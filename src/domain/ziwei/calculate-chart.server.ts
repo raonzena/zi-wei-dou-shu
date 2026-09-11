@@ -6,6 +6,7 @@ import {
   type BirthError,
   type NormalizedBirth,
 } from '../birth/normalize-birth.server';
+import { projectTiming } from './timing.server';
 import { chartSchema, type Chart } from './chart';
 
 const config = {
@@ -67,6 +68,9 @@ export function calculateChart(
       'ko-KR',
     );
     const chart = chartSchema.parse({
+      soulStar: raw.soul,
+      bodyStar: raw.body,
+      timing: projectTiming(raw, now.toZonedDateTimeISO('Asia/Seoul').year),
       soulPalaceBranch: raw.earthlyBranchOfSoulPalace,
       bodyPalaceBranch: raw.earthlyBranchOfBodyPalace,
       fiveElementsClass: raw.fiveElementsClass,

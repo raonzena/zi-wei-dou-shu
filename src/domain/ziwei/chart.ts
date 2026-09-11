@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { timingSchema } from './timing';
 
 const label = z.string().min(1);
 const starSchema = z.strictObject({
@@ -18,9 +19,13 @@ const palaceSchema = z.strictObject({
   stars: z.array(starSchema),
 });
 
-// Service chart data: no dates, gender, engine methods, or private normalization data.
+// Service chart data: no original birth dates, gender, engine methods, or private normalization.
+// Timing age/year ranges can reveal the birth year; disclose this before external processing.
 export const chartSchema = z
   .strictObject({
+    soulStar: label,
+    bodyStar: label,
+    timing: timingSchema,
     soulPalaceBranch: label,
     bodyPalaceBranch: label,
     fiveElementsClass: label,

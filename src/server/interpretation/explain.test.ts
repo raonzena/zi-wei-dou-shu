@@ -83,7 +83,7 @@ describe('OpenAI 설명 요청과 검증', () => {
     expect((await explainChart(chart)).status).toBe('ready');
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
-  it('원본 출생 정보와 미검증 밝기를 제외한 본명반을 전송하고 SDK로 구조화된 응답을 읽는다', async () => {
+  it('원본 출생 정보를 제외하고 보충된 본명반·운한을 전송한다', async () => {
     fetchMock.mockResolvedValue(response(valid()));
     const result = await explainChart(reading());
     expect(result.status).toBe('ready');
@@ -98,11 +98,18 @@ describe('OpenAI 설명 요청과 검증', () => {
     expect(request.instructions).toContain(userConsultationPrompt);
     expect(
       JSON.parse(request.input).palaces.every((p: { stars: object[] }) =>
-        p.stars.every((s) => !('brightness' in s)),
+        p.stars.every((s) => 'brightness' in s),
       ),
     ).toBe(true);
     expect(request.tools).toBeUndefined();
     expect(request.text.format.strict).toBe(true);
+    const allowed =
+      request.text.format.schema.properties.sections.items.properties.paragraphs
+        .items.properties.evidenceIds.items.enum;
+    expect(allowed).toContain('star:사:adjective:팔좌');
+    expect(allowed).not.toContain('star:사:minor:팔좌');
+    expect(request.instructions).toContain('7: 결혼과 장기 관계 분석');
+    expect(request.instructions).toContain('8: 건강과 생활관리 분석');
     expect(JSON.stringify(result)).not.toContain('test-key');
   });
   it.each(['unknown', 'duplicate', 'missing', 'extra'])(
@@ -188,7 +195,7 @@ describe('OpenAI 설명 요청과 검증', () => {
   });
 });
 
-it('대한 자료 없이 시기 해석을 반환하면 거부한다', async () => {
+it('대한 근거 ID 없이 시기 해석을 반환하면 거부한다', async () => {
   const value = valid();
   value.sections[9] = { ...value.sections[0], step: 10 };
   fetchMock.mockResolvedValue(response(value));
@@ -226,4 +233,92 @@ it('삼방사정은 지지 위치로 구성하고 원본 데이터와 표시 범
   expect(input.palaces.filter((p) => p.isBodyPalace)).toHaveLength(1);
   expect(JSON.stringify(chart)).toBe(before);
   expect(input).not.toHaveProperty('birth');
+});
+
+it.each([
+  ['credit_balance_exhausted', undefined],
+  ['organization_spend_limit_exceeded', undefined],
+  ['project_spend_limit_exceeded', undefined],
+  ['organization_usage_limit_exceeded', undefined],
+  [undefined, 'insufficient_quota'],
+])('결제·사용량 한도 %s/%s는 재시도를 제공하지 않는다', async (code, type) => {
+  fetchMock.mockResolvedValue(
+    new Response(
+      JSON.stringify({
+        error: {
+          code,
+          type,
+          message: 'private billing detail',
+        },
+      }),
+      { status: 429, headers: { 'content-type': 'application/json' } },
+    ),
+  );
+  const result = await explainChart(reading());
+  expect(result).toMatchObject({
+    status: 'error',
+    code: 'quota',
+    retryable: false,
+  });
+  expect(JSON.stringify(result)).not.toContain('private billing detail');
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+it.each(['rate_limit_exceeded', 'slow_down'])(
+  '일시적인 제한 %s는 명시적인 재시도를 제공한다',
+  async (code) => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: {
+            code,
+            type: 'rate_limit_error',
+            message: 'private rate detail',
+          },
+        }),
+        { status: 429, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(await explainChart(reading())).toMatchObject({
+      status: 'error',
+      code: 'rate-limit',
+      retryable: true,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  },
+);
+
+it('전달한 대한·유년 근거를 사용한 시기 해석은 허용한다', async () => {
+  const value = valid();
+  for (const step of [3, 10, 11])
+    value.sections[step - 1] = {
+      ...value.sections[0],
+      step,
+      paragraphs: [
+        {
+          ...value.sections[0].paragraphs[0],
+          evidenceIds: [
+            step === 11
+              ? consultationEvidence(reading()).timing.yearly.id
+              : 'decadal:3',
+          ],
+        },
+      ],
+    };
+  fetchMock.mockResolvedValue(response(value));
+  expect((await explainChart(reading())).status).toBe('ready');
+});
+it('다른 연도의 유년 ID나 대한만으로 올해 유년 해석을 만들면 거부한다', async () => {
+  for (const id of ['yearly:1800', 'decadal:3']) {
+    const value = valid();
+    value.sections[10] = {
+      ...value.sections[0],
+      step: 11,
+      paragraphs: [{ ...value.sections[0].paragraphs[0], evidenceIds: [id] }],
+    };
+    fetchMock.mockResolvedValue(response(value));
+    expect(await explainChart(reading())).toMatchObject({
+      status: 'error',
+      code: 'invalid-response',
+    });
+  }
 });

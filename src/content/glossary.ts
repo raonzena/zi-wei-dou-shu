@@ -11,6 +11,36 @@ const adjSource = 'https://iztro.com/learn/adj-star';
 const mutagenSource = 'https://iztro.com/learn/mutagen';
 
 export const terms: Record<string, TermDefinition> = {
+  명주: {
+    label: '명주',
+    description:
+      '계산 규칙에 따라 명궁의 지지로 정하는 대표 별입니다. 명궁에 실제 놓인 주성과는 다른 항목입니다.',
+    source: 'https://iztro.com/learn/setup',
+  },
+  신주: {
+    label: '신주',
+    description:
+      '출생 연도의 지지로 정하는 대표 별입니다. 신궁의 위치나 그 궁에 놓인 별과 구분합니다.',
+    source: 'https://iztro.com/learn/setup',
+  },
+  대한: {
+    label: '대한',
+    description:
+      '10년 단위의 흐름을 살피는 전통적인 구분입니다. 오행국에 따라 시작 나이가 달라집니다. 계산용 나이는 만 나이가 아닙니다.',
+    source: 'https://iztro.com/learn/horoscope',
+  },
+  유년: {
+    label: '유년',
+    description:
+      '한 해의 흐름을 살피는 명반입니다. 이 서비스는 iztro 음력 정월 초하루를 연도 경계로 사용합니다.',
+    source: 'https://iztro.com/learn/horoscope',
+  },
+  밝기: {
+    label: '별의 밝기',
+    description:
+      '묘·왕·득·리·평·불·함으로 구분하는 전통적인 별의 상태입니다. 실제 빛의 밝기나 운세 점수가 아니며 유파별 표가 다를 수 있습니다.',
+    source: 'https://iztro.com/learn/star',
+  },
   윤달: {
     label: '윤달',
     description:

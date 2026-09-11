@@ -5,6 +5,7 @@ import {
 import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
 import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
+import { SupplementalEvidence } from './supplemental-evidence';
 import { palaceTerms, starTerms } from '../../content/glossary';
 import * as styles from './styles.css';
 
@@ -23,6 +24,15 @@ export function AiExplanation({
   const evidence = consultationEvidence(chart);
   function reference(id: string) {
     if (id === 'chart') return <span>본명반 · {chart.fiveElementsClass}</span>;
+    const timing = evidence.timing.decadals.find((d) => d.id === id);
+    if (timing)
+      return (
+        <span>
+          대한 {timing.ageRange.join('–')}세 · {timing.yearRange.join('–')}년
+        </span>
+      );
+    if (id === evidence.timing.yearly.id)
+      return <span>{evidence.timing.yearly.year}년 유년</span>;
     const palace = evidence.palaces.find(
       (p) => p.id === id || p.stars.some((s) => s.id === id),
     )!;
@@ -69,8 +79,9 @@ export function AiExplanation({
             확인해주세요.
           </p>
           <p className={styles.evidence}>
-            대한·유년·유월과 별의 밝기 자료는 제공하지 않았습니다. 시기별 분석은
-            자료 부족으로 구분합니다.
+            명주·신주, 별의 밝기, 대한과 {chart.timing.yearly.year}년 유년
+            자료를 함께 사용했습니다. 유월·자화·비화·격국 판정과 과거 경험은
+            포함하지 않았습니다.
           </p>
           {result.sections.map((section) => (
             <details
@@ -120,7 +131,7 @@ export function AiExplanation({
                               {p.stars
                                 .map(
                                   (s) =>
-                                    `${s.name}${s.natalTransformation ? ` (화${s.natalTransformation})` : ''}`,
+                                    `${s.name}${s.brightness ? ` [${evidence.brightnessScale[s.brightness as keyof typeof evidence.brightnessScale] ?? s.brightness}]` : ''}${s.natalTransformation ? ` (화${s.natalTransformation})` : ''}`,
                                 )
                                 .join(' · ') || '표시 범위의 별 없음'}
                             </td>
@@ -129,8 +140,9 @@ export function AiExplanation({
                       </tbody>
                     </table>
                   </div>
+                  <SupplementalEvidence chart={chart} />
                   <p className={styles.evidence}>
-                    미제공 자료: {evidence.missing.join(' / ')}
+                    추가 분석에 필요한 자료: {evidence.missing.join(' / ')}
                   </p>
                 </>
               )}

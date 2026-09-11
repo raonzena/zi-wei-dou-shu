@@ -18,7 +18,6 @@ export const consultationStages = [
   '유년 분석',
   '현실 조언과 핵심 결론',
 ] as const;
-export const unavailableStages = [3, 10, 11];
 export const aiExplanationSchema = z.strictObject({
   sections: z
     .array(
@@ -48,6 +47,7 @@ export type AiExplanationResult =
         | 'unavailable'
         | 'timeout'
         | 'rate-limit'
+        | 'quota'
         | 'invalid-response'
         | 'provider';
       message: string;
@@ -69,16 +69,23 @@ export function validateAiExplanation(
   for (const [index, section] of result.sections.entries()) {
     if (section.step !== index + 1) throw new Error('Invalid analysis order');
     if (
-      unavailableStages.includes(section.step) &&
-      section.status !== 'unavailable'
-    )
-      throw new Error('Missing timing data');
-    if (
       (section.status === 'unavailable') !==
       (section.paragraphs.length === 0)
     )
       throw new Error('Invalid supported scope');
     for (const p of section.paragraphs) {
+      if (
+        [3, 10].includes(section.step) &&
+        !p.evidenceIds.some((id) =>
+          evidence.timing.decadals.some((d) => d.id === id),
+        )
+      )
+        throw new Error('Missing decadal evidence');
+      if (
+        section.step === 11 &&
+        !p.evidenceIds.includes(evidence.timing.yearly.id)
+      )
+        throw new Error('Missing yearly evidence');
       if (
         p.evidenceIds.some((id) => !ids.has(id)) ||
         new Set(p.evidenceIds).size !== p.evidenceIds.length
@@ -88,4 +95,28 @@ export function validateAiExplanation(
   }
   // Structural evidence checks do not establish the truth or semantic fidelity of prose.
   return result.sections;
+}
+
+/** Constrain generation to the same source IDs checked after parsing. */
+export function aiExplanationSchemaFor(evidence: ConsultationEvidence) {
+  const section = aiExplanationSchema.shape.sections.element;
+  const paragraph = section.shape.paragraphs.element;
+  return aiExplanationSchema.extend({
+    sections: z
+      .array(
+        section.extend({
+          paragraphs: z
+            .array(
+              paragraph.extend({
+                evidenceIds: z
+                  .array(z.enum([...evidenceIds(evidence)]))
+                  .min(1)
+                  .max(20),
+              }),
+            )
+            .max(6),
+        }),
+      )
+      .length(12),
+  });
 }
