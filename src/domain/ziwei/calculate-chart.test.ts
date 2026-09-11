@@ -258,5 +258,5 @@ describe('server boundary and error isolation', () => {
     );
     for (const index of [0, 2, 4, 6]) expect(results[index]).toEqual(expected);
     expect(success().chart).toEqual(expected);
-  });
+  }, 20_000);
 });

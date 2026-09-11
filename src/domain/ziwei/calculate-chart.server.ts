@@ -6,6 +6,7 @@ import {
   type BirthError,
   type NormalizedBirth,
 } from '../birth/normalize-birth.server';
+import { projectFlyingTransformations } from './relations.server';
 import { projectTiming } from './timing.server';
 import { chartSchema, type Chart } from './chart';
 
@@ -68,6 +69,7 @@ export function calculateChart(
       'ko-KR',
     );
     const chart = chartSchema.parse({
+      flyingTransformations: projectFlyingTransformations(raw),
       soulStar: raw.soul,
       bodyStar: raw.body,
       timing: projectTiming(raw, now.toZonedDateTimeISO('Asia/Seoul').year),

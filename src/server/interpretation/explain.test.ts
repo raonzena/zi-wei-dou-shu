@@ -227,7 +227,7 @@ it('삼방사정은 지지 위치로 구성하고 원본 데이터와 표시 범
     input.palaces.find((p) => p.earthlyBranch === '신')!.relatedPalaceIds,
   ).toEqual(['palace:신', 'palace:자', 'palace:진', 'palace:인']);
   const stars = input.palaces.flatMap((p) => p.stars);
-  expect(stars).toHaveLength(32);
+  expect(stars).toHaveLength(39);
   expect(stars.filter((s) => s.natalTransformation)).toHaveLength(4);
   expect(stars.filter((s) => s.name === '천월')).toHaveLength(1);
   expect(input.palaces.filter((p) => p.isBodyPalace)).toHaveLength(1);
@@ -300,6 +300,9 @@ it('전달한 대한·유년 근거를 사용한 시기 해석은 허용한다',
             step === 11
               ? consultationEvidence(reading()).timing.yearly.id
               : 'decadal:3',
+            ...(step === 11
+              ? consultationEvidence(reading()).timing.monthly.map((m) => m.id)
+              : []),
           ],
         },
       ],
@@ -322,3 +325,42 @@ it('다른 연도의 유년 ID나 대한만으로 올해 유년 해석을 만들
     });
   }
 });
+
+it('유년 해석에서 일부 월 구간을 누락하면 거부한다', async () => {
+  const value = valid();
+  const evidence = consultationEvidence(reading());
+  value.sections[10] = {
+    ...value.sections[0],
+    step: 11,
+    paragraphs: [
+      {
+        ...value.sections[0].paragraphs[0],
+        evidenceIds: [
+          evidence.timing.yearly.id,
+          ...evidence.timing.monthly.slice(1).map((m) => m.id),
+        ],
+      },
+    ],
+  };
+  fetchMock.mockResolvedValue(response(value));
+  expect(await explainChart(reading())).toMatchObject({
+    status: 'error',
+    code: 'invalid-response',
+  });
+});
+
+it.each([
+  '유월은 별도로 계산할 근거가 없어 여기서는 다루지 않습니다.',
+  '현재 대한인 decadal:93에서는 책임이 커집니다.',
+])(
+  '실호출에서 발견한 모순·내부 ID 노출을 거부한다: %s',
+  async (interpretation) => {
+    const value = valid();
+    value.sections[0].paragraphs[0].interpretation = interpretation;
+    fetchMock.mockResolvedValue(response(value));
+    expect(await explainChart(reading())).toMatchObject({
+      status: 'error',
+      code: 'invalid-response',
+    });
+  },
+);

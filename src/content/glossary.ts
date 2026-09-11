@@ -157,6 +157,13 @@ const majorStars: [string, string, string][] = [
   ['파군', '破軍', '변화와 재구성'],
 ];
 const supportingStars: [string, string, string, string][] = [
+  ['minor', '천마', '天馬', '이동과 활동'],
+  ['minor', '지공', '地空', '발상과 비움'],
+  ['minor', '지겁', '地劫', '자원의 소모와 변동'],
+  ['adjective', '홍란', '紅鸞', '친밀감과 교류'],
+  ['adjective', '천희', '天喜', '친화력과 즐거움'],
+  ['adjective', '천요', '天姚', '표현과 사교'],
+  ['adjective', '함지', '咸池', '매력과 교류'],
   ['minor', '좌보', '左輔', '도움과 지원'],
   ['minor', '우필', '右弼', '협력과 지원'],
   ['minor', '문창', '文昌', '학습과 글'],
@@ -194,3 +201,30 @@ export const starTerms: Record<string, TermDefinition> = Object.fromEntries([
     },
   ]),
 ]);
+
+export const extendedTerms = {
+  유월: {
+    label: '유월',
+    description:
+      '한 해를 음력 월별로 살펴보는 운한입니다. 여기서는 iztro 음력을 쓰며 한국 음력과 날짜가 다를 수 있습니다. 윤달은 1~15일과 16일 이후로 나눕니다.',
+    source: 'https://iztro.com/posts/astrolabe',
+  },
+  비화: {
+    label: '궁간 비화·자화',
+    description:
+      '각 궁의 천간으로 정한 사화가 어느 별과 궁에 연결되는지 표시합니다. 출발 궁과 도착 궁이 같으면 자화입니다. 생년사화와 별개이며 연쇄 추론은 하지 않습니다.',
+    source: 'https://iztro.com/posts/palace',
+  },
+  격국: {
+    label: '격국 구조 검사',
+    description:
+      '여러 별의 배치 조건을 묶어 확인합니다. 표시된 두 규칙의 명궁 조건만 검사하며 길흉이나 실제 성취를 확정하지 않습니다.',
+    source: 'https://iztro.com/learn/pattern',
+  },
+  유요: {
+    label: '유요',
+    description:
+      '대한·유년·유월에 따라 위치가 달라지는 별입니다. 본명반 별의 위치와 구분해서 읽습니다. 표시된 궁은 본명반의 궁 이름입니다.',
+    source: 'https://iztro.com/posts/horoscope',
+  },
+} satisfies Record<string, TermDefinition>;

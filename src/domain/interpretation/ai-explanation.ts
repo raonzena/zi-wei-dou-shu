@@ -67,12 +67,36 @@ export function validateAiExplanation(
   const result = aiExplanationSchema.parse(value);
   const ids = evidenceIds(evidence);
   for (const [index, section] of result.sections.entries()) {
+    const prose = [
+      section.limitation,
+      ...section.paragraphs.flatMap((p) => [
+        p.terms,
+        p.interpretation,
+        p.check,
+      ]),
+    ].join('\n');
+    if (
+      /(?:decadal|yearly|monthly|flying|pattern|palace|star):[^\s]+/.test(prose)
+    )
+      throw new Error('Internal evidence ID in prose');
+    // Regression guard for an observed contradiction; not general semantic validation.
+    if (
+      /유월[^.!?\n]{0,40}(?:자료|근거)[^.!?\n]{0,20}(?:없어|없습니다|미제공|부족)/.test(
+        prose,
+      )
+    )
+      throw new Error('Contradicts provided monthly evidence');
     if (section.step !== index + 1) throw new Error('Invalid analysis order');
     if (
       (section.status === 'unavailable') !==
       (section.paragraphs.length === 0)
     )
       throw new Error('Invalid supported scope');
+    if (section.step === 11 && section.status === 'limited') {
+      const cited = new Set(section.paragraphs.flatMap((p) => p.evidenceIds));
+      if (evidence.timing.monthly.some((m) => !cited.has(m.id)))
+        throw new Error('Missing monthly coverage');
+    }
     for (const p of section.paragraphs) {
       if (
         [3, 10].includes(section.step) &&

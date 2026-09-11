@@ -110,6 +110,6 @@ describe('보충 본명반·대한·유년', () => {
     expect(e.metadata).toMatchObject({ soulStar: '무곡', bodyStar: '천기' });
     expect(e).not.toHaveProperty('birth');
     expect(e).not.toHaveProperty('rawDates');
-    expect(e.timing).not.toHaveProperty('monthly');
+    expect(e.timing.monthly).toHaveLength(12);
   });
 });

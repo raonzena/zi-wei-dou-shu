@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { timingSchema } from './timing';
+import { flyingTransformationSchema } from './relations';
 
 const label = z.string().min(1);
 const starSchema = z.strictObject({
@@ -26,6 +27,7 @@ export const chartSchema = z
     soulStar: label,
     bodyStar: label,
     timing: timingSchema,
+    flyingTransformations: z.array(flyingTransformationSchema).length(48),
     soulPalaceBranch: label,
     bodyPalaceBranch: label,
     fiveElementsClass: label,

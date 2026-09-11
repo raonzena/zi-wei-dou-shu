@@ -5,6 +5,7 @@ import {
 import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
 import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
+import { monthLabel } from './expanded-evidence';
 import { SupplementalEvidence } from './supplemental-evidence';
 import { palaceTerms, starTerms } from '../../content/glossary';
 import * as styles from './styles.css';
@@ -33,6 +34,26 @@ export function AiExplanation({
       );
     if (id === evidence.timing.yearly.id)
       return <span>{evidence.timing.yearly.year}년 유년</span>;
+    const month = evidence.timing.monthly.find((m) => m.id === id);
+    if (month) return <span>{monthLabel(month)} · iztro 음력 유월</span>;
+    const flying = evidence.flyingTransformations.find((f) => f.id === id);
+    if (flying)
+      return (
+        <span>
+          {evidence.palaces.find((p) => p.id === flying.sourcePalaceId)!.name} →{' '}
+          {evidence.palaces.find((p) => p.id === flying.targetPalaceId)!.name} ·{' '}
+          {flying.starName} 화{flying.type}
+          {flying.self ? ' 자화' : ''}
+        </span>
+      );
+    const pattern = evidence.patterns.find((p) => p.id === id);
+    if (pattern)
+      return (
+        <span>
+          {pattern.name} ·{' '}
+          {pattern.matched ? '배치 조건 일치' : '배치 조건 불일치'}
+        </span>
+      );
     const palace = evidence.palaces.find(
       (p) => p.id === id || p.stars.some((s) => s.id === id),
     )!;
@@ -80,8 +101,8 @@ export function AiExplanation({
           </p>
           <p className={styles.evidence}>
             명주·신주, 별의 밝기, 대한과 {chart.timing.yearly.year}년 유년
-            자료를 함께 사용했습니다. 유월·자화·비화·격국 판정과 과거 경험은
-            포함하지 않았습니다.
+            자료에 올해 전체 유월, 궁간 사화, 유요와 두 가지 격국의 구조 검사를
+            더했습니다. 과거 경험과 미지원 격국은 추정하지 않습니다.
           </p>
           {result.sections.map((section) => (
             <details

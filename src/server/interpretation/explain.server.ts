@@ -12,7 +12,7 @@ import {
 } from '../../domain/interpretation/ai-explanation';
 
 export const explanationModel = 'gpt-5.4-mini-2026-03-17';
-export const explanationPromptVersion = 'user-consultation-v3';
+export const explanationPromptVersion = 'user-consultation-v5';
 
 export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
   const evidence = consultationEvidence(chart);

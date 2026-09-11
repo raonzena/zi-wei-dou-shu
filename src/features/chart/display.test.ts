@@ -13,10 +13,10 @@ function referenceChart(year = 1929) {
 }
 
 describe('명반 표시 데이터', () => {
-  it('독립 대조 명반의 14주성과 보조성 18개를 빠짐없이 표시한다', () => {
+  it('독립 대조 명반의 14주성과 보조성 25개를 빠짐없이 표시한다', () => {
     const chart = referenceChart();
     const stars = chart.palaces.flatMap(displayedStars);
-    expect(stars).toHaveLength(32);
+    expect(stars).toHaveLength(39);
     expect(stars.filter((star) => star.isMajor)).toHaveLength(14);
     for (const palace of chart.palaces) {
       expect(palaceTerms[palace.name]).toBeDefined();
@@ -54,8 +54,9 @@ describe('명반 표시 데이터', () => {
       starTerms[starKey(all.find((s) => s.name === '천상' && !s.isMajor)!)],
     ).toBeUndefined();
   });
-  it('열 천간 사례에서 표시 범위가 네 종류의 사화를 모두 보존한다', () => {
-    for (let year = 1990; year < 2000; year++) {
+  it.each(Array.from({ length: 10 }, (_, i) => 1990 + i))(
+    '%s년 천간의 네 종류 사화를 모두 보존한다',
+    (year) => {
       const chart = referenceChart(year);
       const before = JSON.stringify(chart);
       expect(
@@ -65,8 +66,8 @@ describe('명반 표시 데이터', () => {
           .sort(),
       ).toEqual(['과', '권', '기', '록']);
       expect(JSON.stringify(chart)).toBe(before);
-    }
-  });
+    },
+  );
   it('궁을 고정 지지에 배치하며 중앙 네 칸과 겹치지 않는다', () => {
     const coords = referenceChart().palaces.map(
       (p) => positions[p.earthlyBranch],
