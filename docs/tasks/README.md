@@ -38,3 +38,9 @@
 이 규칙 도입 이전의 초기 설정과 계산 엔진 평가 기록은 [기술 선택 기록](../decisions/0001-technology-stack.md), [계산 엔진 평가](../decisions/0002-calculation-engine-evaluation.md)에서 확인한다. 해당 기록을 새 작업 페이지 작성 완료로 집계하지 않는다.
 
 | 2026-09-12 | [main 자동 배포](2026-09-12-main-auto-deployment.md) | 완료 — CI·자동 배포 검증 |
+
+| 2026-09-12 | [명반 인장 로고와 메타데이터](2026-09-12-brand-logo-metadata.md) | 완료 — 코드·Figma·로컬 검증 |
+
+| 2026-09-12 | [계산 기준 안내와 유월 제목](2026-09-12-reading-labels-and-calculation-notice.md) | 완료 — 월 제목·공통 하단 검증 |
+
+| 2026-09-12 | [해석 근거 크기와 접기](2026-09-12-collapsible-reading-evidence.md) | 완료 — 근거 크기·접기·여백 검증 |

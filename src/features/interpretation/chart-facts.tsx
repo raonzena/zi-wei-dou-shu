@@ -18,7 +18,7 @@ export function ChartFacts({
   const evidence = consultationEvidence(chart);
   return (
     <section className={styles.reading} aria-label="서버 계산 자료">
-      <p className={styles.eyebrow}>계산 결과 · AI 생성 문장이 아닙니다</p>
+      <p className={styles.eyebrow}>계산 결과</p>
       <details open={numbered}>
         <summary className={styles.sectionSummary}>
           {numbered ? '1. ' : ''}명반 판독 요약
@@ -37,16 +37,10 @@ export function ChartFacts({
             </div>
           ))}
         </dl>
-        <p>계산 출처: {facts.source}</p>
         <details>
           <summary className={styles.sectionSummary}>
-            계산 기준과 제공 범위
+            제공하는 자료와 범위
           </summary>
-          <ul>
-            {facts.policies.map((p) => (
-              <li key={p}>{p}</li>
-            ))}
-          </ul>
           <h3>제공하는 자료</h3>
           <ul>
             {facts.supported.map((p) => (

@@ -12,15 +12,33 @@ export const eyebrow = style({
   fontSize: '.875rem',
   margin: 0,
 });
-export const evidence = style({ color: colors.muted, fontSize: '.875rem' });
+export const evidence = style({
+  color: colors.muted,
+  fontSize: '10px',
+  margin: '.25rem 0',
+});
+globalStyle(`${evidence} ul`, {
+  margin: '.25rem 0',
+  paddingLeft: '1.25rem',
+});
+export const evidenceSummary = style({
+  cursor: 'pointer',
+  padding: '.5rem 0',
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${colors.accent}`,
+      outlineOffset: 3,
+    },
+  },
+});
 export const scope = style({
   borderLeft: `3px solid ${colors.accent}`,
   paddingLeft: '1rem',
 });
 export const entry = style({
   borderTop: `1px solid ${colors.line}`,
-  marginTop: '1.5rem',
-  paddingTop: '.5rem',
+  marginTop: '.75rem',
+  paddingTop: '.25rem',
 });
 export const question = style({
   background: colors.tint,

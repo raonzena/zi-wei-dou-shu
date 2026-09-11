@@ -21,11 +21,10 @@ export function createChartFacts(chart: Chart) {
   for (const d of chart.timing.decadals)
     references[d.id] =
       `대한 ${d.ageRange.join('–')}세 · ${d.yearRange.join('–')}년`;
-  references[chart.timing.yearly.id] =
-    `${chart.timing.yearly.year}년 유년 · iztro 음력 기준`;
+  references[chart.timing.yearly.id] = `${chart.timing.yearly.year}년 유년`;
   for (const m of chart.timing.monthly)
     references[m.id] =
-      `${m.year}년 ${m.isLeapMonth ? '윤' : ''}${m.month}월 ${m.dayRange.join('–')}일 · iztro 음력`;
+      `${m.isLeapMonth ? '윤' : ''}${m.month}월${m.part === 'first' ? ' 전반' : m.part === 'second' ? ' 후반' : ''}`;
   for (const f of chart.flyingTransformations)
     references[f.id] =
       `${palaceName(f.sourcePalaceId)} → ${palaceName(f.targetPalaceId)} · ${f.starName} 화${f.type}${f.self ? ' · 자화' : ''}`;
@@ -44,6 +43,7 @@ export function createChartFacts(chart: Chart) {
       '출생 정보: 한국 음력 입력을 지원하며, 당시 대한민국 표준시·서머타임을 반영합니다. 진태양시 보정은 적용하지 않습니다.',
       `운한: ${chart.timing.yearBoundary}에 연도가 시작합니다. 한국 음력이나 양력 날짜와 같다고 보장하지 않습니다.`,
       `계산용 나이: ${chart.timing.ageBasis}. 대한 구간은 수명을 뜻하지 않습니다.`,
+      '유월: 표와 해석에는 월만 표시합니다. 윤달 전반은 1~15일, 후반은 16일부터 그달 마지막 날까지입니다. 표시한 월은 양력 월이 아닙니다.',
       '밝기: 묘·왕·득·리·평·불·함의 전통 분류입니다. 등급 미제공을 낮은 등급으로 해석하지 않습니다.',
     ],
     source: 'iztro 2.6.1 기본표 · 한국 출생 시각 보정',
@@ -66,7 +66,7 @@ export function createChartFacts(chart: Chart) {
       10: chart.timing.yearly.currentDecadalId
         ? '전체 대한과 올해가 속한 구간을 구분해 읽습니다. 나이는 만 나이가 아닙니다.'
         : '올해는 제공된 대한 구간 밖입니다. 현재 대한을 임의로 만들지 않습니다.',
-      11: `${chart.timing.yearly.year}년 유년과 전체 유월을 제공합니다. 월·일은 iztro 음력입니다.`,
+      11: `${chart.timing.yearly.year}년 유년과 전체 유월을 제공합니다.`,
       12: '계산 자료에 대한 AI의 해석입니다. 자신의 경험과 비교해 참고해주세요.',
     } as Record<number, string>,
     references,

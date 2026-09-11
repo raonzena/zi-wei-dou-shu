@@ -21,3 +21,12 @@ export const seal = style({
   fontWeight: 700,
   lineHeight: 1.6,
 });
+
+export const logo = style({
+  width: '2.5rem',
+  height: '2.5rem',
+  flexShrink: 0,
+  '@media': {
+    '(max-width: 767px)': { width: '2rem', height: '2rem' },
+  },
+});

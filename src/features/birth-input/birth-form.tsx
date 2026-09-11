@@ -152,11 +152,7 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
           aria-busy="true"
         >
           <Seal />
-          <h1 className={styles.title}>
-            {includeAi
-              ? '명반과 AI 설명을 준비하고 있습니다'
-              : '명반과 기본 풀이를 준비하고 있습니다'}
-          </h1>
+          <h1 className={styles.title}>명반 풀이를 준비하고 있습니다</h1>
           <p>
             입력한 날짜와 시각으로 명반을 계산하고 기본 풀이를 함께 준비합니다.
           </p>
@@ -352,7 +348,6 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
                   구조, 대한·올해 유년·유월·유요 자료를 OpenAI에 보내 AI 해석을
                   함께 제공합니다. 원본 출생 날짜·시각·성별은 보내지 않지만,
                   대한의 나이와 연도 구간으로 출생 연도를 추정할 수 있습니다.
-                  유월은 iztro 음력 기준으로 한국 음력과 다를 수 있습니다.
                   OpenAI는 부정 사용 모니터링을 위해 API 내용을 보관할 수
                   있습니다.{' '}
                   <a

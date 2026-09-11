@@ -46,10 +46,7 @@ export function ExpandedEvidence({
         <summary>
           <Term term={extendedTerms.유월} /> · 올해 전체 월별 자료
         </summary>
-        <p>
-          아래 월·일은 iztro 음력 기준입니다. 한국 음력이나 양력 날짜로 읽지
-          마세요. 윤달이 있는 해에는 전반과 후반을 나눠 표시합니다.
-        </p>
+        <p>윤달이 있는 해에는 전반과 후반을 나눠 표시합니다.</p>
         <div
           className={styles.tableScroll}
           tabIndex={0}
@@ -60,7 +57,7 @@ export function ExpandedEvidence({
             <caption>올해 전체 유월 근거</caption>
             <thead>
               <tr>
-                <th scope="col">음력 구간</th>
+                <th scope="col">월</th>
                 <th scope="col">유월 명궁</th>
                 <th scope="col">유월사화</th>
                 <th scope="col">

@@ -56,6 +56,14 @@ describe('고정 평가 사례와 서버 표시 계약', () => {
       expect(monthly.required).toEqual(chart.timing.monthly.map((m) => m.id));
       expect(monthly.additionalProperties).toBe(false);
       const facts = createChartFacts(chart);
+      expect(facts.references[chart.timing.yearly.id]).toBe(
+        `${chart.timing.yearly.year}년 유년`,
+      );
+      expect(
+        chart.timing.monthly
+          .map((m) => facts.references[m.id])
+          .every((label) => /^(윤)?\d{1,2}월( 전반| 후반)?$/.test(label)),
+      ).toBe(true);
       expect(new Set(Object.keys(facts.references))).toEqual(
         evidenceIds(evidence),
       );
@@ -70,7 +78,7 @@ describe('고정 평가 사례와 서버 표시 계약', () => {
       ).toHaveLength(expected.months);
     },
   );
-  it('윤달 전·후반의 날짜를 서버가 구분하고 AI의 키 순서를 신뢰하지 않는다', () => {
+  it('윤달 전·후반 제목을 구분하고 AI의 키 순서를 신뢰하지 않는다', () => {
     const { chart, evidence } = prepare(1);
     const value = mockExplanation(evidence);
     value.monthly = Object.fromEntries(Object.entries(value.monthly).reverse());
@@ -80,8 +88,8 @@ describe('고정 평가 사례와 서버 표시 계약', () => {
     const facts = createChartFacts(chart);
     const leap = chart.timing.monthly.filter((m) => m.isLeapMonth);
     expect(leap.map((m) => facts.references[m.id])).toEqual([
-      '2025년 윤6월 1–15일 · iztro 음력',
-      '2025년 윤6월 16–29일 · iztro 음력',
+      '윤6월 전반',
+      '윤6월 후반',
     ]);
   });
   it('자화의 출발·도착과 사용자가 읽는 시기 이름을 서버가 생성한다', () => {

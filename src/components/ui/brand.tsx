@@ -1,11 +1,10 @@
+import Logo from '@/app/icon.svg';
 import * as styles from './brand.css';
 
 export function Brand() {
   return (
     <p className={styles.brand}>
-      <span lang="zh-Hant" aria-hidden="true">
-        紫微斗數
-      </span>
+      <Logo className={styles.logo} aria-hidden="true" focusable="false" />
       <span>자미두수</span>
     </p>
   );

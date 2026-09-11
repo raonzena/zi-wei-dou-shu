@@ -1,5 +1,6 @@
 'use client';
 
+import { CalculationNotice } from '../interpretation/calculation-notice';
 import { ChartFacts } from '../interpretation/chart-facts';
 import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
 import { AiExplanation } from '../interpretation/ai-explanation';
@@ -132,6 +133,7 @@ export function ChartResult({
         >
           출생 정보 수정
         </button>
+        <CalculationNotice facts={facts} />
       </section>
     </Provider>
   );

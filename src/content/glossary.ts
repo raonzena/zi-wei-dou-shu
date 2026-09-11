@@ -32,7 +32,7 @@ export const terms: Record<string, TermDefinition> = {
   유년: {
     label: '유년',
     description:
-      '한 해의 흐름을 살피는 명반입니다. 이 서비스는 iztro 음력 정월 초하루를 연도 경계로 사용합니다.',
+      '한 해의 흐름을 살피는 명반입니다. 자세한 달력 기준은 페이지 하단에서 확인할 수 있습니다.',
     source: 'https://iztro.com/learn/horoscope',
   },
   밝기: {
@@ -206,7 +206,7 @@ export const extendedTerms = {
   유월: {
     label: '유월',
     description:
-      '한 해를 음력 월별로 살펴보는 운한입니다. 여기서는 iztro 음력을 쓰며 한국 음력과 날짜가 다를 수 있습니다. 윤달은 1~15일과 16일 이후로 나눕니다.',
+      '한 해의 흐름을 월별로 살펴보는 명반입니다. 윤달은 전반과 후반을 나눠 읽으며, 자세한 달력 기준은 페이지 하단에서 확인할 수 있습니다.',
     source: 'https://iztro.com/posts/astrolabe',
   },
   비화: {

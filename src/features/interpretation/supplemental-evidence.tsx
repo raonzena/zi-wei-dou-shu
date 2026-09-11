@@ -23,8 +23,7 @@ export function SupplementalEvidence({
     <>
       <p>
         <Term term={terms.대한} /> {timing.startAge}세 시작 · {timing.direction}
-        . 나이는 {timing.ageBasis}입니다. 연도는 {timing.yearBoundary}에
-        시작합니다. 표시된 구간은 수명을 뜻하지 않습니다.
+        . 표시된 구간은 수명을 뜻하지 않습니다.
       </p>
       <div
         className={styles.tableScroll}
@@ -70,9 +69,8 @@ export function SupplementalEvidence({
         </p>
       )}
       <p>
-        <Term term={terms.밝기} />는 iztro 기본표를 사용합니다.
-        묘·왕·득·리·평·불·함은 전통 분류이며 운세 점수가 아닙니다. 등급이 없는
-        별은 밝기를 추정하지 않습니다.
+        <Term term={terms.밝기} />의 묘·왕·득·리·평·불·함은 전통 분류이며 운세
+        점수가 아닙니다. 등급이 없는 별은 밝기를 추정하지 않습니다.
       </p>
       <ExpandedEvidence chart={chart} facts={facts} />
     </>

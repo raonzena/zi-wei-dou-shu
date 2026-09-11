@@ -23,7 +23,7 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
       status: 'error',
       code: 'unavailable',
       message:
-        'AI 설명 서비스가 아직 준비되지 않았습니다. 기본 풀이는 확인할 수 있습니다.',
+        '설명 서비스가 아직 준비되지 않았습니다. 기본 풀이는 확인할 수 있습니다.',
       retryable: false,
     };
   const client = new OpenAI({ apiKey, timeout: 150_000, maxRetries: 0 });
@@ -65,7 +65,7 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
         status: 'error',
         code: 'timeout',
         message:
-          'AI 설명을 기다리는 시간이 길어져 중단했습니다. 다시 시도할 수 있습니다.',
+          '설명을 기다리는 시간이 길어져 중단했습니다. 다시 시도할 수 있습니다.',
         retryable: true,
       };
     if (error instanceof OpenAI.RateLimitError) {
@@ -82,14 +82,14 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
           status: 'error',
           code: 'quota',
           message:
-            'AI 설명 서비스의 이용 한도에 도달했습니다. 서비스 운영자의 확인이 필요합니다. 기본 풀이는 계속 볼 수 있습니다.',
+            '설명 서비스의 이용 한도에 도달했습니다. 서비스 운영자의 확인이 필요합니다. 기본 풀이는 계속 볼 수 있습니다.',
           retryable: false,
         };
       return {
         status: 'error',
         code: 'rate-limit',
         message:
-          '지금은 AI 요청을 처리하기 어렵습니다. 잠시 후 다시 시도해주세요.',
+          '지금은 요청을 처리하기 어렵습니다. 잠시 후 다시 시도해주세요.',
         retryable: true,
       };
     }
@@ -101,7 +101,7 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
         status: 'error',
         code: 'unavailable',
         message:
-          'AI 설명 서비스 설정을 확인하고 있습니다. 기본 풀이는 확인할 수 있습니다.',
+          '설명 서비스 설정을 확인하고 있습니다. 기본 풀이는 확인할 수 있습니다.',
         retryable: false,
       };
     if (error instanceof SyntaxError || error instanceof ZodError)
@@ -109,7 +109,7 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
     return {
       status: 'error',
       code: 'provider',
-      message: 'AI 설명을 가져오지 못했습니다. 다시 시도할 수 있습니다.',
+      message: '설명을 가져오지 못했습니다. 다시 시도할 수 있습니다.',
       retryable: true,
     };
   }
@@ -119,7 +119,7 @@ function invalidResponse(): AiExplanationResult {
     status: 'error',
     code: 'invalid-response',
     message:
-      'AI 설명이 정해진 형식이나 근거 목록과 맞지 않아 표시하지 않았습니다. 다시 시도할 수 있습니다.',
+      '설명이 정해진 형식이나 근거 목록과 맞지 않아 표시하지 않았습니다. 다시 시도할 수 있습니다.',
     retryable: true,
   };
 }

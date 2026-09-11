@@ -49,7 +49,7 @@ export function AiExplanation({
       aria-labelledby="ai-explanation-title"
       aria-busy={pending}
     >
-      <p className={styles.eyebrow}>계산 자료를 바탕으로 이어지는 AI 해석</p>
+      <p className={styles.eyebrow}>계산 자료를 바탕으로 이어지는 해석</p>
       <h2 id="ai-explanation-title">나의 명반을 깊이 읽어보기</h2>
       <p>
         1단계 명반 판독 요약은 위의 서버 계산 자료입니다. 아래 2~12단계는 AI가
@@ -57,7 +57,7 @@ export function AiExplanation({
       </p>
       {pending ? (
         <p role="status">
-          AI 해석을 다시 준비하고 있습니다. 계산 자료와 기본 풀이는 계속 볼 수
+          해석을 다시 준비하고 있습니다. 계산 자료와 기본 풀이는 계속 볼 수
           있습니다.
         </p>
       ) : result.status === 'error' ? (
@@ -65,7 +65,7 @@ export function AiExplanation({
           <p>{result.message}</p>
           {result.retryable && (
             <button type="button" className={styles.retry} onClick={onRetry}>
-              AI 설명 다시 시도
+              설명 다시 시도
             </button>
           )}
         </div>
@@ -78,8 +78,10 @@ export function AiExplanation({
             <p className={styles.scope}>{facts.sectionScopes[section.step]}</p>
             {section.paragraphs.map((p, index) => (
               <article key={index} className={styles.entry}>
-                <div className={styles.evidence}>
-                  명반 근거:
+                <details className={styles.evidence}>
+                  <summary className={styles.evidenceSummary}>
+                    명반 근거 ({p.evidenceIds.length})
+                  </summary>
                   <ul>
                     {p.evidenceIds.map((id) => (
                       <li key={id}>
@@ -91,7 +93,7 @@ export function AiExplanation({
                       </li>
                     ))}
                   </ul>
-                </div>
+                </details>
                 <ReadingText reading={p} />
               </article>
             ))}
@@ -100,10 +102,6 @@ export function AiExplanation({
                 <h3>
                   올해 전체 <Term term={extendedTerms.유월} /> 해석
                 </h3>
-                <p className={styles.evidence}>
-                  제목과 계산 근거는 서버가 표시합니다. 월·일은 iztro 음력
-                  기준입니다.
-                </p>
                 {result.monthly.map((reading) => {
                   const period = chart.timing.monthly.find(
                     (m) => m.id === reading.periodId,
