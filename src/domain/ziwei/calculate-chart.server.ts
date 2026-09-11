@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { astro } from 'iztro';
-import { version as engineVersion } from 'iztro/package.json';
+import enginePackage from 'iztro/package.json';
 import {
   normalizeBirth,
   type BirthError,
@@ -98,7 +98,7 @@ export function calculateChart(
       data: {
         chart,
         birth: normalized.data,
-        engine: { name: 'iztro', version: engineVersion },
+        engine: { name: 'iztro', version: enginePackage.version },
       },
     };
   } catch {

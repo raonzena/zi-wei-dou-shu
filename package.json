@@ -21,6 +21,7 @@
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
+    "@base-ui/react": "1.8.0",
     "@js-temporal/polyfill": "0.5.1",
     "@supabase/supabase-js": "2.116.0",
     "@vanilla-extract/css": "1.21.2",

@@ -210,3 +210,7 @@ Vitest로 앱이 책임지는 입력 정규화·계산 정책·명반 회귀·�
 - `pnpm start`: HTTP 200과 vanilla-extract CSS 응답 확인.
 - 개발 서버는 검증 환경의 파일 감시 한도 오류(EMFILE)로 검증 시에만 `WATCHPACK_POLLING=true pnpm dev`를 사용해 HTTP 200과 CSS 응답을 확인했다. 프로젝트 실행 명령에는 폴링 설정을 추가하지 않았다.
 - 브라우저 시각·hydration 검증, Supabase 실제 연결, GitHub CI 원격 실행은 아직 수행하지 않았다.
+
+## 입력형 목록 추가 (2026-09-11)
+
+날짜·시각의 직접 입력과 목록 선택 요청에 맞춰 @base-ui/react 1.8.0의 Autocomplete를 채택했다. 기존 패키지에 해당 UI가 없고 네이티브 datalist 선택을 현재 브라우저에서 검증하지 못해, 키보드·포커스·팝업 동작을 라이브러리에 맡긴다. 스타일은 기존 vanilla-extract를 유지한다. [작업 문서](../tasks/2026-09-11-birth-input-controls.md)에 결정·검증 근거를 기록했다.

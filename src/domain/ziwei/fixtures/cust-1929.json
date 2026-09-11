@@ -125,7 +125,7 @@
   "sourceConflicts": [
     {
       "id": "cust-fire-bell",
-      "reason": "Source chart and table disagree with iztro on 火星/鈴星. Unresolved source/rule difference, not a passing reference.",
+      "reason": "Source chart and table disagree with iztro on 火星/鈴星. User chose iztro placement; this is an explained policy difference, not an independently matching reference.",
       "source": [
         { "name": "화성", "branch": "유" },
         { "name": "령성", "branch": "인" }

@@ -79,8 +79,8 @@ describe('independent CUST reference: verified matching scope', () => {
   });
 });
 
-// These tests preserve evidence of disagreement. Green means reproduced, NOT reference approval.
-describe('unresolved independent discrepancies (release review required)', () => {
+// User-selected iztro policy. Source differences are retained, not counted as independent matches.
+describe('accepted iztro policy differences from CUST', () => {
   it('reproduces the opposite 火星/鈴星 locations, without accepting source equivalence', () => {
     const conflict = reference.sourceConflicts[0];
     const actual = placements().filter((s) =>
@@ -97,7 +97,11 @@ describe('unresolved independent discrepancies (release review required)', () =>
     expect(science.map((s) => s.name)).toEqual(['좌보']);
     expect(science.map((s) => s.name)).not.toEqual(['천부']);
   });
-  it('reproduces leap-month late-rat disagreement with the selected split-month rule', () => {
+});
+
+// User accepted this iztro exception for v1; future change needs a new policy.
+describe('accepted iztro leap late-rat exception', () => {
+  it('reproduces leap-month late-rat disagreement with the general split-month description', () => {
     // HKO: April 5 = leap 2/15; April 6 = leap 2/16. CUST month/hour soul rule:
     // month 2 + 子 => 卯, month 3 + 子 => 辰. v1 uses next month after day 15.
     const input = { ...reference.input, year: 2023, month: 4, minute: 0 };
