@@ -4,7 +4,7 @@
 
 - 저장소: https://github.com/raonzena/zi-wei-dou-shu
 - 기술 스택: pnpm, Next.js, TypeScript, Vitest, vanilla-extract, Jotai, Supabase
-- 현재 단계: 초기 설정과 계산 엔진 1차 평가 완료. 초기 iztro 사용과 후속 TypeScript 자체 구현을 결정했으며 출생 정보 검증·날짜 및 시간 정규화 모듈을 구현했다. 입력 화면·명반·해석·공유 연결은 후속 작업이다.
+- 현재 단계: 초기 설정과 계산 엔진 1차 평가 완료. 초기 iztro 사용과 후속 TypeScript 자체 구현을 결정했으며 출생 정보 검증·시간 정규화에서 iztro 명반 계산까지 서버 내부 흐름을 연결했다. 독립 명반 검증과 입력·결과 화면·해석·공유 연결은 후속 작업이다.
 
 ## 프로젝트 문서
 
@@ -72,6 +72,8 @@ feat/initial-settings
 
 ## 다음 작업
 
-1. [엔진·계산 정책](docs/decisions/0003-engine-and-calculation-policy.md)에 따라 정규화 결과를 엔진에 연결하고 독립 기준 명반·배치 경계 검증을 완료한다.
+1. [엔진·계산 정책](docs/decisions/0003-engine-and-calculation-policy.md)에 따라 독립 기준 명반·배치 경계 검증을 완료한다.
 2. 입력 → 실제 명반 → 기본 설명 흐름을 구현한다.
 3. 간편·상세 결과, 용어 설명, 해석 생성, 결과 저장·공유 순서로 확장한다.
+
+독립 강의 명반 1건의 기본 배치는 일치했으나 화령·壬 사화·윤달 늦은 자시에 미해결 차이가 있어 공개 계산 연결을 보류한다. [독립 대조 결과](docs/tasks/2026-09-11-independent-chart-verification.md)에 검증 범위와 근거를 기록했다.

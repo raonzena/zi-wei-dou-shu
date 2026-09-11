@@ -1,0 +1,139 @@
+{
+  "id": "cust-1929-04-25-hai",
+  "provenance": {
+    "author": "翁彩瓊",
+    "title": "室內風水與環境評析 — 紫微斗數命盤步驟",
+    "source": "https://cc.cust.edu.tw/~wtcbee/index.files/teaching/98-2/Geomancy2/lesson/18.pdf",
+    "pages": [2, 14],
+    "supplement": "https://cc.cust.edu.tw/~wtcbee/index.files/teaching/98-2/Geomancy2/lesson/19.pdf",
+    "supplementPages": [14, 25],
+    "calendar": "solar 1929-04-25 / lunar 己巳三月十六, non-leap",
+    "timeBranch": "亥",
+    "scope": "Published placement, not the historical person's geographical time conversion. The synthetic Korean input below preserves the reference calendar date and hour branch.",
+    "transcription": "Manually transcribed from rendered pages. 事業 maps to 관록; 友朋 maps to 노복; 七煞/七殺 maps to 칠살. No person name retained."
+  },
+  "input": {
+    "calendar": "solar",
+    "year": 1929,
+    "month": 4,
+    "day": 25,
+    "hour": 22,
+    "minute": 0,
+    "gender": "male"
+  },
+  "soulPalaceBranch": "사",
+  "bodyPalaceBranch": "묘",
+  "fiveElementsClass": "목삼국",
+  "palaces": [
+    {
+      "earthlyBranch": "인",
+      "heavenlyStem": "병",
+      "name": "자녀",
+      "majorStars": []
+    },
+    {
+      "earthlyBranch": "묘",
+      "heavenlyStem": "정",
+      "name": "부처",
+      "majorStars": []
+    },
+    {
+      "earthlyBranch": "진",
+      "heavenlyStem": "무",
+      "name": "형제",
+      "majorStars": ["천동"]
+    },
+    {
+      "earthlyBranch": "사",
+      "heavenlyStem": "기",
+      "name": "명궁",
+      "majorStars": ["무곡", "파군"]
+    },
+    {
+      "earthlyBranch": "오",
+      "heavenlyStem": "경",
+      "name": "부모",
+      "majorStars": ["태양"]
+    },
+    {
+      "earthlyBranch": "미",
+      "heavenlyStem": "신",
+      "name": "복덕",
+      "majorStars": ["천부"]
+    },
+    {
+      "earthlyBranch": "신",
+      "heavenlyStem": "임",
+      "name": "전택",
+      "majorStars": ["천기", "태음"]
+    },
+    {
+      "earthlyBranch": "유",
+      "heavenlyStem": "계",
+      "name": "관록",
+      "majorStars": ["자미", "탐랑"]
+    },
+    {
+      "earthlyBranch": "술",
+      "heavenlyStem": "갑",
+      "name": "노복",
+      "majorStars": ["거문"]
+    },
+    {
+      "earthlyBranch": "해",
+      "heavenlyStem": "을",
+      "name": "천이",
+      "majorStars": ["천상"]
+    },
+    {
+      "earthlyBranch": "자",
+      "heavenlyStem": "병",
+      "name": "질액",
+      "majorStars": ["천량"]
+    },
+    {
+      "earthlyBranch": "축",
+      "heavenlyStem": "정",
+      "name": "재백",
+      "majorStars": ["염정", "칠살"]
+    }
+  ],
+  "supportingPlacements": [
+    { "name": "좌보", "branch": "오" },
+    { "name": "우필", "branch": "신" },
+    { "name": "문곡", "branch": "묘" },
+    { "name": "문창", "branch": "해" },
+    { "name": "타라", "branch": "사" },
+    { "name": "록존", "branch": "오" },
+    { "name": "경양", "branch": "미" },
+    { "name": "천괴", "branch": "자" },
+    { "name": "천월", "branch": "신" },
+    { "name": "천관", "branch": "유" },
+    { "name": "천복", "branch": "인" },
+    { "name": "삼태", "branch": "유" },
+    { "name": "팔좌", "branch": "사" },
+    { "name": "은광", "branch": "축" },
+    { "name": "천귀", "branch": "사" },
+    { "name": "천재", "branch": "술" }
+  ],
+  "transformations": [
+    { "name": "무곡", "transformation": "록" },
+    { "name": "탐랑", "transformation": "권" },
+    { "name": "천량", "transformation": "과" },
+    { "name": "문곡", "transformation": "기" }
+  ],
+  "sourceConflicts": [
+    {
+      "id": "cust-fire-bell",
+      "reason": "Source chart and table disagree with iztro on 火星/鈴星. Unresolved source/rule difference, not a passing reference.",
+      "source": [
+        { "name": "화성", "branch": "유" },
+        { "name": "령성", "branch": "인" }
+      ],
+      "iztroObserved": [
+        { "name": "화성", "branch": "인" },
+        { "name": "령성", "branch": "유" }
+      ]
+    }
+  ]
+}
