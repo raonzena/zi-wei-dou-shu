@@ -1,4 +1,4 @@
-name: CI
+name: CI and Production Deployment
 
 on:
   push:
@@ -7,6 +7,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ci-deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   validate:
@@ -22,3 +26,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - run: pnpm build
+
+  deploy:
+    name: Deploy to Vercel Production
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://zi-wei-dou-shu-blush.vercel.app
+    env:
+      VERCEL_ORG_ID: team_qdMYAnhM7iP9OC5KUlqfWfdR
+      VERCEL_PROJECT_ID: prj_rngxUdP9V5mt3wVWovUumuCFMTVp
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+      - name: Deploy validated source
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::Register VERCEL_TOKEN in repository Actions secrets."
+            exit 1
+          fi
+          npx --yes vercel@59.10.0 deploy --prod --yes --token "$VERCEL_TOKEN"
