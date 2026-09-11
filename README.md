@@ -4,7 +4,7 @@
 
 - 저장소: https://github.com/raonzena/zi-wei-dou-shu
 - 기술 스택: pnpm, Next.js, TypeScript, Vitest, vanilla-extract, Jotai, Supabase
-- 현재 단계: 초기 설정과 계산 엔진 1차 평가 완료. 한국·중국 음력 차이로 iztro 운영 채택은 보류했으며 출생 정보 입력·명반·해석·공유 기능은 후속 작업이다.
+- 현재 단계: 초기 설정과 계산 엔진 1차 평가 완료. 초기 iztro 사용과 후속 TypeScript 자체 구현을 결정했으며 출생 정보 입력·명반·해석·공유 기능은 후속 작업이다.
 
 ## 프로젝트 문서
 
@@ -72,6 +72,6 @@ feat/initial-settings
 
 ## 다음 작업
 
-1. 계산 달력·시간 정책을 확정하고 독립 기준 명반을 확보한 뒤 엔진을 결정한다.
+1. [엔진·계산 정책](docs/decisions/0003-engine-and-calculation-policy.md)에 따라 입력·시간 정규화를 구현하고 독립 기준 명반·경계 검증을 완료한다.
 2. 입력 → 실제 명반 → 기본 설명 흐름을 구현한다.
 3. 간편·상세 결과, 용어 설명, 해석 생성, 결과 저장·공유 순서로 확장한다.
