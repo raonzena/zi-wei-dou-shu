@@ -27,4 +27,6 @@
 
 | 2026-09-11 | [AI 명반 보충 자료](2026-09-11-supplemental-chart-evidence.md) | 본명반·대한·올해 유년 연결 및 모의 검증 완료 |
 
+| 2026-09-11 | [프로젝트 스킬 등록](2026-09-11-project-skills.md) | 완료 |
+
 이 규칙 도입 이전의 초기 설정과 계산 엔진 평가 기록은 [기술 선택 기록](../decisions/0001-technology-stack.md), [계산 엔진 평가](../decisions/0002-calculation-engine-evaluation.md)에서 확인한다. 해당 기록을 새 작업 페이지 작성 완료로 집계하지 않는다.
