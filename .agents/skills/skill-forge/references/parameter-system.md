@@ -16,12 +16,12 @@ Document parameters as a table in SKILL.md:
 ```markdown
 ## Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `<content>` | Input file or text | Required |
-| `--style <name>` | Visual style | auto |
-| `--quick` | Skip confirmation gates | false |
-| `--lang <code>` | Output language | en |
+| Option           | Description             | Default  |
+| ---------------- | ----------------------- | -------- |
+| `<content>`      | Input file or text      | Required |
+| `--style <name>` | Visual style            | auto     |
+| `--quick`        | Skip confirmation gates | false    |
+| `--lang <code>`  | Output language         | en       |
 ```
 
 ### Parameter Types
@@ -85,6 +85,7 @@ A `--quick` flag that skips confirmation gates is a common and useful pattern:
 ## Step 2: Confirm Options ⚠️ REQUIRED
 
 Unless `--quick` was passed:
+
 - Present options to user
 - Wait for confirmation
 

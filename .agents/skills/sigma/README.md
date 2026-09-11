@@ -47,13 +47,13 @@ After installation, invoke with:
 
 ### Arguments
 
-| Argument | Description |
-|----------|-------------|
-| `<topic>` | Subject to learn (required, or prompted) |
+| Argument          | Description                                                                |
+| ----------------- | -------------------------------------------------------------------------- |
+| `<topic>`         | Subject to learn (required, or prompted)                                   |
 | `--level <level>` | Starting level: `beginner`, `intermediate`, `advanced` (default: diagnose) |
-| `--lang <code>` | Language override (default: follow user's input language) |
-| `--resume` | Resume previous session from `sigma/{topic-slug}/` |
-| `--visual` | Force rich visual output every round |
+| `--lang <code>`   | Language override (default: follow user's input language)                  |
+| `--resume`        | Resume previous session from `sigma/{topic-slug}/`                         |
+| `--visual`        | Force rich visual output every round                                       |
 
 ## How It Works
 
@@ -75,6 +75,7 @@ Decomposes the topic into 5-15 atomic concepts ordered by dependency, then gener
 ### 3. Tutor Loop
 
 For each concept:
+
 - **Introduce** with a question, not a lecture
 - **Question cycle** alternating structured choices, open-ended questions, and interleaving with past concepts
 - **Misconception tracking** — wrong answers are diagnosed for underlying wrong mental models, counter-examples are designed to dismantle them
@@ -100,15 +101,15 @@ sigma/
 
 Based on seven proven principles from cognitive science:
 
-| Principle | Research | Implementation |
-|-----------|----------|----------------|
-| **Bloom's 2-Sigma** | Bloom 1984 | 1-on-1 tutoring + mastery gating at 80% via calibrated rubric |
-| **Socratic Method** | Classical | Questions only — never lecture, never hand-wave |
-| **Spaced Repetition** | Ebbinghaus 1885, SM-2 | Review mastered concepts at increasing intervals on resume |
-| **Interleaving** | Rohrer & Taylor 2007 | Mix old concepts into current question flow (+43% retention) |
-| **Misconception Dismantling** | Vosniadou 2013, Chi 2005 | Counter-example method to dislodge wrong mental models |
-| **Deliberate Practice** | Ericsson 1993 | Hands-on practice phase before marking mastered |
-| **Metacognition** | Bjork 1994 | Self-assessment calibration to detect fluency illusion |
+| Principle                     | Research                 | Implementation                                                |
+| ----------------------------- | ------------------------ | ------------------------------------------------------------- |
+| **Bloom's 2-Sigma**           | Bloom 1984               | 1-on-1 tutoring + mastery gating at 80% via calibrated rubric |
+| **Socratic Method**           | Classical                | Questions only — never lecture, never hand-wave               |
+| **Spaced Repetition**         | Ebbinghaus 1885, SM-2    | Review mastered concepts at increasing intervals on resume    |
+| **Interleaving**              | Rohrer & Taylor 2007     | Mix old concepts into current question flow (+43% retention)  |
+| **Misconception Dismantling** | Vosniadou 2013, Chi 2005 | Counter-example method to dislodge wrong mental models        |
+| **Deliberate Practice**       | Ericsson 1993            | Hands-on practice phase before marking mastered               |
+| **Metacognition**             | Bjork 1994               | Self-assessment calibration to detect fluency illusion        |
 
 Question types include: predict, compare, debug, extend, teach-back, and connect — keeping engagement high through variety.
 

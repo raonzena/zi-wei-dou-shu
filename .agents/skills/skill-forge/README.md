@@ -10,20 +10,20 @@ Skill Forge fixes this by teaching you **12 battle-tested techniques** for skill
 
 ## What's Inside
 
-| Technique | What It Solves |
-|-----------|---------------|
-| Progressive Loading | Context bloat — keep SKILL.md lean, load details on demand |
-| Keyword Bombing | Skills that never trigger — write descriptions that actually match user intent |
-| Workflow Checklist | Inconsistent execution — give the model a trackable path with ⚠️/⛔ markers |
-| Script Encapsulation | Wasted tokens — wrap deterministic ops in scripts (zero context cost) |
-| Question-Style Instructions | Vague output — ask specific questions instead of abstract directives |
-| Confirmation Gates | Runaway execution — force the model to pause before critical operations |
-| Pre-Delivery Checklist | Quality gaps — add concrete, verifiable checks before output |
-| Parameter System | Inflexibility — support `--flags`, partial execution, `--quick` mode |
-| Reference Organization | Loading irrelevant context — organize by domain, load only what's needed |
-| CLI + Skill Pattern | MCP overhead — replace MCP Servers with CLI tools |
-| Iron Law | Model shortcuts — set one unbreakable rule the model can never violate |
-| Anti-Pattern Documentation | Default AI behavior — explicitly list what NOT to do |
+| Technique                   | What It Solves                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| Progressive Loading         | Context bloat — keep SKILL.md lean, load details on demand                     |
+| Keyword Bombing             | Skills that never trigger — write descriptions that actually match user intent |
+| Workflow Checklist          | Inconsistent execution — give the model a trackable path with ⚠️/⛔ markers    |
+| Script Encapsulation        | Wasted tokens — wrap deterministic ops in scripts (zero context cost)          |
+| Question-Style Instructions | Vague output — ask specific questions instead of abstract directives           |
+| Confirmation Gates          | Runaway execution — force the model to pause before critical operations        |
+| Pre-Delivery Checklist      | Quality gaps — add concrete, verifiable checks before output                   |
+| Parameter System            | Inflexibility — support `--flags`, partial execution, `--quick` mode           |
+| Reference Organization      | Loading irrelevant context — organize by domain, load only what's needed       |
+| CLI + Skill Pattern         | MCP overhead — replace MCP Servers with CLI tools                              |
+| Iron Law                    | Model shortcuts — set one unbreakable rule the model can never violate         |
+| Anti-Pattern Documentation  | Default AI behavior — explicitly list what NOT to do                           |
 
 ## Install
 

@@ -29,6 +29,7 @@ Skill Review Progress:
 ## Step 1: Load Target ⚠️ REQUIRED
 
 Identify the skill to review. Accept:
+
 - Explicit path: `/skill-review path/to/skill`
 - Current directory context: if user is already in a skill folder
 - Skill name: search within the workspace for matching skill directory
@@ -42,6 +43,7 @@ Load references/review-criteria.md for detailed criteria. Evaluate the skill acr
 ### 2.1 Structure Compliance
 
 Questions to answer:
+
 - Does the directory follow the standard layout (SKILL.md, scripts/, references/, assets/)?
 - Is SKILL.md under 500 lines?
 - Does frontmatter contain only `name` and `description` (plus optional `allowed-tools`, `license`, `metadata`)?
@@ -51,6 +53,7 @@ Questions to answer:
 ### 2.2 Description Quality
 
 Questions to answer:
+
 - Does the description include concrete trigger keywords and phrases?
 - Does it use keyword bombing (multiple phrasings of the same intent)?
 - Is it self-contained — can a router understand what this skill does without reading the body?
@@ -60,6 +63,7 @@ Questions to answer:
 ### 2.3 Workflow Design
 
 Questions to answer:
+
 - Is there a trackable checklist with copy-paste-friendly format?
 - Are critical steps marked with ⚠️ REQUIRED or ⛔ BLOCKING?
 - Are there confirmation gates before destructive/generative operations?
@@ -69,6 +73,7 @@ Questions to answer:
 ### 2.4 Token Efficiency
 
 Questions to answer:
+
 - Is there an Iron Law or core constraint at the top?
 - Does SKILL.md only contain what Claude doesn't already know?
 - Are references loaded progressively (on-demand) rather than all upfront?
@@ -79,6 +84,7 @@ Questions to answer:
 ### 2.5 Anti-Pattern Detection
 
 Check for these known bad patterns:
+
 - Vague directives ("ensure good quality", "make it better")
 - Placeholder residue (TODO, FIXME, xxx, TBD)
 - Over-specification of things Claude already knows
@@ -96,6 +102,7 @@ Present the review in this order:
 **1. Strengths** — What this skill does well. Be specific: quote the actual lines or patterns that work. Minimum 2 strengths, even for weak skills (find what's salvageable).
 
 **2. Suggestions** — Improvements sorted by impact (highest first). Each suggestion must include:
+
 - **What**: the specific issue found
 - **Where**: file and location
 - **Fix**: concrete actionable change (show before/after when helpful)

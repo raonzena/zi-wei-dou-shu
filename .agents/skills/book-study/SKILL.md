@@ -88,6 +88,7 @@ On first `/book-study <book-name>`:
 # <Book Title> Study Plan
 
 ## Info
+
 - **Title**: XXX
 - **Author**: XXX
 - **Total Chapters**: XX
@@ -97,11 +98,12 @@ On first `/book-study <book-name>`:
 
 ## Chapter Plan
 
-| # | Chapter | Core Question | Status | Mastery | Date |
-|---|---------|---------------|--------|---------|------|
-| 1 | Chapter Name | What this chapter answers | Not Started | - | - |
+| #   | Chapter      | Core Question             | Status      | Mastery | Date |
+| --- | ------------ | ------------------------- | ----------- | ------- | ---- |
+| 1   | Chapter Name | What this chapter answers | Not Started | -       | -    |
 
 ### Status Legend
+
 - Not Started
 - Guided (pre-reading done, ready to read)
 - Reading
@@ -110,6 +112,7 @@ On first `/book-study <book-name>`:
 - Needs Review (test failed)
 
 ## Current Position
+
 - **Current Chapter**: Chapter X
 - **Next Action**: guide / read / ingest / test / review
 ```
@@ -121,16 +124,17 @@ On first `/book-study <book-name>`:
 
 ## Concepts
 
-| Concept | Chapter | Status | Last Tested | Next Review |
-|---------|---------|--------|-------------|-------------|
-| (auto-populated on ingest) | | | | |
+| Concept                    | Chapter | Status | Last Tested | Next Review |
+| -------------------------- | ------- | ------ | ----------- | ----------- |
+| (auto-populated on ingest) |         |        |             |             |
 
 ## Models
 
 | Model | Chapter | Status | Last Tested | Next Review |
-|-------|---------|--------|-------------|-------------|
+| ----- | ------- | ------ | ----------- | ----------- |
 
 ## Stats
+
 - Total knowledge points: X
 - Mastered: X (X%)
 - Due for review: X
@@ -145,7 +149,7 @@ Purpose: activate prior knowledge, set reading questions.
 2. Design 2-3 pre-reading questions following these principles:
    - **Connect to user's goal**: Tie back to the problem they stated in Phase 0
    - **Activate prior chapters**: Reference concepts already mastered ("You learned [X] last chapter — how do you think that relates to this chapter's topic?")
-   - **Probe intuition**: Ask what they *expect* the author to argue, so they read with a hypothesis to test
+   - **Probe intuition**: Ask what they _expect_ the author to argue, so they read with a hypothesis to test
    - **Keep it concrete**: Not "What do you think about XX?" but "If you had to solve [specific scenario], what would you do right now?"
 3. Present questions and send user off to read
 4. Update `study-plan.md` status to "Guided"
@@ -175,7 +179,7 @@ Test chapter mastery using Socratic questioning.
 4. **Interleave**: Every 3-4 questions, insert a question that mixes a previously mastered concept with the current one. Don't announce it as review — weave it in naturally.
 5. Score each knowledge point using the 4-criterion rubric:
    - **Accurate** (1pt): factually/logically correct
-   - **Explained** (1pt): articulates *why*, not just *what*
+   - **Explained** (1pt): articulates _why_, not just _what_
    - **Applied** (1pt): can use in a novel scenario
    - **Discriminated** (1pt): can distinguish from related concepts
 6. **Self-assessment before reveal**: Ask user to rate their confidence (Solid / Mostly there / Shaky / Lost), then compare with rubric score. Flag fluency illusion if self-assessment is high but rubric is low.
@@ -191,12 +195,14 @@ Test chapter mastery using Socratic questioning.
 Understanding ≠ ability. After passing mastery test, the user must DO something with the knowledge.
 
 Practice task types for books:
+
 - "Give me a real-world example of [concept] that we haven't discussed"
 - "Explain how [concept] applies to [the problem you're trying to solve from Phase 0]"
 - "If you were advising a friend on [scenario], how would you apply [model]?"
 - "Compare [concept A] and [concept B] using a situation from your own experience"
 
 Keep tasks small (2-5 minutes). Pass/fail:
+
 - **Pass** → mark as Mastered, set `Last Tested` to today, `Next Review` to +1 day, advance
 - **Fail** → diagnose gap (conceptual vs application), give a simpler practice task or cycle back to Phase 3
 
@@ -251,6 +257,7 @@ Every `/book-study <book-name>` session:
 ### Entity Extraction
 
 Extract from input:
+
 - **Concepts** (`concepts/`): core terms, theories, ideas
 - **Cases** (`cases/`): experiments, stories, data, real-world examples
 - **Models** (`models/`): frameworks, methodologies, mental models
@@ -262,6 +269,7 @@ Extract from input:
 ### Cross-Reference Update
 
 After each ingest:
+
 - Check if new concepts appeared in other books' wikis
 - If shared across books → create/update aggregation page in `cross-book/concepts/`
 - Update all related pages' "Related" sections
@@ -328,6 +336,7 @@ Read `book-wiki/index.md` → stats per book (progress, page count) → cross-bo
 ## Guidelines
 
 ### Learning Flow
+
 - Don't skip the pre-reading guide — it's critical for activating prior knowledge
 - Mastery tests must be rigorous: "I get it" doesn't count, push for examples and applications
 - Spaced repetition is the core mechanism for long-term memory — always check on return
@@ -336,6 +345,7 @@ Read `book-wiki/index.md` → stats per book (progress, page count) → cross-bo
 - Mastery over speed
 
 ### Knowledge Compilation
+
 - Check `book-wiki/` first to avoid duplicate pages
 - One-line definitions must be in user's own words (Feynman principle), not copied from the book
 - Leave "My Understanding" and "My Takeaway" sections as placeholders if user hasn't provided their thinking — remind them to fill in later
@@ -343,6 +353,7 @@ Read `book-wiki/index.md` → stats per book (progress, page count) → cross-bo
 - Questions are the soul of this system — encourage the user to raise questions. No questions = not really reading
 
 ### Knowledge Query
+
 - Read `book-wiki/index.md` before querying
 - Respect user's personal reflections in the wiki — don't casually dismiss them
 - In review mode, ask questions first, reveal answers only after user responds

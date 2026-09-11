@@ -38,10 +38,12 @@ The model reads security-checklist.md only when it reaches Step 3 — not at the
 # PDF Processing
 
 ## Quick start
+
 Extract text with pdfplumber:
 [code example]
 
 ## Advanced features
+
 - **Form filling**: See references/forms.md for complete guide
 - **API reference**: See references/api.md for all methods
 ```
@@ -54,9 +56,11 @@ Claude loads forms.md or api.md only when needed.
 # DOCX Processing
 
 ## Creating documents
+
 Use docx-js for new documents. See references/docx-js.md.
 
 ## Editing documents
+
 For simple edits, modify the XML directly.
 **For tracked changes**: See references/redlining.md
 ```
@@ -110,6 +114,7 @@ cloud-deploy/
 Ask: "Is this operation deterministic and repeatable?" If yes → script it.
 
 Examples:
+
 - PDF rotation → `scripts/rotate_pdf.py`
 - Design database search → `scripts/search.py`
 - Image merging → `scripts/merge_images.py`
@@ -118,6 +123,7 @@ Examples:
 ### Key Benefit: No Context Cost
 
 Scripts execute without being loaded into context. The model only needs to know:
+
 1. The script exists
 2. What arguments it takes
 3. What it returns
@@ -130,6 +136,7 @@ This saves massive context compared to the model writing the same code from scra
 ## Available Scripts
 
 ### scripts/search.py
+
 Search the design database for matching styles.
 Usage: `python3 scripts/search.py "<query>" --domain <color|font|layout>`
 Returns: JSON array of matching entries with name, values, and usage notes.
@@ -148,6 +155,7 @@ For capabilities that would traditionally require an MCP Server, consider: CLI t
 ### How It Works
 
 Instead of an MCP Server with 20+ tool definitions in context, use:
+
 - A CLI tool with clear commands
 - A SKILL.md that teaches the model how to use it
 

@@ -28,6 +28,7 @@ wiki/
 ### 1. Confirm Input
 
 Accept user-specified content source:
+
 - Pasted text directly
 - File path(s) (md, txt, pdf, etc.)
 - Directory path (batch processing)
@@ -41,6 +42,7 @@ Read `wiki/index.md` (if exists) to understand existing pages and avoid duplicat
 ### 3. Extract Knowledge Entities
 
 Extract from content:
+
 - **Concepts** (`concepts/`): Abstract ideas, terminology, theories
 - **Products** (`products/`): Specific products, tools, services
 - **Patterns** (`patterns/`): Engineering patterns, design decisions, methodologies
@@ -55,6 +57,7 @@ Each entity maps to one wiki page.
 → Load [references/page-templates.md](references/page-templates.md) for page templates.
 
 Rules:
+
 - If page already exists → **update** it, append new information, don't overwrite existing content
 - Keep the one-line definition stable unless the new content provides a clearly better one
 - Prioritize updating "Sources" and "Related Pages" sections
@@ -62,6 +65,7 @@ Rules:
 ### 5. Update Cross-References
 
 Check all existing wiki pages. If new content involves concepts referenced in other pages:
+
 - Update their Related Pages list
 - Update their Sources list
 - Supplement new information in their detail sections

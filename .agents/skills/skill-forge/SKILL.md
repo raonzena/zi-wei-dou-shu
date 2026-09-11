@@ -64,11 +64,13 @@ Skill Forge Progress:
 ## Step 1: Understand the Skill ⚠️ REQUIRED
 
 Ask yourself:
+
 - What specific problem does this skill solve that Claude can't do well on its own?
 - What would a user literally type to trigger this skill?
 - What are 3-5 concrete usage examples with realistic inputs and expected outputs?
 
 If unclear, ask the user (don't ask everything at once — start with the most critical):
+
 - "Can you give me 3 examples of how you'd use this skill?"
 - "What would you literally say to trigger it?"
 - "What does a good output look like?"
@@ -78,11 +80,13 @@ Do NOT proceed until you have at least 3 concrete examples.
 ## Step 2: Plan Architecture
 
 For each concrete example, ask:
+
 1. What operations are deterministic and repeatable? → `scripts/`
 2. What domain knowledge does Claude need at specific steps? → `references/`
 3. What files are used in output but not in reasoning? → `assets/`
 
 Key constraints:
+
 - SKILL.md must stay under 500 lines — everything else goes to `references/`
 - References organized by domain, one level of nesting only
 - Load references/architecture-guide.md for progressive loading patterns and organization strategies
@@ -100,6 +104,7 @@ The script creates a template with Iron Law placeholder, workflow checklist, and
 ## Step 4: Write Description
 
 This is the most underestimated part of a skill. The description determines:
+
 1. Whether the skill triggers automatically
 2. Whether users find it by search
 
@@ -121,6 +126,7 @@ Write a rule that prevents it. Place it at the top of SKILL.md, right after the 
 ### 5.2 Design Workflow Checklist
 
 Create a trackable checklist with:
+
 - ⚠️ REQUIRED for steps that must not be skipped
 - ⛔ BLOCKING for prerequisites
 - Sub-step nesting for complex steps
@@ -131,6 +137,7 @@ Create a trackable checklist with:
 ### 5.3 Add Confirmation Gates
 
 Force the model to stop and ask the user before:
+
 - Destructive operations (delete, overwrite, modify)
 - Generative operations with significant cost
 - Applying changes based on analysis
@@ -177,18 +184,21 @@ Add concrete, verifiable checks. Each item must be specific enough that the mode
 ## Step 6: Build Resources
 
 ### Scripts
+
 - Encapsulate deterministic, repeatable operations
 - Scripts execute without loading into context — major token savings
 - Test every script before packaging
 - In SKILL.md, document only the command and arguments, not the source code
 
 ### References
+
 - Organize by domain, not by type
 - One level of nesting only
 - Each file referenced from SKILL.md with clear "when to load" instructions
 - Large files (>100 lines) should have a table of contents at the top
 
 ### Assets
+
 - Templates, images, fonts used in output
 - Not loaded into context, just referenced by path
 
@@ -201,6 +211,7 @@ Present the skill summary to the user and confirm before packaging.
 ### Pre-Delivery Checklist
 
 #### Structure
+
 - [ ] SKILL.md under 500 lines
 - [ ] Frontmatter has `name` and `description` only (plus optional `allowed-tools`, `license`, `metadata`)
 - [ ] Description includes trigger keywords and usage scenarios
@@ -208,6 +219,7 @@ Present the skill summary to the user and confirm before packaging.
 - [ ] No example/placeholder files left from initialization
 
 #### Quality
+
 - [ ] Has an Iron Law or core constraint at the top
 - [ ] Has a trackable workflow checklist with ⚠️/⛔ markers
 - [ ] Confirmation gates before destructive/generative operations
@@ -216,12 +228,14 @@ Present the skill summary to the user and confirm before packaging.
 - [ ] References loaded progressively, not all upfront
 
 #### Resources
+
 - [ ] Scripts tested and executable
 - [ ] References organized by domain, one level deep
 - [ ] Large references have table of contents
 - [ ] Assets used in output, not loaded into context
 
 #### Anti-Patterns to Avoid
+
 - Stuffing everything into one massive SKILL.md (>500 lines)
 - Vague description like "A tool for X"
 - No workflow — letting the model freestyle
@@ -241,6 +255,7 @@ Validates automatically before packaging. Fix errors and re-run.
 ## Step 9: Iterate
 
 After real usage:
+
 1. Notice where the model struggles or is inconsistent
 2. Identify which workflow step needs improvement
 3. Add more specific instructions, examples, or anti-patterns

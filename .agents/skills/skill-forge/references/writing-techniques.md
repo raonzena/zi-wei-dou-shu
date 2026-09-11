@@ -7,21 +7,25 @@ Set one unbreakable rule at the top of SKILL.md, right after frontmatter. This p
 ### Examples
 
 **Debugging skill:**
+
 ```
 IRON LAW: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.
 ```
 
 **TDD skill:**
+
 ```
 IRON LAW: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST.
 ```
 
 **Copywriting skill:**
+
 ```
 IRON LAW: Clarity over cleverness — ALWAYS.
 ```
 
 **Database migration skill:**
+
 ```
 IRON LAW: Every migration must have a rollback script. No rollback = no execution.
 ```
@@ -31,6 +35,7 @@ IRON LAW: Every migration must have a rollback script. No rollback = no executio
 Ask: "What is the ONE mistake the model will most likely make with this skill?"
 
 Then write a rule that prevents it:
+
 - ALL CAPS for emphasis
 - Absolute language ("NEVER", "ALWAYS", "MUST")
 - No wiggle room — no "try to" or "consider"
@@ -41,6 +46,7 @@ Pair your Iron Law with "red flags" that force the model to backtrack when it dr
 
 ```markdown
 Red Flags (return to Step 1 if any appear):
+
 - "I think the problem might be..." (guessing, not analyzing)
 - Making changes without understanding root cause
 - Fix works but you can't explain why
@@ -60,43 +66,53 @@ A good question focuses the model's attention on the right part of the code or c
 
 ```markdown
 # Bad — vague directive
+
 Check if the code violates the Single Responsibility Principle.
 
 # Good — specific question
+
 Ask yourself: How many distinct reasons could this module need to change?
 If the answer is more than one, it likely violates SRP.
 ```
 
 ```markdown
 # Bad
+
 Watch out for race conditions.
 
 # Good
+
 Ask: What happens if two requests hit this code simultaneously?
 ```
 
 ```markdown
 # Bad
+
 Handle edge cases properly.
 
 # Good
+
 Ask: What happens if this value is null? Is 0? Is an empty array? Is negative?
 ```
 
 ```markdown
 # Bad
+
 Watch out for TOCTOU vulnerabilities.
 
 # Good
+
 Ask: Between checking the permission and performing the action,
 could the state have changed?
 ```
 
 ```markdown
 # Bad
+
 Write engaging copy.
 
 # Good
+
 Ask: If the reader stopped after the first sentence, would they know
 what they're getting and why they should care?
 ```
@@ -124,8 +140,10 @@ Ask: "What would Claude's lazy default look like for this task?" Then explicitly
 ### Examples
 
 **Frontend design skill:**
+
 ```markdown
 Anti-Patterns to Avoid:
+
 - Generic AI aesthetics
 - Purple/blue gradients as default
 - Cookie-cutter layouts
@@ -134,13 +152,16 @@ Anti-Patterns to Avoid:
 ```
 
 **Copywriting skill:**
+
 ```markdown
 Weak CTAs to avoid: "Submit", "Sign Up", "Learn More"
 ```
 
 **Code review skill:**
+
 ```markdown
 Insecure patterns (must flag):
+
 - Direct SQL string concatenation
 - User input inserted into HTML without escaping
 - Check-then-act without locks
@@ -148,8 +169,10 @@ Insecure patterns (must flag):
 ```
 
 **Any skill that generates code:**
+
 ```markdown
 Do NOT:
+
 - Add unnecessary try-catch blocks with console.log
 - Over-abstract one-time operations into utility functions
 - Add comments that restate the code
@@ -159,6 +182,7 @@ Do NOT:
 ### Structure
 
 Place anti-patterns either:
+
 - In the SKILL.md body near the relevant step
 - In a reference file for detailed anti-pattern lists (e.g., `references/security-antipatterns.md`)
 

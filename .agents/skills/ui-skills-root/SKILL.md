@@ -4,7 +4,7 @@ description: Use before UI-related work to select the smallest useful UI Skills 
 license: MIT
 metadata:
   author: ibelick
-  version: "1.0.0"
+  version: '1.0.0'
 ---
 
 # UI Skills Root

@@ -18,13 +18,13 @@ Personalized 1-on-1 mastery tutor. Bloom's 2-Sigma method: diagnose, question, a
 
 ## Arguments
 
-| Argument | Description |
-|----------|-------------|
-| `<topic>` | Subject to learn (required, or prompted) |
+| Argument          | Description                                                          |
+| ----------------- | -------------------------------------------------------------------- |
+| `<topic>`         | Subject to learn (required, or prompted)                             |
 | `--level <level>` | Starting level: beginner, intermediate, advanced (default: diagnose) |
-| `--lang <code>` | Language override (default: follow user's input language) |
-| `--resume` | Resume previous session from `sigma/{topic-slug}/` |
-| `--visual` | Force rich visual output every round |
+| `--lang <code>`   | Language override (default: follow user's input language)            |
+| `--resume`        | Resume previous session from `sigma/{topic-slug}/`                   |
+| `--visual`        | Force rich visual output every round                                 |
 
 ## Core Rules (NON-NEGOTIABLE)
 
@@ -70,27 +70,33 @@ Input -> [Load Profile] -> [Diagnose] -> [Build Roadmap] -> [Tutor Loop] -> [Ses
 ### Step 0: Parse Input
 
 1. Extract topic from arguments. If no topic provided, ask:
+
    ```
    Use AskUserQuestion:
    header: "Topic"
    question: "What do you want to learn?"
    -> Use plain text "Other" input (no preset options needed for topic)
    ```
+
    Actually, just ask in plain text: "What topic do you want to learn today?"
 
 2. Detect language from user input. Store as session language.
 
 3. **Load learner profile** (cross-topic memory):
+
    ```bash
    test -f "sigma/learner-profile.md" && echo "profile exists"
    ```
+
    If exists: read `sigma/learner-profile.md`. Use it to inform diagnosis (Step 1) and adapt teaching style from the start.
    If not exists: will be created at session end (Step 5).
 
 4. Check for existing session:
+
    ```bash
    test -d "sigma/{topic-slug}" && echo "exists"
    ```
+
    If exists and `--resume`: read `session.md`, restore state, continue from last concept.
    If exists and no `--resume`: ask user whether to resume or start fresh via AskUserQuestion.
 
@@ -101,6 +107,7 @@ Input -> [Load Profile] -> [Diagnose] -> [Build Roadmap] -> [Tutor Loop] -> [Ses
 **Goal**: Determine what the learner already knows. This shapes everything.
 
 **If learner profile exists**: Use it for cold-start optimization:
+
 - Skip questions about areas the learner has consistently mastered in past topics
 - Pay extra attention to recurring misconception patterns from the profile
 - Adapt question style to the learner's known preferences (e.g., "learns better with concrete examples first")
@@ -111,6 +118,7 @@ Input -> [Load Profile] -> [Diagnose] -> [Build Roadmap] -> [Tutor Loop] -> [Ses
 **If no level**: Ask 2-3 diagnostic questions using AskUserQuestion.
 
 **Diagnostic question design**:
+
 - Start broad, narrow down based on answers
 - Mix recognition questions (multiple choice via AskUserQuestion) with explanation questions (plain text)
 - Each question should probe a different depth layer
@@ -118,6 +126,7 @@ Input -> [Load Profile] -> [Diagnose] -> [Build Roadmap] -> [Tutor Loop] -> [Ses
 **Example diagnostic for "Python decorators"**:
 
 Round 1 (AskUserQuestion):
+
 ```
 header: "Level check"
 question: "Which of these Python concepts are you comfortable with?"
@@ -145,28 +154,34 @@ Based on diagnosis, create a structured learning path:
 1. **Decompose topic** into 5-15 atomic concepts, ordered by dependency.
 2. **Mark mastery status**: `not-started` | `in-progress` | `mastered` | `skipped`
 3. **Save to `session.md`**:
+
    ```markdown
    # Session: {topic}
+
    ## Learner Profile
+
    - Level: {diagnosed level}
    - Language: {lang}
    - Started: {timestamp}
 
    ## Concept Map
-   | # | Concept | Prerequisites | Status | Score | Last Reviewed | Review Interval |
-   |---|---------|---------------|--------|-------|---------------|-----------------|
-   | 1 | Functions as first-class objects | - | mastered | 90% | 2025-01-15 | 4d |
-   | 2 | Higher-order functions | 1 | in-progress | 60% | - | - |
-   | 3 | Closures | 1, 2 | not-started | - | - | - |
-   | ... | ... | ... | ... | ... | ... | ... |
+
+   | #   | Concept                          | Prerequisites | Status      | Score | Last Reviewed | Review Interval |
+   | --- | -------------------------------- | ------------- | ----------- | ----- | ------------- | --------------- |
+   | 1   | Functions as first-class objects | -             | mastered    | 90%   | 2025-01-15    | 4d              |
+   | 2   | Higher-order functions           | 1             | in-progress | 60%   | -             | -               |
+   | 3   | Closures                         | 1, 2          | not-started | -     | -             | -               |
+   | ... | ...                              | ...           | ...         | ...   | ...           | ...             |
 
    ## Misconceptions
-   | # | Concept | Misconception | Root Cause | Status | Counter-Example Used |
-   |---|---------|---------------|------------|--------|---------------------|
-   | 1 | Closures | "Closures copy the variable's value" | Confusing pass-by-value with reference capture | active | - |
-   | 2 | Higher-order functions | "map() modifies the original array" | Confusing mutating vs non-mutating methods | resolved | "What does the original array look like after map?" |
+
+   | #   | Concept                | Misconception                        | Root Cause                                     | Status   | Counter-Example Used                                |
+   | --- | ---------------------- | ------------------------------------ | ---------------------------------------------- | -------- | --------------------------------------------------- |
+   | 1   | Closures               | "Closures copy the variable's value" | Confusing pass-by-value with reference capture | active   | -                                                   |
+   | 2   | Higher-order functions | "map() modifies the original array"  | Confusing mutating vs non-mutating methods     | resolved | "What does the original array look like after map?" |
 
    ## Session Log
+
    - [timestamp] Diagnosed level: intermediate
    - [timestamp] Concept 1: mastered (skipped, pre-existing knowledge)
    - [timestamp] Concept 2: started tutoring
@@ -193,6 +208,7 @@ This is the main teaching cycle. Repeat for each concept until mastery.
 #### 3a. Introduce (Minimal)
 
 DO NOT explain the concept. Instead:
+
 - Set context: "Now let's explore [concept]. It builds on [prerequisite] that you just mastered."
 - Ask an opening question that probes intuition:
   - "What do you think [concept] means?"
@@ -204,6 +220,7 @@ DO NOT explain the concept. Instead:
 Alternate between:
 
 **Structured questions** (AskUserQuestion) - for testing recognition, choosing between options:
+
 ```
 header: "{concept}"
 question: "What will this code output?"
@@ -217,6 +234,7 @@ options:
 ```
 
 **Open questions** (plain text) - for testing deep understanding:
+
 - "Explain in your own words why..."
 - "Give me an example of..."
 - "What would happen if we changed..."
@@ -227,27 +245,30 @@ options:
 When 1+ concepts are already mastered, insert an **interleaving question** that mixes a previously mastered concept with the current one. This is NOT review — it forces the learner to discriminate between concepts and strengthens long-term retention.
 
 Rules:
+
 - Every 3-4 questions about the current concept, insert 1 interleaving question
 - The question MUST require the learner to use both the old concept and the current concept together
 - Do NOT announce "now let's review" — just ask the question naturally as part of the flow
 - If the learner gets the interleaving question wrong on the OLD concept part, note it in the session log (it may indicate the old concept is decaying)
 
 Example (learning "closures", already mastered "higher-order functions"):
+
 > "Here's a function that takes a callback and returns a new function. What will `counter()()` return, and why does the inner function still have access to `count`?"
 
 This single question tests both higher-order function understanding (function returning function) and closure understanding (variable capture) simultaneously.
 
 #### 3c. Respond to Answers
 
-| Answer Quality | Response |
-|----------------|----------|
-| Correct + good explanation | Acknowledge briefly, ask a harder follow-up |
-| Correct but shallow | "Good. Now can you explain *why* that's the case?" |
-| Partially correct | "You're on the right track with [part]. But think about [hint]..." |
-| Incorrect | "Interesting thinking. Let's step back — [simpler sub-question]" |
-| "I don't know" | "That's fine. Let me give you a smaller piece: [minimal hint]. Now, what do you think?" |
+| Answer Quality             | Response                                                                                |
+| -------------------------- | --------------------------------------------------------------------------------------- |
+| Correct + good explanation | Acknowledge briefly, ask a harder follow-up                                             |
+| Correct but shallow        | "Good. Now can you explain _why_ that's the case?"                                      |
+| Partially correct          | "You're on the right track with [part]. But think about [hint]..."                      |
+| Incorrect                  | "Interesting thinking. Let's step back — [simpler sub-question]"                        |
+| "I don't know"             | "That's fine. Let me give you a smaller piece: [minimal hint]. Now, what do you think?" |
 
 **Hint escalation** (from least to most help):
+
 1. Rephrase the question
 2. Ask a simpler related question
 3. Give a concrete example to reason from
@@ -258,7 +279,8 @@ This single question tests both higher-order function understanding (function re
 
 **When the learner gives an incorrect answer, do NOT just note "wrong". Diagnose the underlying misconception.**
 
-A wrong answer reveals what the learner *thinks* is true. "Not knowing" and "believing something wrong" require completely different responses:
+A wrong answer reveals what the learner _thinks_ is true. "Not knowing" and "believing something wrong" require completely different responses:
+
 - **Not knowing** → teach new knowledge
 - **Wrong mental model** → first dismantle the incorrect model, then build the correct one
 
@@ -290,13 +312,13 @@ A wrong answer reveals what the learner *thinks* is true. "Not knowing" and "bel
 
 Generate visual aids when they help understanding. Choose the right format:
 
-| When | Output Mode | Tool |
-|------|-------------|------|
-| Concept has relationships/hierarchy | Excalidraw diagram | See [references/excalidraw.md](references/excalidraw.md) |
-| Code walkthrough / step-by-step | HTML page with syntax highlighting | Write to `visuals/{concept-slug}.html` |
-| Abstract concept needs metaphor | Generated image | nano-banana-pro skill |
-| Data/comparison | HTML table or chart | Write to `visuals/{concept-slug}.html` |
-| Mental model / flow | Excalidraw flowchart | See [references/excalidraw.md](references/excalidraw.md) |
+| When                                | Output Mode                        | Tool                                                     |
+| ----------------------------------- | ---------------------------------- | -------------------------------------------------------- |
+| Concept has relationships/hierarchy | Excalidraw diagram                 | See [references/excalidraw.md](references/excalidraw.md) |
+| Code walkthrough / step-by-step     | HTML page with syntax highlighting | Write to `visuals/{concept-slug}.html`                   |
+| Abstract concept needs metaphor     | Generated image                    | nano-banana-pro skill                                    |
+| Data/comparison                     | HTML table or chart                | Write to `visuals/{concept-slug}.html`                   |
+| Mental model / flow                 | Excalidraw flowchart               | See [references/excalidraw.md](references/excalidraw.md) |
 
 **HTML visual guidelines**: See [references/html-templates.md](references/html-templates.md)
 
@@ -324,18 +346,19 @@ After 3-5 question rounds on a concept, do a mastery check.
 
 For each mastery check question, evaluate against these criteria. Each criterion is worth 1 point:
 
-| Criterion | What it means | How to test |
-|-----------|---------------|-------------|
-| **Accurate** | The answer is factually/logically correct | Does it match the ground truth? |
-| **Explained** | The learner articulates *why*, not just *what* | Did they explain the mechanism, not just the result? |
-| **Novel application** | The learner can apply to an unseen scenario | Give a scenario not used during teaching |
-| **Discrimination** | The learner can distinguish from similar concepts | "How is this different from [related concept]?" |
+| Criterion             | What it means                                     | How to test                                          |
+| --------------------- | ------------------------------------------------- | ---------------------------------------------------- |
+| **Accurate**          | The answer is factually/logically correct         | Does it match the ground truth?                      |
+| **Explained**         | The learner articulates _why_, not just _what_    | Did they explain the mechanism, not just the result? |
+| **Novel application** | The learner can apply to an unseen scenario       | Give a scenario not used during teaching             |
+| **Discrimination**    | The learner can distinguish from similar concepts | "How is this different from [related concept]?"      |
 
 Score = criteria met / 4. Mastery threshold: >= 3/4 (75%) on EACH mastery check question, AND overall concept score >= 80%.
 
 **Learner self-assessment** (do this BEFORE revealing your evaluation):
 
 After the mastery check questions, ask:
+
 ```
 Use AskUserQuestion:
 header: "Self-check"
@@ -352,11 +375,13 @@ options:
 ```
 
 **Calibration signal**: Compare self-assessment with your rubric score:
+
 - Self-assessment matches rubric score → learner has good metacognition, proceed normally
 - Self-assessment HIGH but rubric score LOW → **fluency illusion detected**. The learner thinks they understand but doesn't. This is the most dangerous case. Flag it explicitly: "You said you feel solid, but your answers show a gap in [specific area]. Let's explore that — it's actually a really common trap."
 - Self-assessment LOW but rubric score HIGH → learner is under-confident. Reassure with specific evidence: "Actually, you nailed [X] and [Y]. You understand this better than you think."
 
 **If mastery NOT met** (< 80%):
+
 1. Check the Misconceptions table — are there unresolved misconceptions for this concept?
 2. If yes: prioritize dismantling the misconception before re-testing
 3. If no: identify the specific gap and cycle back with targeted questions
@@ -369,22 +394,26 @@ options:
 After passing the mastery check (3g), give the learner a **practice task**:
 
 **For programming topics**:
+
 - "Write a [small thing] that uses [concept]. Keep it under 10 lines."
 - "Here's broken code that misuses [concept]. Fix it."
 - "Modify this working example to add [requirement] using [concept]."
 
 **For non-programming topics**:
+
 - "Give me a real-world example of [concept] that we haven't discussed."
 - "Explain how [concept] applies to [specific scenario the learner cares about]."
 - "Design/sketch a [small thing] that demonstrates [concept]."
 
 **Evaluation**: The practice task is pass/fail:
+
 - **Pass**: The output demonstrates correct application of the concept. Mark as `mastered`.
 - **Fail**: The output reveals a gap. Diagnose whether it's a conceptual gap (go back to 3b) or an execution gap (give a simpler practice task).
 
 **Keep practice tasks small.** 2-5 minutes max. The goal is to cross the knowing-doing gap, not to build a project.
 
 **On mastery**:
+
 1. Set `Last Reviewed` to current timestamp and `Review Interval` to `1d` in session.md
 2. Generate a brief milestone visual or congratulatory note
 3. Introduce next concept
@@ -393,11 +422,11 @@ After passing the mastery check (3g), give the learner a **practice task**:
 
 `roadmap.html` is already updated every round (Step 3f). At these additional points, generate richer output:
 
-| Trigger | Output |
-|---------|--------|
-| Every 3 concepts mastered | Regenerate concept map (Excalidraw) |
-| Halfway through roadmap | Generate `summary.html` mid-session review |
-| All concepts mastered | Generate final `summary.html` with full achievements |
+| Trigger                    | Output                                                      |
+| -------------------------- | ----------------------------------------------------------- |
+| Every 3 concepts mastered  | Regenerate concept map (Excalidraw)                         |
+| Halfway through roadmap    | Generate `summary.html` mid-session review                  |
+| All concepts mastered      | Generate final `summary.html` with full achievements        |
 | User says "stop" / "pause" | Save state to `session.md`, generate current `summary.html` |
 
 ### Step 5: Session End
@@ -409,27 +438,33 @@ When all concepts mastered or user ends session:
 2. **Update `sigma/learner-profile.md`** (cross-topic memory):
 
    Create or update the learner profile with insights from this session:
+
    ```markdown
    # Learner Profile
+
    Updated: {timestamp}
 
    ## Learning Style
+
    - Preferred explanation mode: {concrete examples / abstract principles / visual / ...}
    - Pace: {fast / moderate / needs-time}
    - Responds best to: {predict questions / debug questions / teach-back / ...}
    - Struggles with: {abstract concepts / edge cases / connecting ideas / ...}
 
    ## Misconception Patterns
+
    - Tends to confuse [X] with [Y] (seen in: {topic1}, {topic2})
    - Overgeneralizes [pattern] (seen in: {topic})
    - {other recurring patterns}
 
    ## Mastered Topics
-   | Topic | Concepts Mastered | Date | Key Strengths | Persistent Gaps |
-   |-------|-------------------|------|---------------|-----------------|
-   | Python decorators | 8/10 | 2025-01-15 | Strong on closures | Weak on class decorators |
+
+   | Topic             | Concepts Mastered | Date       | Key Strengths      | Persistent Gaps          |
+   | ----------------- | ----------------- | ---------- | ------------------ | ------------------------ |
+   | Python decorators | 8/10              | 2025-01-15 | Strong on closures | Weak on class decorators |
 
    ## Metacognition
+
    - Self-assessment accuracy: {over-confident / well-calibrated / under-confident}
    - Fluency illusion frequency: {rare / occasional / frequent}
    ```
@@ -460,6 +495,7 @@ When `--resume` or user chooses to resume:
 4. **Spaced repetition review** (BEFORE continuing new content):
 
    Check all `mastered` concepts for review eligibility:
+
    ```
    For each mastered concept:
      days_since_review = today - last_reviewed

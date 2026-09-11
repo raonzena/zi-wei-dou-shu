@@ -12,30 +12,31 @@ For book study specifically: "truly understood" means the reader can explain the
 ## Socratic Questioning Techniques
 
 Never lecture. Instead:
+
 - Ask questions that lead the learner to discover the answer
 - When they're stuck, don't explain — ask a simpler question
 - When they answer correctly, don't just confirm — ask them to explain why
 
 ### Question Types
 
-| Type | Purpose | Example |
-|------|---------|---------|
-| Clarification | Test understanding depth | "Can you explain that in different words?" |
-| Assumption probe | Surface hidden beliefs | "What are you assuming when you say that?" |
-| Evidence request | Connect to support | "What evidence from the book supports that?" |
-| Counter-example | Stress-test understanding | "Can you think of a case where that wouldn't hold?" |
-| Application | Bridge to practice | "How would you apply this to the problem you're trying to solve?" |
-| Comparison | Sharpen distinctions | "How is this different from [concept from previous chapter]?" |
+| Type             | Purpose                   | Example                                                           |
+| ---------------- | ------------------------- | ----------------------------------------------------------------- |
+| Clarification    | Test understanding depth  | "Can you explain that in different words?"                        |
+| Assumption probe | Surface hidden beliefs    | "What are you assuming when you say that?"                        |
+| Evidence request | Connect to support        | "What evidence from the book supports that?"                      |
+| Counter-example  | Stress-test understanding | "Can you think of a case where that wouldn't hold?"               |
+| Application      | Bridge to practice        | "How would you apply this to the problem you're trying to solve?" |
+| Comparison       | Sharpen distinctions      | "How is this different from [concept from previous chapter]?"     |
 
 ### Response Patterns
 
-| User Answer | Response Strategy |
-|-------------|-------------------|
-| Correct + well explained | Acknowledge briefly, ask a harder follow-up |
-| Correct but shallow | "Good. Now can you explain *why*?" |
-| Partially correct | "You're on the right track with [part]. But think about [hint]..." |
-| Incorrect | "Interesting. Let's step back — [simpler sub-question]" |
-| "I don't know" | "That's fine. Here's a smaller piece: [minimal hint]. Now what do you think?" |
+| User Answer              | Response Strategy                                                             |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| Correct + well explained | Acknowledge briefly, ask a harder follow-up                                   |
+| Correct but shallow      | "Good. Now can you explain _why_?"                                            |
+| Partially correct        | "You're on the right track with [part]. But think about [hint]..."            |
+| Incorrect                | "Interesting. Let's step back — [simpler sub-question]"                       |
+| "I don't know"           | "That's fine. Here's a smaller piece: [minimal hint]. Now what do you think?" |
 
 ### Hint Escalation (least to most help)
 
@@ -52,17 +53,18 @@ Interleaving means mixing questions about old concepts into the current learning
 **Why it works**: Forces the learner to discriminate between concepts ("which idea applies here?"), which is higher cognitive demand than applying a known concept. This discrimination practice builds durable, flexible knowledge.
 
 **How to design interleaving questions**:
+
 - The question must require BOTH the old concept and the current concept
 - Don't announce it as review — embed it naturally in the flow
 - Prioritize concepts easily confused with the current one
 - If the learner fails the old-concept part, it signals decay — note for spaced repetition
 
-| Pattern | Example |
-|---------|---------|
-| **Combine** | "How do [old concept] and [new concept] work together in this scenario?" |
-| **Discriminate** | "Would [old concept] or [new concept] better explain this situation? Why?" |
-| **Contrast** | "This sounds similar to [old concept]. What's actually different?" |
-| **Layer** | "We said [old concept] explains X. Now how does [new concept] add to that picture?" |
+| Pattern          | Example                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| **Combine**      | "How do [old concept] and [new concept] work together in this scenario?"            |
+| **Discriminate** | "Would [old concept] or [new concept] better explain this situation? Why?"          |
+| **Contrast**     | "This sounds similar to [old concept]. What's actually different?"                  |
+| **Layer**        | "We said [old concept] explains X. Now how does [new concept] add to that picture?" |
 
 ## Mastery Rubric
 
@@ -70,11 +72,11 @@ Interleaving means mixing questions about old concepts into the current learning
 
 Do NOT score based on vague impression. Evaluate each mastery check question against:
 
-| Criterion | 1 Point | What to Look For |
-|-----------|---------|------------------|
-| **Accurate** | Factually/logically correct | Does it match what the book actually says? |
-| **Explained** | Articulates *why*, not just *what* | Did they explain the mechanism or reasoning? |
-| **Applied** | Can use in a novel scenario | Give a scenario not discussed during teaching |
+| Criterion         | 1 Point                               | What to Look For                                |
+| ----------------- | ------------------------------------- | ----------------------------------------------- |
+| **Accurate**      | Factually/logically correct           | Does it match what the book actually says?      |
+| **Explained**     | Articulates _why_, not just _what_    | Did they explain the mechanism or reasoning?    |
+| **Applied**       | Can use in a novel scenario           | Give a scenario not discussed during teaching   |
 | **Discriminated** | Can distinguish from related concepts | "How is this different from [similar concept]?" |
 
 Score per question = criteria met / 4. Mastery requires >= 3/4 on each question AND >= 80% overall.
@@ -82,6 +84,7 @@ Score per question = criteria met / 4. Mastery requires >= 3/4 on each question 
 ### Self-Assessment Calibration
 
 Ask the learner to self-assess BEFORE revealing your evaluation:
+
 - **Solid**: Could explain to someone else and handle edge cases
 - **Mostly there**: Get the core idea but might struggle with tricky cases
 - **Shaky**: Rough sense but wouldn't trust myself to apply it
@@ -89,12 +92,12 @@ Ask the learner to self-assess BEFORE revealing your evaluation:
 
 Compare with rubric score:
 
-| Self vs Rubric | Meaning | Action |
-|----------------|---------|--------|
-| Both high | True mastery, good metacognition | Proceed to practice |
+| Self vs Rubric        | Meaning                               | Action                                                                                     |
+| --------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Both high             | True mastery, good metacognition      | Proceed to practice                                                                        |
 | Self HIGH, rubric LOW | **Fluency illusion** — most dangerous | Flag explicitly: "You feel solid, but your answers show a gap in [X]. Let's explore that." |
-| Self LOW, rubric HIGH | Under-confidence | Reassure with specific evidence: "You nailed [X] and [Y]." |
-| Both low | Honest awareness of gaps | Cycle back with adjusted approach |
+| Self LOW, rubric HIGH | Under-confidence                      | Reassure with specific evidence: "You nailed [X] and [Y]."                                 |
+| Both low              | Honest awareness of gaps              | Cycle back with adjusted approach                                                          |
 
 **Fluency illusion** (Bjork 1994): The feeling of understanding from familiarity rather than comprehension. Common in reading: seeing a clear explanation and thinking "I get it" when you can't actually reproduce the reasoning. This is WHY we test — passive reading breeds fluency illusion.
 
@@ -106,14 +109,14 @@ A gap ("I don't know X") is easy to fill — just teach X. A misconception ("I k
 
 ### Common Misconception Types in Reading
 
-| Type | Example | Why It's Sticky |
-|------|---------|-----------------|
-| **Overgeneralization** | "Sunk cost always means you should quit" | Correct in many cases, fails in nuanced ones |
-| **False analogy** | "Willpower is like a muscle — it gets tired" | Useful metaphor, but taken too literally |
-| **Vocabulary confusion** | "Correlation and causation are basically the same" | Everyday language reinforces the error |
-| **Causal reversal** | "Successful people read a lot, so reading makes you successful" | Correlation mistaken for causation |
-| **Incomplete model** | "Cognitive bias means people are irrational" | Partially correct, misses adaptive function |
-| **Author's framing as absolute truth** | "The book says X, so X is always true" | Uncritical acceptance of one author's perspective |
+| Type                                   | Example                                                         | Why It's Sticky                                   |
+| -------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------- |
+| **Overgeneralization**                 | "Sunk cost always means you should quit"                        | Correct in many cases, fails in nuanced ones      |
+| **False analogy**                      | "Willpower is like a muscle — it gets tired"                    | Useful metaphor, but taken too literally          |
+| **Vocabulary confusion**               | "Correlation and causation are basically the same"              | Everyday language reinforces the error            |
+| **Causal reversal**                    | "Successful people read a lot, so reading makes you successful" | Correlation mistaken for causation                |
+| **Incomplete model**                   | "Cognitive bias means people are irrational"                    | Partially correct, misses adaptive function       |
+| **Author's framing as absolute truth** | "The book says X, so X is always true"                          | Uncritical acceptance of one author's perspective |
 
 ### The Counter-Example Method
 
@@ -130,6 +133,7 @@ The most effective way to dislodge a misconception is NOT to say "that's wrong."
 ### Resolution Criteria
 
 A misconception is resolved ONLY when BOTH conditions are met:
+
 1. The learner explicitly states what was wrong about their old thinking
 2. The learner correctly handles a new scenario that would have triggered the old misconception
 
@@ -145,13 +149,13 @@ For book reading this is especially important — books create a powerful fluenc
 
 ### Practice Task Design
 
-| Property | Good | Bad |
-|----------|------|-----|
-| **Size** | 2-5 minutes | 30-minute essay |
-| **Scope** | Tests one concept | Tests everything at once |
-| **Novelty** | New scenario, same concept | Repeat of book's own example |
-| **Output** | Learner produces something | Learner answers more questions |
-| **Connection** | Ties to user's real problem (Phase 0) | Abstract exercise |
+| Property       | Good                                  | Bad                            |
+| -------------- | ------------------------------------- | ------------------------------ |
+| **Size**       | 2-5 minutes                           | 30-minute essay                |
+| **Scope**      | Tests one concept                     | Tests everything at once       |
+| **Novelty**    | New scenario, same concept            | Repeat of book's own example   |
+| **Output**     | Learner produces something            | Learner answers more questions |
+| **Connection** | Ties to user's real problem (Phase 0) | Abstract exercise              |
 
 ### Practice Task Types for Book Study
 
@@ -163,18 +167,19 @@ For book reading this is especially important — books create a powerful fluenc
 
 ### Practice vs More Questions
 
-| Dimension | Questions (Phase 3) | Practice (Phase 3b) |
-|-----------|---------------------|---------------------|
-| Mode | Reactive (answer what's asked) | Generative (produce something new) |
-| Cognitive load | Recognition + recall | Planning + synthesis + self-monitoring |
-| Output | Words | Artifact (example, plan, analysis, explanation) |
-| Anchoring | Book's content | User's own context |
+| Dimension      | Questions (Phase 3)            | Practice (Phase 3b)                             |
+| -------------- | ------------------------------ | ----------------------------------------------- |
+| Mode           | Reactive (answer what's asked) | Generative (produce something new)              |
+| Cognitive load | Recognition + recall           | Planning + synthesis + self-monitoring          |
+| Output         | Words                          | Artifact (example, plan, analysis, explanation) |
+| Anchoring      | Book's content                 | User's own context                              |
 
 ## Spaced Repetition
 
 ### The Forgetting Curve
 
 Without review, memory decays exponentially:
+
 - After 1 day: ~70% forgotten
 - After 1 week: ~90% forgotten
 
@@ -182,12 +187,12 @@ The only countermeasure is **spaced review** at increasing intervals.
 
 ### Interval Schedule
 
-| Event | Next Review |
-|-------|-------------|
-| First mastered | +1 day |
-| Review: correct | Double interval (1d → 3d → 7d → 14d → 30d → 60d) |
-| Review: incorrect | Reset to 1 day |
-| Maximum interval | 60 days |
+| Event             | Next Review                                      |
+| ----------------- | ------------------------------------------------ |
+| First mastered    | +1 day                                           |
+| Review: correct   | Double interval (1d → 3d → 7d → 14d → 30d → 60d) |
+| Review: incorrect | Reset to 1 day                                   |
+| Maximum interval  | 60 days                                          |
 
 ### Review Question Design
 
@@ -198,6 +203,7 @@ The only countermeasure is **spaced review** at increasing intervals.
 ### Session Protocol
 
 On return (`/book-study <book-name>`), before new content:
+
 1. Identify mastered concepts where `days_since_review >= review_interval`
 2. Sort by most overdue first
 3. Review max 5 concepts per session
@@ -206,12 +212,12 @@ On return (`/book-study <book-name>`), before new content:
 
 ## Adaptive Pacing
 
-| Signal | Action |
-|--------|--------|
-| Answers quickly and correctly | Accelerate — merge concepts, skip simpler questions |
-| Answers correctly but slowly | Normal pace, give time to think |
-| Partially correct | Probe with follow-up questions before moving on |
-| Consistently wrong | Break into sub-concepts, use more concrete examples |
-| Frustrated or overwhelmed | Switch approach — use analogy, real-world example, or take a step back |
-| Bored or disengaged | Increase difficulty, connect to user's real problem, challenge assumptions |
-| Deeply curious about a tangent | Follow it — genuine curiosity is more valuable than rigid progression |
+| Signal                         | Action                                                                     |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| Answers quickly and correctly  | Accelerate — merge concepts, skip simpler questions                        |
+| Answers correctly but slowly   | Normal pace, give time to think                                            |
+| Partially correct              | Probe with follow-up questions before moving on                            |
+| Consistently wrong             | Break into sub-concepts, use more concrete examples                        |
+| Frustrated or overwhelmed      | Switch approach — use analogy, real-world example, or take a step back     |
+| Bored or disengaged            | Increase difficulty, connect to user's real problem, challenge assumptions |
+| Deeply curious about a tangent | Follow it — genuine curiosity is more valuable than rigid progression      |

@@ -20,10 +20,10 @@ Copy this checklist and check off items as you complete them:
 
 ### Markers
 
-| Marker | Meaning | When to Use |
-|--------|---------|-------------|
-| ⚠️ REQUIRED | Must not skip | User confirmation, critical validation |
-| ⛔ BLOCKING | Must complete before proceeding | Prerequisite setup, dependency loading |
+| Marker        | Meaning                            | When to Use                             |
+| ------------- | ---------------------------------- | --------------------------------------- |
+| ⚠️ REQUIRED   | Must not skip                      | User confirmation, critical validation  |
+| ⛔ BLOCKING   | Must complete before proceeding    | Prerequisite setup, dependency loading  |
 | (conditional) | Execute based on earlier decisions | Optional review, user-selected features |
 
 ### Design Principles
@@ -76,6 +76,7 @@ Force the model to stop and ask the user before critical operations.
 ## Step 5: Confirm ⚠️ REQUIRED
 
 Present findings to the user. Ask:
+
 - Proceed with all recommendations?
 - Only apply high-priority (P0/P1) items?
 - Select specific items to apply?
@@ -90,6 +91,7 @@ Present findings to the user. Ask:
 ## Step 2: Confirm Options ⚠️ REQUIRED
 
 Use AskUserQuestion to confirm:
+
 - Round 1 (always): style, audience, quantity, review preferences
 - Round 2 (conditional): only if "custom" was selected — texture, tone, layout
 
@@ -117,10 +119,12 @@ Add concrete, verifiable checks before delivering output. Each item must be spec
 
 ```markdown
 # Bad — vague, uncheckable
+
 - [ ] Ensure good quality
 - [ ] Make sure it's accessible
 
 # Good — specific, verifiable
+
 - [ ] No emojis used as icons (use SVG instead)
 - [ ] All images have alt text
 - [ ] All clickable elements have cursor-pointer
@@ -134,15 +138,18 @@ Add concrete, verifiable checks before delivering output. Each item must be spec
 ## Pre-Delivery Checklist
 
 ### Correctness
+
 - [ ] Generated code compiles/runs without errors
 - [ ] Output matches requested format exactly
 - [ ] No placeholder text remaining
 
 ### Quality
+
 - [ ] Follows existing code style in the project
 - [ ] No unnecessary complexity added
 
 ### Completeness
+
 - [ ] All workflow checklist items checked off
 - [ ] User's original request fully addressed
 ```
@@ -151,11 +158,11 @@ Add concrete, verifiable checks before delivering output. Each item must be spec
 
 For review/analysis skills, categorize findings instead of a flat list:
 
-| Level | Meaning | Action |
-|-------|---------|--------|
-| P0 | Critical | Must block delivery |
-| P1 | High | Should fix before delivery |
-| P2 | Medium | Create follow-up task |
-| P3 | Low | Optional improvement |
+| Level | Meaning  | Action                     |
+| ----- | -------- | -------------------------- |
+| P0    | Critical | Must block delivery        |
+| P1    | High     | Should fix before delivery |
+| P2    | Medium   | Create follow-up task      |
+| P3    | Low      | Optional improvement       |
 
 This prevents the model from treating all issues equally — critical bugs and naming nitpicks should not get the same weight.

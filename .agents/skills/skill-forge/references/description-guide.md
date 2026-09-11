@@ -5,6 +5,7 @@
 The `description` field in frontmatter is the ONLY thing Claude reads before deciding to trigger your skill. The SKILL.md body loads AFTER triggering. So "When to Use This Skill" sections in the body are useless for triggering.
 
 Two things description controls:
+
 1. Whether the skill triggers automatically
 2. Whether users find it by search
 
@@ -22,6 +23,7 @@ List every possible trigger scenario — actions, objects, synonyms, and natural
 ### Excellent Examples
 
 **ui-ux-pro-max:**
+
 ```yaml
 description: "UI/UX design intelligence. 50 styles, 21 palettes,
 50 font pairings, 20 charts, 8 stacks (React, Next.js, Vue, Svelte,
@@ -35,6 +37,7 @@ Styles: glassmorphism, claymorphism, minimalism, brutalism..."
 This is a "trigger keyword net" — no matter what the user says about UI, it hits.
 
 **excalidraw-artist:**
+
 ```yaml
 description: "Create beautiful, elegant Excalidraw diagrams based on
 user intent. Use when user asks to draw, visualize, diagram, sketch,
