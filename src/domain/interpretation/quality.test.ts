@@ -142,3 +142,14 @@ it('월별 필드가 완전해도 본문 근거 검사가 실패하면 별도로
     semanticReview: 'required',
   });
 });
+
+it('유년 단계에 궁간 사화나 현재가 아닌 대한을 끼워 넣지 못한다', () => {
+  const { evidence } = prepare();
+  for (const id of ['flying:오:0', 'decadal:3']) {
+    const value = mockExplanation(evidence);
+    value.sections
+      .find((s) => s.step === 11)!
+      .paragraphs[0].evidenceIds.push(id);
+    expect(() => validateAiExplanation(value, evidence)).toThrow();
+  }
+});

@@ -35,6 +35,7 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
     let usage: unknown;
     let providerOutput: unknown;
     let providerStatus: unknown;
+    let providerError: unknown;
     let generated: unknown;
     globalThis.fetch = async (...args) => {
       if (++calls > 1) throw new Error('Live evaluation call limit exceeded');
@@ -42,6 +43,8 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
       const body = await response.clone().json();
       usage = body.usage;
       providerStatus = response.status;
+      if (body.error)
+        providerError = { code: body.error.code, type: body.error.type };
       providerOutput = body.output;
       const message = body.output?.find(
         (item: { type: string }) => item.type === 'message',
@@ -67,6 +70,8 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
         promptVersion: explanationPromptVersion,
         calls,
         providerStatus,
+        providerError,
+        resultCode: result.status === 'error' ? result.code : undefined,
         durationMs: Math.round(performance.now() - started),
         usage,
         resultStatus: result.status,
@@ -84,5 +89,5 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
       globalThis.fetch = original;
     }
   },
-  100_000,
+  160_000,
 );

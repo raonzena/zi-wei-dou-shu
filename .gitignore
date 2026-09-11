@@ -10,3 +10,4 @@ next-env.d.ts
 *.log
 .pnpm-store/
 work/
+.vercel

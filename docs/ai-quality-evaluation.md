@@ -65,3 +65,7 @@ ZIWEI_LIVE_EVAL=1 ZIWEI_EVAL_CASE=reference pnpm eval:ai
 - [OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs)
 - [OpenAI Evaluation best practices](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
 - [작업 기록](tasks/2026-09-12-ai-quality-structure.md)
+
+## 유년 사화 회귀 검사 추가
+
+2026-09-12에 유년 연간과 유년 명궁이 위치한 본명반 궁의 천간을 혼동한 사례를 확인했다. 올해 사화의 별·종류·위치를 서버에서 명시하고, 유년 문단의 궁간 사화 참조와 현재가 아닌 대한 참조를 거부한다. 사화 쌍의 표기 검사와 별도 내용 검토를 구분한다. 모델 상향 전 mini의 입력·지침을 보완하는 정책과 결과는 [배포 작업 기록](tasks/2026-09-12-ai-grounding-vercel.md)에 남긴다.

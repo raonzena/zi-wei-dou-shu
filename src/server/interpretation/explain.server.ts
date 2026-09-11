@@ -1,10 +1,11 @@
 import 'server-only';
 import OpenAI from 'openai';
+import { groundedInput } from './grounded-input';
 import { ZodError } from 'zod';
 import { zodTextFormat } from 'openai/helpers/zod';
 import type { Chart } from '../../domain/ziwei/chart';
 import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
-import { consultationInstructions } from './consultation-prompt';
+import { groundedInstructions } from './consultation-prompt';
 import {
   aiExplanationSchemaFor,
   validateAiExplanation,
@@ -12,7 +13,7 @@ import {
 } from '../../domain/interpretation/ai-explanation';
 
 export const explanationModel = 'gpt-5.4-mini-2026-03-17';
-export const explanationPromptVersion = 'user-consultation-v7';
+export const explanationPromptVersion = 'user-consultation-v10';
 
 export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
   const evidence = consultationEvidence(chart);
@@ -25,15 +26,15 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
         'AI 설명 서비스가 아직 준비되지 않았습니다. 기본 풀이는 확인할 수 있습니다.',
       retryable: false,
     };
-  const client = new OpenAI({ apiKey, timeout: 90_000, maxRetries: 0 });
+  const client = new OpenAI({ apiKey, timeout: 150_000, maxRetries: 0 });
   try {
     const response = await client.responses.parse({
       model: explanationModel,
       store: false,
       max_output_tokens: 16000,
-      reasoning: { effort: 'none' },
-      instructions: consultationInstructions,
-      input: JSON.stringify(evidence),
+      reasoning: { effort: 'low' },
+      instructions: groundedInstructions,
+      input: JSON.stringify(groundedInput(evidence)),
       text: {
         format: zodTextFormat(
           aiExplanationSchemaFor(evidence),

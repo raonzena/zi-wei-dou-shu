@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { validateTransformationClaims } from './transformation-claims';
 import {
   evidenceIds,
   type ConsultationEvidence,
@@ -110,6 +111,25 @@ export function validateAiExplanation(
     if (section.step !== index + 2) throw new Error('Invalid analysis order');
     for (const p of section.paragraphs) {
       validateProse(p);
+      if (
+        [3, 10, 11].includes(section.step) &&
+        p.evidenceIds.some((id) => id.startsWith('flying:'))
+      )
+        throw new Error('Natal flying reference in timing section');
+      if (
+        section.step === 11 &&
+        p.evidenceIds.some(
+          (id) =>
+            id.startsWith('decadal:') &&
+            id !== evidence.timing.yearly.currentDecadalId,
+        )
+      )
+        throw new Error('Noncurrent decadal in yearly section');
+      validateTransformationClaims(
+        [p.terms, p.interpretation, p.check].join('\n'),
+        section.step === 11 ? [evidence.timing.yearly.id] : p.evidenceIds,
+        evidence,
+      );
       if (new Set(p.evidenceIds).size !== p.evidenceIds.length)
         throw new Error('Duplicate evidence');
       if (
@@ -129,6 +149,11 @@ export function validateAiExplanation(
   const monthly = evidence.timing.monthly.map((m) => {
     const reading = result.monthly[m.id];
     validateProse(reading);
+    validateTransformationClaims(
+      [reading.terms, reading.interpretation, reading.check].join('\n'),
+      [m.id],
+      evidence,
+    );
     return { ...reading, periodId: m.id };
   });
   return { sections: result.sections, monthly };

@@ -142,3 +142,17 @@ it('AI가 실패해도 서버 계산 자료와 기본 풀이를 반환한다', a
     spy.mockRestore();
   }
 });
+
+it('서버 플래그가 꺼져 있으면 변조된 on 요청도 외부 호출하지 않는다', async () => {
+  vi.stubEnv('AI_EXPLANATION_ENABLED', 'false');
+  const spy = vi.spyOn(aiService, 'explainChart');
+  try {
+    const result = await calculatePreview(form({ includeAi: 'on' }));
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.ai.status).toBe('not-requested');
+    expect(spy).not.toHaveBeenCalled();
+  } finally {
+    spy.mockRestore();
+    vi.unstubAllEnvs();
+  }
+});

@@ -1,0 +1,6 @@
+.agents/
+work/
+.env*
+!.env.example
+coverage/
+*.log

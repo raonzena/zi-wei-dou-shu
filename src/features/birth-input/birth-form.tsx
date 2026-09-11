@@ -12,7 +12,7 @@ import { Term } from '../../components/ui/term';
 import { terms } from '../../content/glossary';
 import * as styles from './styles.css';
 
-export function BirthForm() {
+export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
   const [calendar, setCalendar] = useState('solar');
   const [date, setDate] = useState({ year: '', month: '', isLeapMonth: false });
   const ranges = birthInputRanges(
@@ -23,7 +23,6 @@ export function BirthForm() {
   );
   const [errors, setErrors] = useState<InputErrors>({});
   const [pending, setPending] = useState(false);
-  const [includeAi, setIncludeAi] = useState(false);
   const [aiPending, setAiPending] = useState(false);
   const submittedForm = useRef<FormData | null>(null);
   const aiBusy = useRef(false);
@@ -340,51 +339,31 @@ export function BirthForm() {
               </p>
               {error('gender')}
             </fieldset>
-            <fieldset className={styles.section}>
-              <legend className={styles.legend}>AI 설명 (선택)</legend>
-              <label className={styles.choice}>
-                <input
-                  type="checkbox"
-                  name="includeAi"
-                  checked={includeAi}
-                  onChange={(event) => setIncludeAi(event.target.checked)}
-                  aria-describedby="ai-help"
-                />
-                12단계 AI 해석 함께 보기
-              </label>
-              <p className={styles.help}>
-                1단계는 서버가 계산한 명반 요약이며, 2~12단계는 AI가 작성합니다.
-              </p>
-              <p id="ai-help" className={styles.help}>
-                선택하면 12궁의 위치와 간지, 명궁·신궁·오행국, 현재 표시하는
-                별과 밝기·생년사화, 명주·신주, 궁의 연결 관계와 궁간 사화·격국
-                구조 검사, 대한·올해 유년·유월·유요 자료를 OpenAI에 보내
-                해석합니다. 원본 출생 날짜·시각·성별은 보내지 않지만, 대한의
-                나이·연도 구간으로 출생 연도를 추정할 수 있습니다. 유월은 iztro
-                음력 기준이며 한국 음력과 날짜가 다를 수 있습니다. 선택하지
-                않아도 기본 풀이와 계산 자료를 볼 수 있습니다.
-              </p>
-              <p className={styles.help}>
-                OpenAI는 부정 사용 모니터링을 위해 API 내용을 보관할 수
-                있습니다.{' '}
-                <a
-                  href="https://developers.openai.com/api/docs/guides/your-data"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  데이터 처리 안내 (새 탭)
-                </a>
-              </p>
-            </fieldset>
+            {includeAi && <input type="hidden" name="includeAi" value="on" />}
             <aside className={styles.notice}>
-              <strong>
-                입력 정보는 명반과 기본 풀이를 만드는 데만 사용합니다.
-              </strong>
+              <strong>입력 정보는 명반과 해석을 만드는 데 사용합니다.</strong>
               <p>
-                입력한 정보와 결과는 이 서비스에 저장하지 않습니다. AI 설명을
-                선택한 경우에만 위에서 안내한 명반 정보를 외부로 보냅니다.
-                새로고침하면 입력값과 결과가 사라집니다.
+                입력한 정보와 결과는 이 서비스에 저장하지 않습니다. 새로고침하면
+                입력값과 결과가 사라집니다.
               </p>
+              {includeAi && (
+                <p>
+                  명반의 궁과 별·밝기, 명궁·신궁·명주·신주·오행국, 사화·격국
+                  구조, 대한·올해 유년·유월·유요 자료를 OpenAI에 보내 AI 해석을
+                  함께 제공합니다. 원본 출생 날짜·시각·성별은 보내지 않지만,
+                  대한의 나이와 연도 구간으로 출생 연도를 추정할 수 있습니다.
+                  유월은 iztro 음력 기준으로 한국 음력과 다를 수 있습니다.
+                  OpenAI는 부정 사용 모니터링을 위해 API 내용을 보관할 수
+                  있습니다.{' '}
+                  <a
+                    href="https://developers.openai.com/api/docs/guides/your-data"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    데이터 처리 안내 (새 탭)
+                  </a>
+                </p>
+              )}
               <details>
                 <summary>날짜와 시각을 계산하는 기준</summary>
                 <p>

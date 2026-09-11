@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { groundedInput } from './grounded-input';
 import { explainChart } from './explain.server';
 import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
 import { userConsultationPrompt } from './consultation-prompt';
@@ -82,9 +83,11 @@ describe('OpenAI 설명 요청과 검증', () => {
       store: false,
       model: 'gpt-5.4-mini-2026-03-17',
       max_output_tokens: 16000,
-      reasoning: { effort: 'none' },
+      reasoning: { effort: 'low' },
     });
-    expect(JSON.parse(request.input)).toEqual(consultationEvidence(reading()));
+    expect(JSON.parse(request.input)).toEqual(
+      groundedInput(consultationEvidence(reading())),
+    );
     expect(request.instructions).toContain(userConsultationPrompt);
     expect(
       JSON.parse(request.input).palaces.every((p: { stars: object[] }) =>
@@ -188,7 +191,7 @@ describe('OpenAI 설명 요청과 검증', () => {
         }),
     );
     const pending = explainChart(reading());
-    await vi.advanceTimersByTimeAsync(90_100);
+    await vi.advanceTimersByTimeAsync(150_100);
     expect(await pending).toMatchObject({
       status: 'error',
       code: 'timeout',
