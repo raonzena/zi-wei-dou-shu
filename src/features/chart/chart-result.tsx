@@ -1,5 +1,9 @@
 'use client';
 
+import { AiExplanation } from '../interpretation/ai-explanation';
+import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
+import type { BasicReading as Reading } from '../../domain/interpretation/basic-reading';
+import { BasicReading } from '../interpretation/basic-reading';
 import { Brand } from '../../components/ui/brand';
 import { Provider } from 'jotai';
 import { Tabs } from '@base-ui/react/tabs';
@@ -13,9 +17,17 @@ import * as styles from './styles.css';
 
 export function ChartResult({
   chart,
+  reading,
+  ai,
+  aiPending,
+  onRetryAi,
   onBack,
 }: {
   chart: Chart;
+  reading: Reading;
+  ai: AiExplanationResult;
+  aiPending: boolean;
+  onRetryAi: () => void;
   onBack: () => void;
 }) {
   const params = useSearchParams();
@@ -62,6 +74,13 @@ export function ChartResult({
           </Tabs.List>
           <Tabs.Panel value="simple">
             <ChartRing chart={chart} detail={false} />
+            <BasicReading reading={reading} />
+            <AiExplanation
+              result={ai}
+              chart={chart}
+              pending={aiPending}
+              onRetry={onRetryAi}
+            />
             <section className={styles.reading} aria-labelledby="reading-title">
               <h2 id="reading-title">명반을 읽는 방법</h2>
               <p>
@@ -75,8 +94,7 @@ export function ChartResult({
                 좋지 않은 결과라는 의미는 아닙니다.
               </p>
               <p className={styles.help}>
-                이 설명은 명반의 공통적인 읽는 법입니다. 개인화 해석은 아직
-                제공하지 않습니다.
+                위의 기본 풀이와 함께 참고할 명반의 공통적인 읽는 법입니다.
               </p>
             </section>
           </Tabs.Panel>
@@ -96,7 +114,12 @@ export function ChartResult({
           결과는 저장되지 않습니다. 새로고침하면 입력 화면으로 돌아갑니다. 공유
           기능은 아직 제공하지 않습니다.
         </p>
-        <button type="button" className={styles.back} onClick={onBack}>
+        <button
+          type="button"
+          className={styles.back}
+          onClick={onBack}
+          disabled={aiPending}
+        >
           출생 정보 수정
         </button>
       </section>

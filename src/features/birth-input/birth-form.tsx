@@ -3,7 +3,6 @@
 import { Brand, Seal } from '../../components/ui/brand';
 
 import { Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
-import type { Chart } from '../../domain/ziwei/chart';
 import { calculatePreview } from './calculate-action';
 import { parseBirthForm, type InputErrors } from './form-input';
 import { NumberChoice } from './number-choice';
@@ -24,7 +23,14 @@ export function BirthForm() {
   );
   const [errors, setErrors] = useState<InputErrors>({});
   const [pending, setPending] = useState(false);
-  const [chart, setChart] = useState<Chart | null>(null);
+  const [includeAi, setIncludeAi] = useState(false);
+  const [aiPending, setAiPending] = useState(false);
+  const submittedForm = useRef<FormData | null>(null);
+  const aiBusy = useRef(false);
+  const [result, setResult] = useState<Extract<
+    Awaited<ReturnType<typeof calculatePreview>>,
+    { success: true }
+  > | null>(null);
   const busy = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -32,8 +38,8 @@ export function BirthForm() {
     if (Object.values(errors).some(Boolean)) summaryRef.current?.focus();
   }, [errors]);
   useEffect(() => {
-    if (chart) document.getElementById('preview-title')?.focus();
-  }, [chart]);
+    if (result) document.getElementById('preview-title')?.focus();
+  }, [result]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,7 +63,8 @@ export function BirthForm() {
           '',
           url.pathname + url.search + url.hash,
         );
-        setChart(result.chart);
+        submittedForm.current = data;
+        setResult(result);
       } else setErrors(result.errors);
     } catch {
       setErrors({
@@ -67,6 +74,48 @@ export function BirthForm() {
     } finally {
       busy.current = false;
       setPending(false);
+    }
+  }
+  async function retryAi() {
+    if (aiBusy.current || !submittedForm.current || !result) return;
+    aiBusy.current = true;
+    setAiPending(true);
+    try {
+      const next = await calculatePreview(submittedForm.current);
+      setResult((previous) =>
+        previous
+          ? {
+              ...previous,
+              ai: next.success
+                ? next.ai
+                : {
+                    status: 'error',
+                    code: 'provider',
+                    message:
+                      'AI 설명을 다시 준비하지 못했습니다. 입력 정보를 확인해주세요.',
+                    retryable: false,
+                  },
+            }
+          : previous,
+      );
+    } catch {
+      setResult((previous) =>
+        previous
+          ? {
+              ...previous,
+              ai: {
+                status: 'error',
+                code: 'provider',
+                message:
+                  '서버에 연결하지 못했습니다. 연결을 확인한 뒤 다시 시도해주세요.',
+                retryable: true,
+              },
+            }
+          : previous,
+      );
+    } finally {
+      aiBusy.current = false;
+      setAiPending(false);
     }
   }
   const error = (field: keyof InputErrors) =>
@@ -104,14 +153,24 @@ export function BirthForm() {
           aria-busy="true"
         >
           <Seal />
-          <h1 className={styles.title}>명반을 계산하고 있습니다</h1>
-          <p>입력한 날짜와 시각을 확인한 뒤 명반에 별을 배치하고 있습니다.</p>
+          <h1 className={styles.title}>
+            {includeAi
+              ? '명반과 AI 설명을 준비하고 있습니다'
+              : '명반과 기본 풀이를 준비하고 있습니다'}
+          </h1>
+          <p>
+            입력한 날짜와 시각으로 명반을 계산하고 기본 풀이를 함께 준비합니다.
+          </p>
         </section>
       )}
-      {chart && !pending && (
+      {result && !pending && (
         <Suspense fallback={<p role="status">명반을 불러오고 있습니다.</p>}>
           <ChartResult
-            chart={chart}
+            chart={result.chart}
+            reading={result.reading}
+            ai={result.ai}
+            aiPending={aiPending}
+            onRetryAi={retryAi}
             onBack={() => {
               const url = new URL(window.location.href);
               url.searchParams.delete('view');
@@ -120,7 +179,8 @@ export function BirthForm() {
                 '',
                 url.pathname + url.search + url.hash,
               );
-              setChart(null);
+              submittedForm.current = null;
+              setResult(null);
               requestAnimationFrame(() =>
                 formRef.current
                   ?.querySelector<HTMLInputElement>('#year')
@@ -130,7 +190,7 @@ export function BirthForm() {
           />
         </Suspense>
       )}
-      <div hidden={pending || !!chart}>
+      <div hidden={pending || !!result}>
         <Brand />
         <div className={styles.inputLayout}>
           <header>
@@ -165,7 +225,7 @@ export function BirthForm() {
               >
                 <strong>
                   {errors.input
-                    ? '명반을 계산하지 못했습니다.'
+                    ? '결과를 준비하지 못했습니다.'
                     : '입력 정보를 확인해주세요.'}
                 </strong>
                 {errors.input && <p>{errors.input}</p>}
@@ -279,10 +339,44 @@ export function BirthForm() {
               </p>
               {error('gender')}
             </fieldset>
+            <fieldset className={styles.section}>
+              <legend className={styles.legend}>AI 설명 (선택)</legend>
+              <label className={styles.choice}>
+                <input
+                  type="checkbox"
+                  name="includeAi"
+                  checked={includeAi}
+                  onChange={(event) => setIncludeAi(event.target.checked)}
+                  aria-describedby="ai-help"
+                />
+                12단계 AI 해석 함께 보기
+              </label>
+              <p id="ai-help" className={styles.help}>
+                선택하면 12궁의 위치와 간지, 명궁·신궁·오행국, 현재 표시하는
+                별과 생년사화, 궁의 연결 관계를 OpenAI에 보내 해석합니다. 출생
+                날짜·시각·성별은 보내지 않습니다. 대한·유년 자료는 제공하지 않아
+                시기별 해석은 할 수 없습니다. 선택하지 않아도 기본 풀이를 볼 수
+                있습니다.
+              </p>
+              <p className={styles.help}>
+                OpenAI는 부정 사용 모니터링을 위해 API 내용을 보관할 수
+                있습니다.{' '}
+                <a
+                  href="https://developers.openai.com/api/docs/guides/your-data"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  데이터 처리 안내 (새 탭)
+                </a>
+              </p>
+            </fieldset>
             <aside className={styles.notice}>
-              <strong>입력 정보는 명반 계산에만 사용합니다.</strong>
+              <strong>
+                입력 정보는 명반과 기본 풀이를 만드는 데만 사용합니다.
+              </strong>
               <p>
-                입력한 정보와 계산 결과는 저장하거나 외부 AI에 보내지 않습니다.
+                입력한 정보와 결과는 이 서비스에 저장하지 않습니다. AI 설명을
+                선택한 경우에만 위에서 안내한 명반 정보를 외부로 보냅니다.
                 새로고침하면 입력값과 결과가 사라집니다.
               </p>
               <details>

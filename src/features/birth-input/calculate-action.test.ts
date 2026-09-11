@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import * as interpretation from '../../domain/interpretation/basic-reading';
 import { calculatePreview } from './calculate-action';
 import { parseBirthForm } from './form-input';
 
@@ -44,10 +45,15 @@ describe('birth form server boundary', () => {
     expect(result.success).toBe(false);
     if (!result.success) expect(result.errors.time).toBeDefined();
   });
-  it('returns only the chart, excluding normalized birth data', async () => {
+  it('returns chart and basic reading without normalized birth data', async () => {
     const result = await calculatePreview(form());
     expect(result.success).toBe(true);
-    expect(Object.keys(result).sort()).toEqual(['chart', 'success']);
+    expect(Object.keys(result).sort()).toEqual([
+      'ai',
+      'chart',
+      'reading',
+      'success',
+    ]);
     if (result.success) expect(result.chart.palaces).toHaveLength(12);
   });
   it('gives the same preview for Korean lunar and solar inputs of the same birthday', async () => {
@@ -79,3 +85,37 @@ it.each([
       ).toContain(message);
   },
 );
+
+it('풀이 준비 오류를 개인정보 없는 안내로 반환한다', async () => {
+  const spy = vi
+    .spyOn(interpretation, 'createBasicReading')
+    .mockImplementationOnce(() => {
+      throw new Error('private internal detail');
+    });
+  try {
+    const result = await calculatePreview(form());
+    expect(result).toEqual({
+      success: false,
+      errors: {
+        input: '기본 풀이를 준비하지 못했습니다. 잠시 후 다시 시도해주세요.',
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain('private internal detail');
+  } finally {
+    spy.mockRestore();
+  }
+});
+
+it('AI를 선택하지 않으면 AI 요청 없이 기본 풀이를 제공한다', async () => {
+  const result = await calculatePreview(form());
+  if (!result.success) throw new Error('expected success');
+  expect(result.ai).toEqual({ status: 'not-requested' });
+});
+it('AI 선택 값의 중복이나 임의 문자열을 거부한다', async () => {
+  expect(
+    (await calculatePreview(form({ includeAi: 'custom prompt' }))).success,
+  ).toBe(false);
+  const data = form({ includeAi: 'on' });
+  data.append('includeAi', 'on');
+  expect((await calculatePreview(data)).success).toBe(false);
+});
