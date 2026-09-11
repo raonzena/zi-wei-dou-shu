@@ -1,66 +1,61 @@
 import type { BasicReading as Reading } from '../../domain/interpretation/basic-reading';
 import { Term } from '../../components/ui/term';
-import { palaceTerms, starTerms, terms } from '../../content/glossary';
+import { palaceTerms, starTerms } from '../../content/glossary';
 import * as styles from './styles.css';
 
 export function BasicReading({ reading }: { reading: Reading }) {
   return (
     <section className={styles.reading} aria-labelledby="basic-reading-title">
-      <p className={styles.eyebrow}>명궁으로 시작하는 기본 풀이</p>
+      <p className={styles.eyebrow}>나를 알아보는 기본 풀이</p>
       <h2 id="basic-reading-title">나의 성향을 살펴보는 첫걸음</h2>
       <p>
-        <Term term={palaceTerms.명궁} />에 놓인 <Term term={terms.주성} />을
-        바탕으로 별의 기본 의미를 소개합니다. 전통적인 해석을 자신을 돌아보는
-        참고로 읽어주세요.
-      </p>
-      <p className={styles.evidence}>
-        내 명반의 근거: {reading.evidence.earthlyBranch} 위치의 명궁 ·{' '}
-        {reading.evidence.stars.join(' · ') || '주성 없음'}
+        자미두수에서는 별의 배치에 의미를 붙여 사람의 성향을 살펴봅니다. 아래
+        설명은 각 별을 전통적으로 풀이하는 방식이며, 제목이 나의 성격을 확정하는
+        것은 아닙니다. 평소 내 모습과 닮은 점이 있는지 살펴보세요.
       </p>
       {reading.status === 'empty' && (
         <p>
-          명궁에 주성이 없습니다. 좋고 나쁨을 뜻하는 것은 아닙니다. 다른 궁과
-          별의 관계를 함께 살펴야 하므로, 현재 기본 풀이에서는 성향 해석을
-          제공하지 않습니다.
+          성향을 살피는 자리에 이 기본 풀이가 다루는 주요 별이 없습니다. 성격에
+          특징이 없거나 좋지 않다는 뜻은 아니에요. 다른 자리에 있는 별까지 함께
+          살펴야 하므로, 여기서는 성향 설명을 제공하지 않습니다.
         </p>
       )}
       {reading.status === 'multiple' && (
         <p className={styles.scope}>
-          명궁에 주성이 함께 놓여 있습니다. 아래는 각 별의 개별 의미이며, 두
-          설명을 합친 성향 풀이가 아닙니다. 조합에 따른 해석은 아직 제공하지
-          않습니다.
+          성향을 살피는 자리에 주요 별이 둘 있습니다. 각 별이 뜻하는 모습을
+          하나씩 소개할게요. 두 별이 함께 있을 때의 의미까지 풀이한 내용은
+          아닙니다.
         </p>
       )}
       {reading.entries.map((entry) => (
         <article key={entry.ruleId} className={styles.entry}>
-          <h3>
+          <h3>{entry.title}</h3>
+          <p className={styles.evidence}>
+            이 설명의 바탕이 된 별:{' '}
             <Term term={starTerms[`major:${entry.starName}`]}>
               {entry.starName}
             </Term>
-            의 기본 의미
-          </h3>
-          <p>{entry.meaning}</p>
-          <div className={styles.question}>
-            <h4>나에게 물어보기</h4>
-            <p>{entry.question}</p>
-          </div>
+          </p>
+          {entry.meaning.split('\n\n').map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
         </article>
       ))}
       <details className={styles.sources}>
-        <summary>풀이의 범위와 출처</summary>
+        <summary>이 설명은 무엇을 바탕으로 하나요?</summary>
         <p>
-          명궁의 주성만 다룬 기본 설명입니다. 다른 궁과의 관계,{' '}
-          <Term term={terms.보조성} />, <Term term={terms.사화} />와 별의 밝기를
-          종합한 풀이는 아닙니다. 일·관계·재물의 주제별 풀이는 아직 제공하지
+          성향을 살피는 자리인 <Term term={palaceTerms.명궁} />의 주요 별만
+          설명합니다. 다른 별과의 관계나 함께 놓였을 때의 의미까지 종합하지는
+          않았습니다. 일·관계·돈에 대한 주제별 해석은 이 기본 풀이에 포함하지
           않습니다.
         </p>
-        <p>
-          ‘나에게 물어보기’는 별의 의미를 읽고 생각을 정리하도록 서비스에서
-          작성한 질문입니다. 명반에서 예측한 결과가 아닙니다.
+        <p className={styles.evidence}>
+          계산 근거: {reading.evidence.earthlyBranch} 위치의 명궁 ·{' '}
+          {reading.evidence.stars.join(' · ') || '주요 별 없음'}
         </p>
         <p>
           <a href={reading.source} target="_blank" rel="noreferrer">
-            별의 의미 참고: iztro 14주성 설명 (중국어, 새 탭)
+            출처: Sylar Long · iztro 14주성 설명 (중국어, 새 탭)
           </a>
         </p>
       </details>

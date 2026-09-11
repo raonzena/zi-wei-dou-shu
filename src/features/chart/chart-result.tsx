@@ -1,5 +1,7 @@
 'use client';
 
+import { ChartFacts } from '../interpretation/chart-facts';
+import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
 import { AiExplanation } from '../interpretation/ai-explanation';
 import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
 import type { BasicReading as Reading } from '../../domain/interpretation/basic-reading';
@@ -17,6 +19,7 @@ import * as styles from './styles.css';
 
 export function ChartResult({
   chart,
+  facts,
   reading,
   ai,
   aiPending,
@@ -24,6 +27,7 @@ export function ChartResult({
   onBack,
 }: {
   chart: Chart;
+  facts: ChartFactsData;
   reading: Reading;
   ai: AiExplanationResult;
   aiPending: boolean;
@@ -45,7 +49,6 @@ export function ChartResult({
         </p>
         <p className={styles.help}>
           점선이 있는 용어를 누르거나 마우스를 올리면 설명을 볼 수 있습니다.
-          키보드로도 확인할 수 있습니다.
         </p>
         <Tabs.Root
           value={view}
@@ -75,9 +78,15 @@ export function ChartResult({
           <Tabs.Panel value="simple">
             <ChartRing chart={chart} detail={false} />
             <BasicReading reading={reading} />
+            <ChartFacts
+              chart={chart}
+              facts={facts}
+              numbered={ai.status !== 'not-requested'}
+            />
             <AiExplanation
               result={ai}
               chart={chart}
+              facts={facts}
               pending={aiPending}
               onRetry={onRetryAi}
             />
@@ -104,9 +113,10 @@ export function ChartResult({
             </p>
             <ChartRing chart={chart} detail />
             <PalaceDetail chart={chart} />
+            <ChartFacts chart={chart} facts={facts} numbered={false} />
             <p className={styles.help}>
-              현재는 14주성과 일부 보조성을 표시합니다. 별의 밝기와 나머지 별은
-              추가 검증 후 제공할 예정입니다.
+              현재는 14주성과 보조성 25개를 표시합니다. 밝기는 계산 자료 표에서
+              확인할 수 있으며 나머지 별은 아직 표시하지 않습니다.
             </p>
           </Tabs.Panel>
         </Tabs.Root>

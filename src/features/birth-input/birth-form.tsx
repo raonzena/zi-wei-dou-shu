@@ -167,6 +167,7 @@ export function BirthForm() {
         <Suspense fallback={<p role="status">명반을 불러오고 있습니다.</p>}>
           <ChartResult
             chart={result.chart}
+            facts={result.facts}
             reading={result.reading}
             ai={result.ai}
             aiPending={aiPending}
@@ -351,6 +352,9 @@ export function BirthForm() {
                 />
                 12단계 AI 해석 함께 보기
               </label>
+              <p className={styles.help}>
+                1단계는 서버가 계산한 명반 요약이며, 2~12단계는 AI가 작성합니다.
+              </p>
               <p id="ai-help" className={styles.help}>
                 선택하면 12궁의 위치와 간지, 명궁·신궁·오행국, 현재 표시하는
                 별과 밝기·생년사화, 명주·신주, 궁의 연결 관계와 궁간 사화·격국
@@ -358,7 +362,7 @@ export function BirthForm() {
                 해석합니다. 원본 출생 날짜·시각·성별은 보내지 않지만, 대한의
                 나이·연도 구간으로 출생 연도를 추정할 수 있습니다. 유월은 iztro
                 음력 기준이며 한국 음력과 날짜가 다를 수 있습니다. 선택하지
-                않아도 기본 풀이를 볼 수 있습니다.
+                않아도 기본 풀이와 계산 자료를 볼 수 있습니다.
               </p>
               <p className={styles.help}>
                 OpenAI는 부정 사용 모니터링을 위해 API 내용을 보관할 수

@@ -1,5 +1,9 @@
 'use server';
 
+import {
+  createChartFacts,
+  type ChartFactsData,
+} from '../../domain/interpretation/chart-facts.server';
 import { explainChart } from '../../server/interpretation/explain.server';
 import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
 import { calculateChart } from '../../domain/ziwei/calculate-chart.server';
@@ -15,6 +19,7 @@ export async function calculatePreview(form: FormData): Promise<
       success: true;
       chart: Chart;
       reading: BasicReading;
+      facts: ChartFactsData;
       ai: AiExplanationResult;
     }
   | { success: false; errors: InputErrors }
@@ -40,11 +45,12 @@ export async function calculatePreview(form: FormData): Promise<
   // Do not return the private birth normalization data across this boundary.
   try {
     const reading = createBasicReading(result.data.chart);
+    const facts = createChartFacts(result.data.chart);
     const ai: AiExplanationResult =
       aiValues[0] === 'on'
         ? await explainChart(result.data.chart)
         : { status: 'not-requested' };
-    return { success: true, chart: result.data.chart, reading, ai };
+    return { success: true, chart: result.data.chart, reading, facts, ai };
   } catch {
     return {
       success: false,

@@ -12,7 +12,7 @@ import {
 } from '../../domain/interpretation/ai-explanation';
 
 export const explanationModel = 'gpt-5.4-mini-2026-03-17';
-export const explanationPromptVersion = 'user-consultation-v5';
+export const explanationPromptVersion = 'user-consultation-v7';
 
 export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
   const evidence = consultationEvidence(chart);
@@ -44,12 +44,15 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
     if (response.status !== 'completed' || !response.output_parsed)
       return invalidResponse();
     try {
-      const sections = validateAiExplanation(response.output_parsed, evidence);
+      const explanation = validateAiExplanation(
+        response.output_parsed,
+        evidence,
+      );
       return {
         status: 'ready',
         model: explanationModel,
         promptVersion: explanationPromptVersion,
-        sections,
+        ...explanation,
       };
     } catch {
       return invalidResponse();

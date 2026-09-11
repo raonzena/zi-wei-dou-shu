@@ -2,13 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { explainChart } from './explain.server';
 import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
 import { userConsultationPrompt } from './consultation-prompt';
+import { mockExplanation } from '../../domain/interpretation/fixtures/mock-explanation';
+import { Temporal } from '@js-temporal/polyfill';
 import { calculateChart } from '../../domain/ziwei/calculate-chart.server';
 import fixture from '../../domain/ziwei/fixtures/cust-1929.json';
 
+const calculated = calculateChart(
+  fixture.input,
+  Temporal.Instant.from('2026-09-12T03:00Z'),
+);
+if (!calculated.success) throw new Error('Fixture calculation failed');
+const referenceChart = calculated.data.chart;
 function reading() {
-  const result = calculateChart(fixture.input);
-  if (!result.success) throw new Error(result.error.code);
-  return result.data.chart;
+  return structuredClone(referenceChart);
 }
 const fetchMock = vi.fn<typeof fetch>();
 beforeEach(() => {
@@ -47,23 +53,7 @@ function response(value: unknown, status = 'completed') {
   );
 }
 function valid() {
-  return {
-    sections: Array.from({ length: 12 }, (_, i) => ({
-      step: i + 1,
-      status: [3, 10, 11].includes(i + 1) ? 'unavailable' : 'limited',
-      limitation: '이것은 실제 해석이 아닌 검증용 제한 안내입니다.',
-      paragraphs: [3, 10, 11].includes(i + 1)
-        ? []
-        : [
-            {
-              evidenceIds: ['palace:사'],
-              terms: '명궁은 기본 성향을 살피는 궁입니다.',
-              interpretation: '테스트를 위한 설명이며 실제 AI 해석이 아닙니다.',
-              check: '이 문장은 화면과 데이터 검증용입니다.',
-            },
-          ],
-    })),
-  };
+  return mockExplanation(consultationEvidence(reading()));
 }
 
 describe('OpenAI 설명 요청과 검증', () => {
@@ -110,6 +100,18 @@ describe('OpenAI 설명 요청과 검증', () => {
     expect(allowed).not.toContain('star:사:minor:팔좌');
     expect(request.instructions).toContain('7: 결혼과 장기 관계 분석');
     expect(request.instructions).toContain('8: 건강과 생활관리 분석');
+    expect(request.text.format.schema.properties.monthly.required).toEqual(
+      consultationEvidence(reading()).timing.monthly.map((m) => m.id),
+    );
+    expect(
+      request.text.format.schema.properties.monthly.additionalProperties,
+    ).toBe(false);
+    if (result.status === 'ready') {
+      expect(result.sections.map((s) => s.step)).toEqual([
+        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+      ]);
+      expect(result.monthly).toHaveLength(12);
+    }
     expect(JSON.stringify(result)).not.toContain('test-key');
   });
   it.each(['unknown', 'duplicate', 'missing', 'extra'])(
@@ -197,7 +199,7 @@ describe('OpenAI 설명 요청과 검증', () => {
 
 it('대한 근거 ID 없이 시기 해석을 반환하면 거부한다', async () => {
   const value = valid();
-  value.sections[9] = { ...value.sections[0], step: 10 };
+  value.sections[8] = { ...value.sections[0], step: 10 };
   fetchMock.mockResolvedValue(response(value));
   expect(await explainChart(reading())).toMatchObject({
     status: 'error',
@@ -287,61 +289,25 @@ it.each(['rate_limit_exceeded', 'slow_down'])(
   },
 );
 
-it('전달한 대한·유년 근거를 사용한 시기 해석은 허용한다', async () => {
-  const value = valid();
-  for (const step of [3, 10, 11])
-    value.sections[step - 1] = {
-      ...value.sections[0],
-      step,
-      paragraphs: [
-        {
-          ...value.sections[0].paragraphs[0],
-          evidenceIds: [
-            step === 11
-              ? consultationEvidence(reading()).timing.yearly.id
-              : 'decadal:3',
-            ...(step === 11
-              ? consultationEvidence(reading()).timing.monthly.map((m) => m.id)
-              : []),
-          ],
-        },
-      ],
-    };
-  fetchMock.mockResolvedValue(response(value));
+it('전달한 대한·유년과 각 월별 필수 항목을 사용한 해석을 허용한다', async () => {
+  fetchMock.mockResolvedValue(response(valid()));
   expect((await explainChart(reading())).status).toBe('ready');
 });
-it('다른 연도의 유년 ID나 대한만으로 올해 유년 해석을 만들면 거부한다', async () => {
-  for (const id of ['yearly:1800', 'decadal:3']) {
+it.each(['yearly:1800', 'decadal:3'])(
+  '올해 유년 근거 대신 %s를 인용하면 거부한다',
+  async (id) => {
     const value = valid();
-    value.sections[10] = {
-      ...value.sections[0],
-      step: 11,
-      paragraphs: [{ ...value.sections[0].paragraphs[0], evidenceIds: [id] }],
-    };
+    value.sections[9].paragraphs[0].evidenceIds = [id];
     fetchMock.mockResolvedValue(response(value));
     expect(await explainChart(reading())).toMatchObject({
       status: 'error',
       code: 'invalid-response',
     });
-  }
-});
-
-it('유년 해석에서 일부 월 구간을 누락하면 거부한다', async () => {
+  },
+);
+it('실호출에서 누락된 3월은 필수 객체 키 누락으로 거부한다', async () => {
   const value = valid();
-  const evidence = consultationEvidence(reading());
-  value.sections[10] = {
-    ...value.sections[0],
-    step: 11,
-    paragraphs: [
-      {
-        ...value.sections[0].paragraphs[0],
-        evidenceIds: [
-          evidence.timing.yearly.id,
-          ...evidence.timing.monthly.slice(1).map((m) => m.id),
-        ],
-      },
-    ],
-  };
+  delete value.monthly['monthly:2026:3:regular:normal'];
   fetchMock.mockResolvedValue(response(value));
   expect(await explainChart(reading())).toMatchObject({
     status: 'error',

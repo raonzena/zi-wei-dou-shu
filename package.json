@@ -18,7 +18,9 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "test:ai": "vitest run src/domain/interpretation/quality.test.ts src/server/interpretation/explain.test.ts",
+    "eval:ai": "vitest run src/server/interpretation/live-evaluation.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",

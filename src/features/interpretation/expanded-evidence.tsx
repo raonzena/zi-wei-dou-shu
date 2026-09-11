@@ -1,14 +1,17 @@
+import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
 import type { Chart } from '../../domain/ziwei/chart';
 import { inspectPatterns } from '../../domain/interpretation/patterns';
 import { Term } from '../../components/ui/term';
 import { extendedTerms, starTerms } from '../../content/glossary';
 import * as styles from './styles.css';
 
-export function monthLabel(m: Chart['timing']['monthly'][number]) {
-  return `${m.year}년 ${m.isLeapMonth ? '윤' : ''}${m.month}월 ${m.dayRange.join('–')}일`;
-}
-
-export function ExpandedEvidence({ chart }: { chart: Chart }) {
+export function ExpandedEvidence({
+  chart,
+  facts,
+}: {
+  chart: Chart;
+  facts: ChartFactsData;
+}) {
   const name = (id: string) =>
     chart.palaces.find((p) => `palace:${p.earthlyBranch}` === id)!.name;
   const moving = (layer: Pick<Chart['timing']['yearly'], 'movingStars'>) =>
@@ -68,7 +71,7 @@ export function ExpandedEvidence({ chart }: { chart: Chart }) {
             <tbody>
               {chart.timing.monthly.map((m) => (
                 <tr key={m.id}>
-                  <th scope="row">{monthLabel(m)}</th>
+                  <th scope="row">{facts.references[m.id]}</th>
                   <td>
                     {name(m.soulPalaceId)} ({m.heavenlyStem}
                     {m.earthlyBranch})

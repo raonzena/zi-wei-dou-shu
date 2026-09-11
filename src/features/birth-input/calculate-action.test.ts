@@ -1,3 +1,4 @@
+import * as aiService from '../../server/interpretation/explain.server';
 import { describe, expect, it, vi } from 'vitest';
 import * as interpretation from '../../domain/interpretation/basic-reading';
 import { calculatePreview } from './calculate-action';
@@ -51,6 +52,7 @@ describe('birth form server boundary', () => {
     expect(Object.keys(result).sort()).toEqual([
       'ai',
       'chart',
+      'facts',
       'reading',
       'success',
     ]);
@@ -118,4 +120,25 @@ it('AI 선택 값의 중복이나 임의 문자열을 거부한다', async () =>
   const data = form({ includeAi: 'on' });
   data.append('includeAi', 'on');
   expect((await calculatePreview(data)).success).toBe(false);
+});
+
+it('AI가 실패해도 서버 계산 자료와 기본 풀이를 반환한다', async () => {
+  const spy = vi.spyOn(aiService, 'explainChart').mockResolvedValueOnce({
+    status: 'error',
+    code: 'invalid-response',
+    message: '검증 실패',
+    retryable: true,
+  });
+  try {
+    const result = await calculatePreview(form({ includeAi: 'on' }));
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected calculated result');
+    expect(result.ai.status).toBe('error');
+    expect(result.facts.formatVersion).toBe('chart-facts-v1');
+    expect(result.facts.summary).toHaveLength(5);
+    expect(result.reading).toBeDefined();
+    expect(JSON.stringify(result.facts)).not.toContain('검증 실패');
+  } finally {
+    spy.mockRestore();
+  }
 });

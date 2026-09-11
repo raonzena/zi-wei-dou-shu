@@ -77,3 +77,12 @@ globalStyle(`${evidenceTable} th, ${evidenceTable} td`, {
   borderBottom: `1px solid ${colors.line}`,
   verticalAlign: 'top',
 });
+
+export const summaryList = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(7rem, 1fr))',
+  gap: '1rem',
+  margin: '1rem 0',
+});
+globalStyle(`${summaryList} dt`, { color: colors.muted, fontSize: '.875rem' });
+globalStyle(`${summaryList} dd`, { margin: 0, fontWeight: 600 });

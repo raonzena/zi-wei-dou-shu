@@ -1,10 +1,17 @@
+import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
 import { ExpandedEvidence } from './expanded-evidence';
 import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
 import { terms } from '../../content/glossary';
 import * as styles from './styles.css';
 
-export function SupplementalEvidence({ chart }: { chart: Chart }) {
+export function SupplementalEvidence({
+  chart,
+  facts,
+}: {
+  chart: Chart;
+  facts: ChartFactsData;
+}) {
   const { timing } = chart;
   const palaceName = (id: string) =>
     chart.palaces.find((p) => `palace:${p.earthlyBranch}` === id)?.name;
@@ -15,10 +22,6 @@ export function SupplementalEvidence({ chart }: { chart: Chart }) {
   return (
     <>
       <p>
-        <Term term={terms.명주} /> {chart.soulStar} · <Term term={terms.신주} />{' '}
-        {chart.bodyStar}
-      </p>
-      <p>
         <Term term={terms.대한} /> {timing.startAge}세 시작 · {timing.direction}
         . 나이는 {timing.ageBasis}입니다. 연도는 {timing.yearBoundary}에
         시작합니다. 표시된 구간은 수명을 뜻하지 않습니다.
@@ -27,10 +30,10 @@ export function SupplementalEvidence({ chart }: { chart: Chart }) {
         className={styles.tableScroll}
         tabIndex={0}
         role="region"
-        aria-label="AI에 전달한 대한 표, 가로 스크롤 가능"
+        aria-label="계산한 대한 표, 가로 스크롤 가능"
       >
         <table className={styles.evidenceTable}>
-          <caption>AI에 전달한 대한 자료</caption>
+          <caption>계산한 대한 자료</caption>
           <thead>
             <tr>
               <th scope="col">계산용 나이</th>
@@ -71,7 +74,7 @@ export function SupplementalEvidence({ chart }: { chart: Chart }) {
         묘·왕·득·리·평·불·함은 전통 분류이며 운세 점수가 아닙니다. 등급이 없는
         별은 밝기를 추정하지 않습니다.
       </p>
-      <ExpandedEvidence chart={chart} />
+      <ExpandedEvidence chart={chart} facts={facts} />
     </>
   );
 }

@@ -18,27 +18,31 @@ export const consultationStages = [
   '유년 분석',
   '현실 조언과 핵심 결론',
 ] as const;
-export const aiExplanationSchema = z.strictObject({
-  sections: z
-    .array(
-      z.strictObject({
-        step: z.number().int().min(1).max(12),
-        status: z.enum(['limited', 'unavailable']),
-        limitation: z.string().min(10).max(1000),
-        paragraphs: z
-          .array(
-            z.strictObject({
-              evidenceIds: z.array(z.string().min(1).max(100)).min(1).max(20),
-              terms: z.string().min(1).max(500),
-              interpretation: z.string().min(10).max(1600),
-              check: z.string().min(5).max(800),
-            }),
-          )
-          .max(6),
-      }),
-    )
-    .length(12),
+
+const proseSchema = z.strictObject({
+  terms: z.string().trim().min(1).max(500),
+  interpretation: z.string().trim().min(10).max(1600),
+  check: z.string().trim().min(5).max(800),
 });
+export const monthlyReadingSchema = proseSchema.extend({
+  interpretation: z.string().trim().min(10).max(800),
+  check: z.string().trim().min(5).max(400),
+});
+export const aiParagraphSchema = proseSchema.extend({
+  evidenceIds: z.array(z.string().min(1).max(100)).min(1).max(20),
+});
+const sectionSchema = z.strictObject({
+  step: z.number().int().min(2).max(12),
+  paragraphs: z.array(aiParagraphSchema).min(1).max(4),
+});
+export type AiParagraph = z.infer<typeof aiParagraphSchema>;
+export type MonthlyReading = z.infer<typeof monthlyReadingSchema> & {
+  periodId: string;
+};
+export type ValidatedExplanation = {
+  sections: z.infer<typeof sectionSchema>[];
+  monthly: MonthlyReading[];
+};
 export type AiExplanationResult =
   | { status: 'not-requested' }
   | {
@@ -53,51 +57,61 @@ export type AiExplanationResult =
       message: string;
       retryable: boolean;
     }
-  | {
+  | ({
       status: 'ready';
       model: string;
       promptVersion: string;
-      sections: z.infer<typeof aiExplanationSchema>['sections'];
-    };
+    } & ValidatedExplanation);
+
+/** Required keys come from the calculated periods, including each leap half. */
+export function aiExplanationSchemaFor(evidence: ConsultationEvidence) {
+  const monthlyIds = new Set(evidence.timing.monthly.map((m) => m.id));
+  const generalIds = [...evidenceIds(evidence)].filter(
+    (id) => !monthlyIds.has(id),
+  );
+  const paragraph = aiParagraphSchema.extend({
+    evidenceIds: z.array(z.enum(generalIds)).min(1).max(20),
+  });
+  return z.strictObject({
+    sections: z
+      .array(
+        sectionSchema.extend({ paragraphs: z.array(paragraph).min(1).max(4) }),
+      )
+      .length(11),
+    monthly: z.strictObject(
+      Object.fromEntries(
+        evidence.timing.monthly.map((m) => [m.id, monthlyReadingSchema]),
+      ),
+    ),
+  });
+}
+
+function validateProse(p: z.infer<typeof proseSchema>) {
+  const prose = [p.terms, p.interpretation, p.check].join('\n');
+  if (
+    /(?:decadal|yearly|monthly|flying|pattern|palace|star):[^\s]+/.test(prose)
+  )
+    throw new Error('Internal evidence ID in prose');
+  // A regression guard for an observed error, not a general truth detector.
+  if (
+    /유월[^.!?\n]{0,40}(?:자료|근거)[^.!?\n]{0,20}(?:없어|없습니다|미제공|부족)/.test(
+      prose,
+    )
+  )
+    throw new Error('Contradicts provided monthly evidence');
+}
 
 export function validateAiExplanation(
   value: unknown,
   evidence: ConsultationEvidence,
-) {
-  const result = aiExplanationSchema.parse(value);
-  const ids = evidenceIds(evidence);
+): ValidatedExplanation {
+  const result = aiExplanationSchemaFor(evidence).parse(value);
   for (const [index, section] of result.sections.entries()) {
-    const prose = [
-      section.limitation,
-      ...section.paragraphs.flatMap((p) => [
-        p.terms,
-        p.interpretation,
-        p.check,
-      ]),
-    ].join('\n');
-    if (
-      /(?:decadal|yearly|monthly|flying|pattern|palace|star):[^\s]+/.test(prose)
-    )
-      throw new Error('Internal evidence ID in prose');
-    // Regression guard for an observed contradiction; not general semantic validation.
-    if (
-      /유월[^.!?\n]{0,40}(?:자료|근거)[^.!?\n]{0,20}(?:없어|없습니다|미제공|부족)/.test(
-        prose,
-      )
-    )
-      throw new Error('Contradicts provided monthly evidence');
-    if (section.step !== index + 1) throw new Error('Invalid analysis order');
-    if (
-      (section.status === 'unavailable') !==
-      (section.paragraphs.length === 0)
-    )
-      throw new Error('Invalid supported scope');
-    if (section.step === 11 && section.status === 'limited') {
-      const cited = new Set(section.paragraphs.flatMap((p) => p.evidenceIds));
-      if (evidence.timing.monthly.some((m) => !cited.has(m.id)))
-        throw new Error('Missing monthly coverage');
-    }
+    if (section.step !== index + 2) throw new Error('Invalid analysis order');
     for (const p of section.paragraphs) {
+      validateProse(p);
+      if (new Set(p.evidenceIds).size !== p.evidenceIds.length)
+        throw new Error('Duplicate evidence');
       if (
         [3, 10].includes(section.step) &&
         !p.evidenceIds.some((id) =>
@@ -110,37 +124,12 @@ export function validateAiExplanation(
         !p.evidenceIds.includes(evidence.timing.yearly.id)
       )
         throw new Error('Missing yearly evidence');
-      if (
-        p.evidenceIds.some((id) => !ids.has(id)) ||
-        new Set(p.evidenceIds).size !== p.evidenceIds.length
-      )
-        throw new Error('Unknown or duplicate evidence');
     }
   }
-  // Structural evidence checks do not establish the truth or semantic fidelity of prose.
-  return result.sections;
-}
-
-/** Constrain generation to the same source IDs checked after parsing. */
-export function aiExplanationSchemaFor(evidence: ConsultationEvidence) {
-  const section = aiExplanationSchema.shape.sections.element;
-  const paragraph = section.shape.paragraphs.element;
-  return aiExplanationSchema.extend({
-    sections: z
-      .array(
-        section.extend({
-          paragraphs: z
-            .array(
-              paragraph.extend({
-                evidenceIds: z
-                  .array(z.enum([...evidenceIds(evidence)]))
-                  .min(1)
-                  .max(20),
-              }),
-            )
-            .max(6),
-        }),
-      )
-      .length(12),
+  const monthly = evidence.timing.monthly.map((m) => {
+    const reading = result.monthly[m.id];
+    validateProse(reading);
+    return { ...reading, periodId: m.id };
   });
+  return { sections: result.sections, monthly };
 }

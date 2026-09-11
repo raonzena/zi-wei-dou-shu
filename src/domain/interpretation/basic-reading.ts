@@ -18,8 +18,8 @@ export type BasicReading = {
   entries: {
     ruleId: string;
     starName: string;
+    title: string;
     meaning: string;
-    question: string;
   }[];
 };
 
@@ -36,8 +36,8 @@ export function createBasicReading(chart: Chart): BasicReading {
       return {
         ruleId: rule.id,
         starName: star.name,
+        title: rule.title,
         meaning: rule.meaning,
-        question: rule.question,
       };
     })
     .sort((a, b) => a.ruleId.localeCompare(b.ruleId, 'en'));

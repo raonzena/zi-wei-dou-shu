@@ -82,7 +82,7 @@ describe('명궁 기본 풀이', () => {
       expect(reading.status).toBe('single');
       expect(starTerms[`major:${star.name}`]).toBeDefined();
       expect(reading.entries[0].meaning.length).toBeGreaterThan(0);
-      expect(reading.entries[0].question.endsWith('?')).toBe(true);
+      expect(reading.entries[0]).not.toHaveProperty('question');
       ids.add(reading.entries[0].ruleId);
     }
     expect(ids.size).toBe(14);
