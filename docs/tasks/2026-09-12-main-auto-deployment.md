@@ -39,3 +39,7 @@ https://vercel.com/account/tokens 에서 배포 대상 팀에 접근 가능한 �
 - [Vercel과 GitHub Actions](https://vercel.com/kb/guide/how-can-i-use-github-actions-with-vercel)
 
 - [검증한 GitHub Actions 실행](https://github.com/raonzena/zi-wei-dou-shu/actions/runs/34623405640)
+
+## 후속 실행의 계산 테스트 제한 시간 보완
+
+문서 반영 커밋 83f3ed8의 실행 34623822775는 입춘·음력 설 경계 테스트가 5초를 초과해 실패했고 배포는 건너뛰었다. 이 테스트는 같은 날짜를 두 번 포함해 명반 전체 계산을 네 번 실행했다. 중복 날짜 계산을 한 번으로 줄이고 이 다중 계산 테스트에만 15초를 적용했다. 입춘 전후 사화가 같고 음력 설에 달라진다는 검증 내용은 유지한다. 다른 테스트와 전체 작업 제한 시간은 바꾸지 않는다.

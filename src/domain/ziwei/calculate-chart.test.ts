@@ -153,18 +153,23 @@ describe('normalized birth to natal chart', () => {
     expect(make(6, 23).soulPalaceBranch).toBe('묘');
   });
 
-  it('keeps lunar-year transformations stable across lichun, changing at lunar new year', () => {
-    const transformations = (day: number) =>
-      success({ ...input, year: 2024, month: 2, day })
-        .chart.palaces.flatMap((p) =>
-          p.stars
-            .filter((s) => s.transformation)
-            .map((s) => `${s.name}:${s.transformation}`),
-        )
-        .sort();
-    expect(transformations(3)).toEqual(transformations(9));
-    expect(transformations(9)).not.toEqual(transformations(10));
-  });
+  it(
+    'keeps lunar-year transformations stable across lichun, changing at lunar new year',
+    { timeout: 15_000 },
+    () => {
+      const transformations = (day: number) =>
+        success({ ...input, year: 2024, month: 2, day })
+          .chart.palaces.flatMap((p) =>
+            p.stars
+              .filter((s) => s.transformation)
+              .map((s) => `${s.name}:${s.transformation}`),
+          )
+          .sort();
+      const beforeLunarNewYear = transformations(9);
+      expect(transformations(3)).toEqual(beforeLunarNewYear);
+      expect(beforeLunarNewYear).not.toEqual(transformations(10));
+    },
+  );
 });
 
 describe('server boundary and error isolation', () => {
