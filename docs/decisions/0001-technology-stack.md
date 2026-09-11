@@ -195,7 +195,7 @@ Vitest로 앱이 책임지는 입력 정규화·계산 정책·명반 회귀·�
 | `jotai`                        | 3.0.0   |
 | `@vanilla-extract/css`         | 1.21.2  |
 | `@supabase/supabase-js`        | 2.116.0 |
-| `typescript`                   | ~6.0.3  |
+| `typescript`                   | 6.0.3   |
 | `vitest`                       | 5.0.0   |
 | `@vanilla-extract/next-plugin` | 2.5.2   |
 | `eslint`                       | 10.10.0 |
