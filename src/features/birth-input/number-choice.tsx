@@ -1,5 +1,6 @@
 'use client';
 
+import ChevronDown from '../../assets/icons/chevron-down.svg';
 import { Autocomplete } from '@base-ui/react/autocomplete';
 import * as styles from './styles.css';
 
@@ -41,7 +42,11 @@ export function NumberChoice({
             className={styles.comboTrigger}
             aria-label={`${label} 목록 열기`}
           >
-            ▾
+            <ChevronDown
+              className={styles.chevron}
+              aria-hidden="true"
+              focusable="false"
+            />
           </Autocomplete.Trigger>
         </Autocomplete.InputGroup>
         <Autocomplete.Portal>

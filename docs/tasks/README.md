@@ -19,4 +19,6 @@
 | 2026-09-11 | [기존 문서의 한국어 가독성 개선](2026-09-11-document-readability.md)          | 완료                                                  |
 | 2026-09-11 | [입력 문구와 간편·상세 명반 UI](2026-09-11-chart-result-ui.md)                | 구현·데스크톱 검증 완료 / 모바일 검증 대기            |
 
+| 2026-09-11 | [중국풍 화면 디자인](2026-09-11-chinese-visual-design.md) | 피그마 8개 화면·페이지 반영 / 브라우저 검증 완료 |
+
 이 규칙 도입 이전의 초기 설정과 계산 엔진 평가 기록은 [기술 선택 기록](../decisions/0001-technology-stack.md), [계산 엔진 평가](../decisions/0002-calculation-engine-evaluation.md)에서 확인한다. 해당 기록을 새 작업 페이지 작성 완료로 집계하지 않는다.

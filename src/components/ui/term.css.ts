@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+import { colors, serif } from '../../styles/theme.css';
 export const trigger = style({
   font: 'inherit',
   color: 'inherit',
@@ -8,8 +9,11 @@ export const trigger = style({
   borderBottom: '1px dotted currentColor',
   cursor: 'help',
   selectors: {
-    '&:focus-visible': { outline: '2px solid #645277', outlineOffset: 3 },
-    '&[aria-expanded="true"]': { background: '#eeeaf1' },
+    '&:focus-visible': {
+      outline: `2px solid ${colors.accent}`,
+      outlineOffset: 3,
+    },
+    '&[aria-expanded="true"]': { background: colors.tint },
   },
 });
 export const positioner = style({ zIndex: 30, maxWidth: 'calc(100vw - 24px)' });
@@ -18,14 +22,18 @@ export const popup = style({
   maxWidth: 'calc(100vw - 24px)',
   maxHeight: 'var(--available-height)',
   overflowY: 'auto',
-  background: '#fff',
-  color: '#292331',
-  border: '1px solid #b8b1c0',
-  borderRadius: '.7rem',
+  background: colors.paper,
+  color: colors.ink,
+  border: `1px solid ${colors.line}`,
+  borderRadius: '.25rem',
   padding: '1rem',
-  boxShadow: '0 6px 24px #29233122',
+  boxShadow: `0 6px 24px rgb(41 41 35 / 14%)`,
 });
-export const title = style({ fontSize: '1rem', margin: '0 0 .5rem' });
+export const title = style({
+  fontFamily: serif,
+  fontSize: '1rem',
+  margin: '0 0 .5rem',
+});
 export const description = style({ fontSize: '.9rem', margin: 0 });
 export const actions = style({
   display: 'flex',
@@ -37,9 +45,9 @@ export const actions = style({
 });
 export const close = style({
   font: 'inherit',
-  border: '1px solid #b8b1c0',
-  borderRadius: '.4rem',
-  background: '#fff',
+  border: `1px solid ${colors.line}`,
+  borderRadius: '.25rem',
+  background: colors.paper,
   padding: '.5rem .8rem',
   minHeight: '2.75rem',
   cursor: 'pointer',

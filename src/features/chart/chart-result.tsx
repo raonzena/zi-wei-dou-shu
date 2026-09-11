@@ -1,5 +1,6 @@
 'use client';
 
+import { Brand } from '../../components/ui/brand';
 import { Provider } from 'jotai';
 import { Tabs } from '@base-ui/react/tabs';
 import { useSearchParams } from 'next/navigation';
@@ -21,7 +22,8 @@ export function ChartResult({
   const view = params.get('view') === 'detail' ? 'detail' : 'simple';
   return (
     <Provider>
-      <section aria-labelledby="preview-title">
+      <section className={styles.result} aria-labelledby="preview-title">
+        <Brand />
         <h1 id="preview-title" tabIndex={-1} className={styles.title}>
           나의 명반
         </h1>

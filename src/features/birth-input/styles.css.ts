@@ -1,43 +1,46 @@
 import { style } from '@vanilla-extract/css';
+import { colors, serif } from '../../styles/theme.css';
 
 export const eyebrow = style({
-  color: '#665b7b',
-  fontWeight: 650,
-  fontSize: '.8rem',
-  letterSpacing: '.12em',
+  color: colors.muted,
+  fontWeight: 700,
+  fontSize: '.875rem',
+
   margin: '0 0 1.25rem',
 });
 export const title = style({
   margin: '0 0 1rem',
-  fontSize: 'clamp(1.8rem, 5vw, 2.7rem)',
-  lineHeight: 1.3,
-  letterSpacing: '-.04em',
-  fontWeight: 650,
+  fontSize: 'clamp(2.25rem, 4vw, 3rem)',
+  fontFamily: serif,
+  lineHeight: 1.6,
+  letterSpacing: '-.025em',
+  fontWeight: 700,
 });
-export const intro = style({ color: '#615b66', marginBottom: '2.5rem' });
+export const intro = style({ color: colors.muted, marginBottom: '2.5rem' });
 export const help = style({
-  color: '#66606c',
-  fontSize: '.85rem',
+  color: colors.muted,
+  fontSize: '.875rem',
   margin: '.8rem 0 0',
 });
-export const form = style({ display: 'grid', gap: '1.6rem' });
+export const form = style({ display: 'grid', gap: '1.75rem' });
 export const section = style({
   border: 0,
-  borderTop: '1px solid #e1dce5',
+
   margin: 0,
-  padding: '1.4rem 0 0',
+  padding: 0,
   minWidth: 0,
 });
 export const legend = style({
-  fontSize: '1rem',
-  fontWeight: 650,
+  fontFamily: serif,
+  fontSize: '1.25rem',
+  fontWeight: 700,
   padding: '0 .75rem 0 0',
 });
 export const choices = style({
   display: 'flex',
   gap: '1rem',
   flexWrap: 'wrap',
-  marginBottom: '1rem',
+  marginBottom: '.5rem',
 });
 export const choice = style({
   display: 'inline-flex',
@@ -45,54 +48,66 @@ export const choice = style({
   gap: '.5rem',
   minHeight: '2.75rem',
   cursor: 'pointer',
-  accentColor: '#645277',
+  accentColor: colors.accent,
 });
-export const row = style({ display: 'flex', gap: '.7rem' });
+export const row = style({
+  display: 'flex',
+  gap: '.75rem',
+  marginTop: '.75rem',
+});
 export const field = style({
+  '@media': {
+    '(max-width: 360px)': { selectors: { '&:has(#year)': { flexGrow: 1.5 } } },
+  },
   flex: '1 1 0',
   minWidth: 0,
   display: 'flex',
   flexDirection: 'column',
   gap: '.35rem',
-  fontSize: '.85rem',
+  fontSize: '.875rem',
 });
 export const error = style({
-  color: '#9a242e',
-  fontSize: '.85rem',
+  color: colors.accent,
+  fontSize: '.875rem',
   margin: '.35rem 0 0',
 });
 export const errorSummary = style({
-  background: '#fff0ef',
-  borderLeft: '3px solid #9a242e',
+  background: colors.tint,
+  borderLeft: `3px solid ${colors.accent}`,
   padding: '1rem',
-  color: '#78252b',
+  color: colors.accent,
 });
 export const notice = style({
-  background: '#eeeaf1',
-  padding: '1.1rem',
-  borderRadius: '.65rem',
-  fontSize: '.8rem',
-  color: '#554c60',
+  background: colors.tint,
+  padding: '1.25rem',
+  borderRadius: '.25rem',
+  fontSize: '.875rem',
+  color: colors.muted,
 });
 export const button = style({
   border: 0,
-  borderRadius: '.65rem',
-  background: '#554265',
-  color: '#fff',
+  borderRadius: '.25rem',
+  background: colors.accent,
+  color: colors.paper,
   padding: '1rem 1.2rem',
   width: '100%',
   font: 'inherit',
-  fontWeight: 650,
+  fontWeight: 700,
   cursor: 'pointer',
   display: 'flex',
   justifyContent: 'space-between',
   selectors: {
-    '&:hover': { background: '#40314e' },
-    '&:focus-visible': { outline: '3px solid #a493ba', outlineOffset: 3 },
+    '&:hover': { background: colors.ink },
+    '&:focus-visible': {
+      outline: `3px solid ${colors.accent}`,
+      outlineOffset: 3,
+    },
     '&:disabled': { opacity: 0.6, cursor: 'wait' },
   },
 });
 export const loading = style({
+  alignItems: 'center',
+  gap: '1.5rem',
   minHeight: '65vh',
   display: 'flex',
   flexDirection: 'column',
@@ -100,13 +115,17 @@ export const loading = style({
   textAlign: 'center',
 });
 export const inputGroup = style({
+  minHeight: '3.25rem',
   display: 'flex',
   minWidth: 0,
-  border: '1px solid #b8b1c0',
-  borderRadius: '.55rem',
-  background: '#fff',
+  border: `1px solid ${colors.line}`,
+  borderRadius: '.25rem',
+  background: colors.paper,
   selectors: {
-    '&:focus-within': { outline: '3px solid #a493ba', outlineOffset: 2 },
+    '&:focus-within': {
+      outline: `3px solid ${colors.accent}`,
+      outlineOffset: 2,
+    },
   },
 });
 export const comboInput = style({
@@ -115,29 +134,32 @@ export const comboInput = style({
   border: 0,
   outline: 0,
   background: 'transparent',
-  padding: '.85rem .7rem',
+  padding: '.75rem .5rem',
+  '@media': { '(max-width: 360px)': { paddingRight: 0 } },
   font: 'inherit',
   fontSize: '1rem',
-  color: '#292331',
+  color: colors.ink,
 });
 export const comboTrigger = style({
-  width: '2rem',
+  display: 'grid',
+  placeItems: 'center',
+  width: '1.5rem',
   flexShrink: 0,
   border: 0,
   background: 'transparent',
-  color: '#554265',
+  color: colors.accent,
   cursor: 'pointer',
-  borderRadius: '.4rem',
-  selectors: { '&:focus-visible': { outline: '2px solid #554265' } },
+  borderRadius: '.25rem',
+  selectors: { '&:focus-visible': { outline: `2px solid ${colors.accent}` } },
 });
 export const positioner = style({ zIndex: 20, outline: 0 });
 export const popup = style({
   width: 'var(--anchor-width)',
   minWidth: '6rem',
-  background: '#fff',
-  border: '1px solid #b8b1c0',
-  borderRadius: '.5rem',
-  boxShadow: '0 5px 18px #29233122',
+  background: colors.paper,
+  border: `1px solid ${colors.line}`,
+  borderRadius: '.25rem',
+  boxShadow: `0 5px 18px rgb(41 41 35 / 14%)`,
   overflow: 'hidden',
 });
 export const optionList = style({
@@ -150,14 +172,34 @@ export const optionList = style({
 export const option = style({
   padding: '.6rem .75rem',
   minHeight: '2.75rem',
-  borderRadius: '.3rem',
+  borderRadius: '.25rem',
   cursor: 'pointer',
   selectors: {
-    '&[data-highlighted]': { background: '#eee6f5', color: '#40314e' },
+    '&[data-highlighted]': { background: colors.tint, color: colors.ink },
   },
 });
 export const empty = style({
   padding: '.7rem',
-  fontSize: '.8rem',
+  fontSize: '.875rem',
   selectors: { '&:empty': { display: 'none' } },
+});
+
+export const inputLayout = style({
+  display: 'grid',
+  gap: '2rem',
+  '@media': {
+    '(min-width: 1000px)': {
+      gridTemplateColumns: 'minmax(0, 432fr) minmax(0, 560fr)',
+      gap: 'clamp(3rem, 7.5vw, 6rem)',
+    },
+  },
+});
+export const introSeal = style({
+  '@media': { '(max-width: 999px)': { display: 'none' } },
+});
+
+export const chevron = style({
+  width: '.6rem',
+  height: '.35rem',
+  flexShrink: 0,
 });

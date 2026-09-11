@@ -19,7 +19,13 @@ export function ChartRing({
   return (
     <div className={styles.chart} aria-label="12궁 명반">
       <div className={styles.center}>
-        <strong>자미두수</strong>
+        <strong
+          className={styles.centerTitle}
+          lang="zh-Hant"
+          aria-label="자미두수"
+        >
+          紫微斗數
+        </strong>
         <Term term={terms.오행국}>{chart.fiveElementsClass}</Term>
         <span className={styles.centerHint}>
           {detail ? '궁을 선택해\n자세히 살펴보세요' : '나의 열두 궁'}
@@ -46,7 +52,7 @@ export function ChartRing({
                 aria-label={`${palace.name.endsWith('궁') ? palace.name : `${palace.name}궁`} 선택`}
                 onClick={() => setSelected(palace.index)}
               >
-                <strong>{palace.name}</strong>
+                <strong className={styles.palaceTitle}>{palace.name}</strong>
                 <span className={styles.stars}>
                   {majorStars.map((star) => star.name).join(' · ') ||
                     '주성 없음'}
