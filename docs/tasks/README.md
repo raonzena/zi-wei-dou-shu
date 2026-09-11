@@ -37,4 +37,4 @@
 
 이 규칙 도입 이전의 초기 설정과 계산 엔진 평가 기록은 [기술 선택 기록](../decisions/0001-technology-stack.md), [계산 엔진 평가](../decisions/0002-calculation-engine-evaluation.md)에서 확인한다. 해당 기록을 새 작업 페이지 작성 완료로 집계하지 않는다.
 
-| 2026-09-12 | [main 자동 배포](2026-09-12-main-auto-deployment.md) | 인증 등록 완료 / 실행 검증 중 |
+| 2026-09-12 | [main 자동 배포](2026-09-12-main-auto-deployment.md) | 완료 — CI·자동 배포 검증 |

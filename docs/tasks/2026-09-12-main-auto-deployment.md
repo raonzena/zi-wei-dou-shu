@@ -1,7 +1,7 @@
 # main 푸시 후 Vercel 자동 배포
 
 - 작성일: 2026-09-12
-- 상태: 워크플로우·인증 등록 완료, 원격 실행 검증 중
+- 상태: 완료 — main push의 CI·운영 배포 검증 완료
 
 ## 작업 개요와 요구사항
 
@@ -26,14 +26,16 @@ https://vercel.com/account/tokens 에서 배포 대상 팀에 접근 가능한 �
 
 ## 검증과 요구사항 대조
 
-기존 CI와 로컬 배포 성공에 사용한 명령·Node 24 설정을 대조했다. actionlint 1.7.12로 워크플로우 구문·식·작업 참조 검사를 통과했다(shellcheck는 로컬 미설치로 제외). pnpm format:check와 git diff --check도 통과했다. 앱 코드 변경은 없으므로 기존 전체 테스트·빌드를 다시 실행하지 않았다. VERCEL_TOKEN의 Repository secret 등록을 확인했다. Actions의 실제 인증·배포는 첫 실행에서 확인한다. 요구사항을 낮추지 않으며 인증 등록과 첫 main 실행이 완료될 때까지 자동 배포 활성화는 미완료로 유지한다.
+기존 CI와 로컬 배포 성공에 사용한 명령·Node 24 설정을 대조했다. actionlint 1.7.12로 워크플로우 구문·식·작업 참조 검사를 통과했다(shellcheck는 로컬 미설치로 제외). pnpm format:check와 git diff --check도 통과했다. 앱 코드 변경은 없으므로 기존 전체 테스트·빌드를 다시 실행하지 않았다. VERCEL_TOKEN의 Repository secret 등록을 확인했다. 첫 main push의 Actions 실행 34623405640에서 validate(1분 30초)와 Deploy to Vercel Production(1분 4초)이 모두 성공했다. 커밋 c3121a8의 main push로 자동 배포가 동작해 요구사항과 일치함을 확인했다. Vercel 배포 dpl_DMwvz8YkvfmfpXgXZixw2FCTSnT2의 production Ready 상태와 공개 주소 HTTP 200, AI 기본 설정을 확인했다. 유료 AI 호출은 하지 않았다.
 
 ## 남은 문제와 추후 개선점
 
-토큰 등록 후 커밋을 main에 반영하고 validate → deploy 성공을 확인해야 한다. 빌드 실패·인증 만료 시 기존 정상 배포는 유지되며 Actions 실행에서 실패 원인을 확인한다.
+기존 pnpm/action-setup@v4의 Node 20 런타임에 대해 Node 24 강제 실행 경고가 발생했으나 작업은 성공했다. 액션 후속 버전 전환은 별도 검토 대상으로 남긴다. 빌드 실패·인증 만료 시 기존 정상 배포는 유지되며 Actions 실행에서 실패 원인을 확인한다.
 
 ## 참고 자료
 
 - [Vercel CLI deploy](https://vercel.com/docs/cli/deploy)
 - [Vercel Git 설정](https://vercel.com/docs/project-configuration/git-settings)
 - [Vercel과 GitHub Actions](https://vercel.com/kb/guide/how-can-i-use-github-actions-with-vercel)
+
+- [검증한 GitHub Actions 실행](https://github.com/raonzena/zi-wei-dou-shu/actions/runs/34623405640)
