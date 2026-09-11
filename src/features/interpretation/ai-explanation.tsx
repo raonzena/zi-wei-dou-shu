@@ -51,10 +51,6 @@ export function AiExplanation({
     >
       <p className={styles.eyebrow}>계산 자료를 바탕으로 이어지는 해석</p>
       <h2 id="ai-explanation-title">나의 명반을 깊이 읽어보기</h2>
-      <p>
-        1단계 명반 판독 요약은 위의 서버 계산 자료입니다. 아래 2~12단계는 AI가
-        전통적인 상징을 해석한 내용이며 실제 사건을 확정하지 않습니다.
-      </p>
       {pending ? (
         <p role="status">
           해석을 다시 준비하고 있습니다. 계산 자료와 기본 풀이는 계속 볼 수

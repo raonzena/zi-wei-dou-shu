@@ -34,6 +34,13 @@ function response(value: unknown, status = 'completed') {
       id: 'resp_test',
       object: 'response',
       status,
+      usage: {
+        input_tokens: 1000,
+        input_tokens_details: { cached_tokens: 200 },
+        output_tokens: 100,
+        output_tokens_details: { reasoning_tokens: 10 },
+        total_tokens: 1100,
+      },
       output: [
         {
           id: 'msg_test',
@@ -58,6 +65,17 @@ function valid() {
 }
 
 describe('OpenAI 설명 요청과 검증', () => {
+  it('SDK 응답 사용량을 운영 기록 콜백에 전달한다', async () => {
+    fetchMock.mockResolvedValue(response(valid()));
+    const onUsage = vi.fn();
+    expect((await explainChart(reading(), onUsage)).status).toBe('ready');
+    expect(onUsage).toHaveBeenCalledExactlyOnceWith({
+      input: 1000,
+      cached: 200,
+      output: 100,
+    });
+  });
+
   it('키가 없으면 외부 호출 없이 설정 오류를 반환한다', async () => {
     vi.stubEnv('OPENAI_API_KEY', '');
     expect(await explainChart(reading())).toMatchObject({

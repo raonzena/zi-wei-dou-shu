@@ -5,7 +5,7 @@ import {
   type ChartFactsData,
 } from '../../domain/interpretation/chart-facts.server';
 import { isAiExplanationEnabled } from '../../server/interpretation/availability';
-import { explainChart } from '../../server/interpretation/explain.server';
+import { requestExplanation } from '../../server/interpretation/request.server';
 import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
 import { calculateChart } from '../../domain/ziwei/calculate-chart.server';
 import {
@@ -49,7 +49,7 @@ export async function calculatePreview(form: FormData): Promise<
     const facts = createChartFacts(result.data.chart);
     const ai: AiExplanationResult =
       isAiExplanationEnabled() && aiValues[0] === 'on'
-        ? await explainChart(result.data.chart)
+        ? await requestExplanation(result.data.chart)
         : { status: 'not-requested' };
     return { success: true, chart: result.data.chart, reading, facts, ai };
   } catch {

@@ -1,5 +1,6 @@
 import 'server-only';
 import OpenAI from 'openai';
+import type { TokenUsage } from './controls/usage';
 import { groundedInput } from './grounded-input';
 import { ZodError } from 'zod';
 import { zodTextFormat } from 'openai/helpers/zod';
@@ -13,9 +14,12 @@ import {
 } from '../../domain/interpretation/ai-explanation';
 
 export const explanationModel = 'gpt-5.4-mini-2026-03-17';
-export const explanationPromptVersion = 'user-consultation-v10';
+export const explanationPromptVersion = 'user-consultation-v11';
 
-export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
+export async function explainChart(
+  chart: Chart,
+  onUsage?: (usage: TokenUsage) => void,
+): Promise<AiExplanationResult> {
   const evidence = consultationEvidence(chart);
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey)
@@ -42,6 +46,12 @@ export async function explainChart(chart: Chart): Promise<AiExplanationResult> {
         ),
       },
     });
+    if (response.usage)
+      onUsage?.({
+        input: response.usage.input_tokens,
+        cached: response.usage.input_tokens_details.cached_tokens,
+        output: response.usage.output_tokens,
+      });
     if (response.status !== 'completed' || !response.output_parsed)
       return invalidResponse();
     try {

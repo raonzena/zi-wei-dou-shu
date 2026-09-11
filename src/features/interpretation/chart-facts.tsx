@@ -9,20 +9,16 @@ import * as styles from './styles.css';
 export function ChartFacts({
   chart,
   facts,
-  numbered,
 }: {
   chart: Chart;
   facts: ChartFactsData;
-  numbered: boolean;
 }) {
   const evidence = consultationEvidence(chart);
   return (
-    <section className={styles.reading} aria-label="서버 계산 자료">
+    <section className={styles.reading} aria-label="명반 판독 요약">
       <p className={styles.eyebrow}>계산 결과</p>
-      <details open={numbered}>
-        <summary className={styles.sectionSummary}>
-          {numbered ? '1. ' : ''}명반 판독 요약
-        </summary>
+      <details>
+        <summary className={styles.sectionSummary}>명반 판독 요약</summary>
         <dl className={styles.summaryList}>
           {facts.summary.map((item) => (
             <div key={item.label}>

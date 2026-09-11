@@ -79,11 +79,6 @@ export function ChartResult({
           <Tabs.Panel value="simple">
             <ChartRing chart={chart} detail={false} />
             <BasicReading reading={reading} />
-            <ChartFacts
-              chart={chart}
-              facts={facts}
-              numbered={ai.status !== 'not-requested'}
-            />
             <AiExplanation
               result={ai}
               chart={chart}
@@ -114,7 +109,7 @@ export function ChartResult({
             </p>
             <ChartRing chart={chart} detail />
             <PalaceDetail chart={chart} />
-            <ChartFacts chart={chart} facts={facts} numbered={false} />
+            <ChartFacts chart={chart} facts={facts} />
             <p className={styles.help}>
               현재는 14주성과 보조성 25개를 표시합니다. 밝기는 계산 자료 표에서
               확인할 수 있으며 나머지 별은 아직 표시하지 않습니다.

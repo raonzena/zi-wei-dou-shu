@@ -348,8 +348,11 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
                   구조, 대한·올해 유년·유월·유요 자료를 OpenAI에 보내 AI 해석을
                   함께 제공합니다. 원본 출생 날짜·시각·성별은 보내지 않지만,
                   대한의 나이와 연도 구간으로 출생 연도를 추정할 수 있습니다.
-                  OpenAI는 부정 사용 모니터링을 위해 API 내용을 보관할 수
-                  있습니다.{' '}
+                  요청 중복과 과도한 호출을 막기 위해 접속 IP와 명반을 비밀키로
+                  변환한 식별값, 처리 상태·시간·토큰 사용량·추정 비용을
+                  기록합니다. IP·명반 원문과 해석 결과는 저장하지 않으며, 30일이
+                  지난 운영 기록은 매일 삭제합니다. OpenAI는 부정 사용
+                  모니터링을 위해 API 내용을 보관할 수 있습니다.{' '}
                   <a
                     href="https://developers.openai.com/api/docs/guides/your-data"
                     target="_blank"

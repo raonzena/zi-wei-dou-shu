@@ -20,7 +20,9 @@
     "format:check": "prettier --check .",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "test:ai": "vitest run src/domain/interpretation/quality.test.ts src/server/interpretation/explain.test.ts",
-    "eval:ai": "vitest run src/server/interpretation/live-evaluation.test.ts"
+    "eval:ai": "vitest run src/server/interpretation/live-evaluation.test.ts",
+    "test:ai-db": "node scripts/test-ai-usage-db.mjs",
+    "report:ai": "node scripts/ai-usage-report.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",

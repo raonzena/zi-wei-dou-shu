@@ -2,6 +2,8 @@
 
 ## iztro-docs
 
+`src/content/palace-reading-rules.ts` also contains edited Korean palace descriptions and single-star symbolic guidance based on the existing glossary, reviewed rules, and the author's [palace guide](https://iztro.com/learn/palace). The service's practical suggestions are editorial guidance, not a translation of verified palace/star combination readings.
+
 The Korean single-star descriptions in `src/content/basic-reading-rules.ts` adapt the traits described by Sylar Long in [十四主星](https://iztro.com/learn/major-star). They are edited explanations, not a complete translation. The upstream [iztro-docs license](https://github.com/SylarLong/iztro-docs/blob/main/LICENSE) is reproduced below.
 
 ```text

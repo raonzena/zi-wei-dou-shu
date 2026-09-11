@@ -4,6 +4,8 @@ import { Term } from '../../components/ui/term';
 import { palaceTerms, starTerms, terms } from '../../content/glossary';
 import { displayedStars, starKey, type Star } from './display';
 import { selectedPalaceAtom } from './selection';
+import { PalaceReading } from '../interpretation/palace-reading';
+import { palaceReadingContexts } from '../../content/palace-reading-rules';
 import * as styles from './styles.css';
 
 function StarList({ stars }: { stars: Star[] }) {
@@ -46,8 +48,11 @@ export function PalaceDetail({ chart }: { chart: Chart }) {
             </>
           )}
         </h2>
+        <h3>이 궁이 알려주는 것</h3>
         <p>{palaceTerms[palace.name].description}</p>
+        <p>{palaceReadingContexts[palace.name].description}</p>
       </div>
+      <PalaceReading palace={palace} />
       <p className={styles.help}>
         <Term term={terms.간지} />: {palace.heavenlyStem}
         {palace.earthlyBranch}

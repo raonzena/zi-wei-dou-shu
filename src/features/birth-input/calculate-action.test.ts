@@ -1,4 +1,4 @@
-import * as aiService from '../../server/interpretation/explain.server';
+import * as aiService from '../../server/interpretation/request.server';
 import { describe, expect, it, vi } from 'vitest';
 import * as interpretation from '../../domain/interpretation/basic-reading';
 import { calculatePreview } from './calculate-action';
@@ -123,7 +123,7 @@ it('AI 선택 값의 중복이나 임의 문자열을 거부한다', async () =>
 });
 
 it('AI가 실패해도 서버 계산 자료와 기본 풀이를 반환한다', async () => {
-  const spy = vi.spyOn(aiService, 'explainChart').mockResolvedValueOnce({
+  const spy = vi.spyOn(aiService, 'requestExplanation').mockResolvedValueOnce({
     status: 'error',
     code: 'invalid-response',
     message: '검증 실패',
@@ -145,7 +145,7 @@ it('AI가 실패해도 서버 계산 자료와 기본 풀이를 반환한다', a
 
 it('서버 플래그가 꺼져 있으면 변조된 on 요청도 외부 호출하지 않는다', async () => {
   vi.stubEnv('AI_EXPLANATION_ENABLED', 'false');
-  const spy = vi.spyOn(aiService, 'explainChart');
+  const spy = vi.spyOn(aiService, 'requestExplanation');
   try {
     const result = await calculatePreview(form({ includeAi: 'on' }));
     expect(result.success).toBe(true);
