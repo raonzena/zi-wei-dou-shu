@@ -21,12 +21,16 @@
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "0.5.1",
     "@supabase/supabase-js": "2.116.0",
     "@vanilla-extract/css": "1.21.2",
+    "iztro": "2.6.1",
     "jotai": "3.0.0",
+    "korean-lunar-calendar": "0.4.0",
     "next": "16.3.4",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "4.6.2"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -38,8 +42,6 @@
     "@vitejs/plugin-react": "6.1.1",
     "eslint": "10.10.0",
     "eslint-config-prettier": "10.1.8",
-    "iztro": "2.6.1",
-    "korean-lunar-calendar": "0.4.0",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.0",
