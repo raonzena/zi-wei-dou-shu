@@ -99,47 +99,6 @@ export const loading = style({
   justifyContent: 'center',
   textAlign: 'center',
 });
-export const chart = style({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-  gridTemplateRows: 'repeat(4, minmax(6.5rem, auto))',
-  gap: '1px',
-  border: '1px solid #cec5d6',
-  borderRadius: '.7rem',
-  overflow: 'hidden',
-  background: '#cec5d6',
-  margin: '1.75rem 0',
-});
-export const palace = style({
-  padding: '.75rem .45rem',
-  background: '#fff',
-  minWidth: 0,
-});
-export const palaceTitle = style({
-  fontSize: '.82rem',
-  margin: 0,
-  color: '#4b365b',
-  overflowWrap: 'anywhere',
-});
-export const stars = style({
-  margin: '.7rem 0 0',
-  fontSize: '.78rem',
-  overflowWrap: 'anywhere',
-  color: '#554e59',
-});
-export const chartCenter = style({
-  gridRow: '2 / 4',
-  gridColumn: '2 / 4',
-  background: '#f0ebf4',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '.6rem',
-  color: '#554265',
-});
-export const reading = style({ marginBottom: '2rem', fontSize: '.95rem' });
-
 export const inputGroup = style({
   display: 'flex',
   minWidth: 0,
