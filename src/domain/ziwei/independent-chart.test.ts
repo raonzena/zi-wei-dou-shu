@@ -108,12 +108,8 @@ describe('accepted iztro leap late-rat exception', () => {
       // HKO: April 5 = leap 2/15; April 6 = leap 2/16. CUST month/hour soul rule:
       // month 2 + 子 => 卯, month 3 + 子 => 辰. v1 uses next month after day 15.
       const input = { ...reference.input, year: 2023, month: 4, minute: 0 };
-      expect(chart({ ...input, day: 5, hour: 0 }).soulPalaceBranch).toBe(
-        '묘',
-      );
-      expect(chart({ ...input, day: 6, hour: 0 }).soulPalaceBranch).toBe(
-        '진',
-      );
+      expect(chart({ ...input, day: 5, hour: 0 }).soulPalaceBranch).toBe('묘');
+      expect(chart({ ...input, day: 6, hour: 0 }).soulPalaceBranch).toBe('진');
       const late = chart({ ...input, day: 6, hour: 23 }).soulPalaceBranch;
       expect(late).toBe('묘');
       expect(late).not.toBe('진');
