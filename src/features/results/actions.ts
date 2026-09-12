@@ -1,5 +1,7 @@
 'use server';
 
+import { resultFingerprint } from '../../server/results/fingerprint.server';
+import type { ResultSnapshot } from '../../server/results/snapshot';
 import { calculatePreview } from '../birth-input/calculate-action';
 import { getStarContent } from '../../server/content/star-content.server';
 import {
@@ -35,15 +37,19 @@ export async function createSavedResult(form: FormData) {
           retryable: true,
         }
       : { status: 'not-requested' };
-    const id = await saveResult({
+    const snapshot: ResultSnapshot = {
       version: 1,
       chart,
       reading,
       facts,
       ai,
       content,
-    });
-    if (wantsAi) {
+    };
+    const { id, created } = await saveResult(
+      snapshot,
+      resultFingerprint(calculationForm, snapshot, wantsAi),
+    );
+    if (wantsAi && created) {
       try {
         const explanation = await requestExplanation(chart);
         await updateResultAi(id, explanation);

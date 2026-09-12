@@ -7,6 +7,9 @@ const m = vi.hoisted(() => ({
   update: vi.fn(),
   ai: vi.fn(),
 }));
+vi.mock('../../server/results/fingerprint.server', () => ({
+  resultFingerprint: () => 'a'.repeat(64),
+}));
 vi.mock('../birth-input/calculate-action', () => ({
   calculatePreview: m.calculate,
 }));
@@ -31,7 +34,7 @@ beforeEach(() => {
     facts: {},
     ai: { status: 'not-requested' },
   });
-  m.save.mockResolvedValue('saved-id');
+  m.save.mockResolvedValue({ id: 'saved-id', created: true });
   m.ai.mockResolvedValue({ status: 'not-requested' });
 });
 it('does not call AI if storage fails and preserves an input error', async () => {
@@ -79,4 +82,16 @@ it('never calls AI for a public visitor retry or when disabled', async () => {
   vi.stubEnv('AI_EXPLANATION_ENABLED', 'false');
   await retrySavedExplanation('id');
   expect(m.ai).not.toHaveBeenCalled();
+});
+
+it('returns a reused result without another AI call or update', async () => {
+  m.save.mockResolvedValue({ id: 'existing-id', created: false });
+  const form = new FormData();
+  form.set('includeAi', 'on');
+  expect(await createSavedResult(form)).toEqual({
+    success: true,
+    id: 'existing-id',
+  });
+  expect(m.ai).not.toHaveBeenCalled();
+  expect(m.update).not.toHaveBeenCalled();
 });

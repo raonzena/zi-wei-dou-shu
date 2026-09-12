@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   eq: vi.fn(),
   gt: vi.fn(),
   insert: vi.fn(),
+  rpc: vi.fn(),
 }));
 vi.mock('next/headers', () => ({
   cookies: async () => ({
@@ -22,7 +23,7 @@ vi.mock('next/headers', () => ({
   }),
 }));
 vi.mock('@supabase/supabase-js', () => ({
-  createClient: () => ({ from: mocks.from }),
+  createClient: () => ({ from: mocks.from, rpc: mocks.rpc }),
 }));
 const id = 'd964c88a-966b-4147-aae1-185f0d86f2dc';
 function buildSnapshot() {
@@ -43,7 +44,7 @@ const snapshot = () => structuredClone(fixtureSnapshot);
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mocks.token = undefined;
+  mocks.token = 'a'.repeat(64);
   mocks.response = { data: null, error: null };
   vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co');
   vi.stubEnv('SUPABASE_SECRET_KEY', 'test');
@@ -57,6 +58,10 @@ beforeEach(() => {
     then: (resolve: (v: unknown) => void) =>
       Promise.resolve(mocks.response).then(resolve),
   };
+  mocks.rpc.mockImplementation(async () => ({
+    data: { id, created: true },
+    error: mocks.response.error,
+  }));
   mocks.from.mockReturnValue(chain);
   mocks.eq.mockReturnValue(chain);
   mocks.gt.mockReturnValue(chain);
@@ -64,16 +69,16 @@ beforeEach(() => {
 });
 it('stores a validated snapshot and an owner digest, never the owner token', async () => {
   const data = snapshot();
-  expect(await saveResult(data)).toMatch(/^[a-f0-9-]{36}$/);
+  expect(await saveResult(data, 'b'.repeat(64))).toEqual({ id, created: true });
   const [name, token, options] = mocks.cookieSet.mock.calls[0];
   expect(name).toBe('ziwei-result-owner');
   expect(token).toHaveLength(64);
   expect(options.httpOnly).toBe(true);
-  const inserted = mocks.insert.mock.calls[0][0];
-  expect(inserted.owner_hash).toBe(
+  const inserted = mocks.rpc.mock.calls[0][1];
+  expect(inserted.p_owner_hash).toBe(
     createHash('sha256').update(token).digest('hex'),
   );
-  expect(inserted.payload).toEqual(data);
+  expect(inserted.p_payload).toEqual(data);
   expect(JSON.stringify(inserted)).not.toContain(token);
 });
 it('allows link visitors to restore the stored result without ownership', async () => {
@@ -90,6 +95,7 @@ it('allows link visitors to restore the stored result without ownership', async 
   expect(mocks.gt).toHaveBeenCalledWith('expires_at', expect.any(String));
 });
 it('does not query invalid IDs or owner-only reads without credentials', async () => {
+  mocks.token = undefined;
   expect(await loadResult('invalid')).toBeNull();
   expect(await loadResult(id, true)).toBeNull();
   expect(mocks.from).not.toHaveBeenCalled();
@@ -109,8 +115,18 @@ it('does not update absent or unauthorized results', async () => {
 it('distinguishes storage failure from a missing result and rejects invalid snapshots', async () => {
   mocks.response.error = {};
   await expect(loadResult(id)).rejects.toThrow('load failed');
-  await expect(saveResult(snapshot())).rejects.toThrow('save failed');
+  await expect(saveResult(snapshot(), 'b'.repeat(64))).rejects.toThrow(
+    'save failed',
+  );
   expect(() =>
     parseSnapshot({ ...snapshot(), birthDate: 'private' }),
   ).toThrow();
+});
+
+it('requires an established owner cookie before saving', async () => {
+  mocks.token = undefined;
+  await expect(saveResult(snapshot(), 'b'.repeat(64))).rejects.toThrow(
+    'session unavailable',
+  );
+  expect(mocks.rpc).not.toHaveBeenCalled();
 });

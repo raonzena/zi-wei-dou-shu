@@ -1,11 +1,14 @@
 import 'server-only';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { parseSnapshot, resultIdSchema, type ResultSnapshot } from './snapshot';
 
-const cookieName = 'ziwei-result-owner';
-export const retentionSeconds = 30 * 24 * 60 * 60;
+import {
+  ownerCookieName,
+  retentionSeconds,
+  validOwnerToken,
+} from './owner-cookie';
 const digest = (value: string) =>
   createHash('sha256').update(value).digest('hex');
 function database() {
@@ -26,13 +29,13 @@ function database() {
 }
 async function owner(create = false) {
   const jar = await cookies();
-  let token = jar.get(cookieName)?.value;
-  if (!token || !/^[a-f0-9]{64}$/.test(token)) {
-    if (!create) return null;
-    token = randomBytes(32).toString('hex');
+  const token = jar.get(ownerCookieName)?.value;
+  if (!validOwnerToken(token)) {
+    if (create) throw new Error('Result session unavailable');
+    return null;
   }
   if (create)
-    jar.set(cookieName, token, {
+    jar.set(ownerCookieName, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -41,18 +44,27 @@ async function owner(create = false) {
     });
   return digest(token);
 }
-export async function saveResult(snapshot: ResultSnapshot) {
+export async function saveResult(
+  snapshot: ResultSnapshot,
+  fingerprint: string,
+) {
   const payload = parseSnapshot(snapshot);
+  if (!/^[a-f0-9]{64}$/.test(fingerprint))
+    throw new Error('Invalid result identity');
   const ownerHash = await owner(true);
-  const id = randomUUID();
-  const expiresAt = new Date(
-    Date.now() + retentionSeconds * 1000,
-  ).toISOString();
-  const { error } = await database()
-    .from('saved_results')
-    .insert({ id, owner_hash: ownerHash, payload, expires_at: expiresAt });
-  if (error) throw new Error('Result save failed');
-  return id;
+  const { data, error } = await database().rpc('save_or_reuse_result', {
+    p_owner_hash: ownerHash,
+    p_fingerprint: fingerprint,
+    p_payload: payload,
+  });
+  if (
+    error ||
+    !data ||
+    !resultIdSchema.safeParse(data.id).success ||
+    typeof data.created !== 'boolean'
+  )
+    throw new Error('Result save failed');
+  return { id: data.id as string, created: data.created as boolean };
 }
 export async function loadResult(id: string, requireOwner = false) {
   if (!resultIdSchema.safeParse(id).success) return null;
