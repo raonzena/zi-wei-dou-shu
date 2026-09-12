@@ -122,6 +122,7 @@ export const inputGroup = style({
   borderRadius: '.25rem',
   background: colors.paper,
   selectors: {
+    '&[data-disabled]': { opacity: 0.6 },
     '&:focus-within': {
       outline: `3px solid ${colors.accent}`,
       outlineOffset: 2,

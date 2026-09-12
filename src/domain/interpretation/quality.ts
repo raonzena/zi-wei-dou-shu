@@ -22,15 +22,29 @@ export function evaluateExplanation(
     };
   try {
     const result = validateAiExplanation(contract.data, evidence);
-    const texts = result.sections.flatMap((section) => section.paragraphs);
+    const texts = result.sections.flatMap((section) =>
+      section.paragraphs.map((p) => p.text),
+    );
+    const sentenceFlags = result.sections.flatMap((section) => {
+      const count = section.paragraphs.reduce(
+        (sum, p) =>
+          sum + (p.text.match(/[.!?](?:["”’])?(?:\s|$)/g)?.length ?? 0),
+        0,
+      );
+      return count < 4 || count > 5
+        ? [`${section.id}: 본문 ${count}문장으로 4~5문장 기준 확인 필요`]
+        : [];
+    });
     return {
       ...base,
       contractPass: true,
       evidencePass: true,
-      reviewFlags:
-        texts.length !== new Set(texts).size
+      reviewFlags: [
+        ...sentenceFlags,
+        ...(texts.length !== new Set(texts).size
           ? ['분야별 해석에 완전히 같은 문장이 반복됩니다.']
-          : [],
+          : []),
+      ],
     };
   } catch {
     return {

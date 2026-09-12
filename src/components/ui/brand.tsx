@@ -1,12 +1,24 @@
+'use client';
+
+import Link from 'next/link';
 import Logo from '@/app/icon.svg';
 import * as styles from './brand.css';
 
 export function Brand() {
   return (
-    <p className={styles.brand}>
+    <Link
+      href="/"
+      className={styles.brand}
+      aria-label="자미두수 홈"
+      prefetch={false}
+      onNavigate={(event) => {
+        event.preventDefault();
+        window.location.assign('/');
+      }}
+    >
       <Logo className={styles.logo} aria-hidden="true" focusable="false" />
       <span>자미두수</span>
-    </p>
+    </Link>
   );
 }
 

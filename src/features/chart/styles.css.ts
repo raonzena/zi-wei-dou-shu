@@ -176,3 +176,30 @@ export const centerTitle = style({
   fontSize: 'clamp(1.25rem, 4vw, 2rem)',
   color: colors.accent,
 });
+
+export const starExplanation = style({ width: '100%', padding: '.5rem 0' });
+export const disclosureSummary = style({
+  cursor: 'pointer',
+  padding: '.5rem 0',
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${colors.accent}`,
+      outlineOffset: 3,
+    },
+  },
+});
+export const resultActions = style({
+  borderTop: `1px solid ${colors.line}`,
+  marginTop: '1rem',
+  paddingTop: '.5rem',
+});
+
+export const readingGuide = style([
+  reading,
+  {
+    borderTop: `1px solid ${colors.line}`,
+    marginTop: '2rem',
+    paddingTop: '1.5rem',
+  },
+]);
+export const readingGuideTitle = style({ marginTop: 0 });

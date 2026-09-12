@@ -1,80 +1,74 @@
+import type { StarContent } from '../../domain/content/star-content';
 import type { ConsultationEvidence } from '../../domain/interpretation/consultation-evidence';
+import { terms } from '../../content/glossary';
 
-/** Resolve every cross-layer position on the server; the model never joins arrays. */
-export function groundedInput(evidence: ConsultationEvidence) {
+/** Only natal evidence enters the seven-topic reading; timing stays in detail facts. */
+export function groundedInput(
+  evidence: ConsultationEvidence,
+  content: StarContent[],
+) {
   const position = (id: string) => {
-    const p = evidence.palaces.find((p) => p.id === id);
-    if (!p) throw new Error('Unknown palace reference');
+    const palace = evidence.palaces.find((p) => p.id === id);
+    if (!palace) throw new Error('Unknown palace reference');
     return {
       palaceId: id,
-      branch: p.earthlyBranch,
-      natalPalace: p.name,
-      natalMajorStars: p.stars.filter((s) => s.isMajor).map((s) => s.name),
-    };
-  };
-  const resolve = <
-    T extends
-      | ConsultationEvidence['timing']['decadals'][number]
-      | ConsultationEvidence['timing']['yearly']
-      | ConsultationEvidence['timing']['monthly'][number],
-  >(
-    layer: T,
-  ) => {
-    const { palaceNames, ...rest } = layer;
-    const placements = evidence.palaces.map((p, i) => ({
-      ...position(p.id),
-      timingPalace: palaceNames[i],
-    }));
-    const at = (id: string) => placements.find((p) => p.palaceId === id)!;
-    return {
-      ...rest,
-      layer: layer.id.startsWith('decadal:')
-        ? '대한'
-        : layer.id.startsWith('yearly:')
-          ? '유년'
-          : '유월',
-      soulPalace: at(layer.soulPalaceId),
-      placements: placements.map(({ branch, natalPalace, timingPalace }) => ({
-        branch,
-        natalPalace,
-        timingPalace,
-      })),
-      transformations: layer.transformations.map((t) => ({
-        ...t,
-        natalPalace: at(t.palaceId).natalPalace,
-        timingPalace: at(t.palaceId).timingPalace,
-      })),
-      movingStars: layer.movingStars.map((s) => ({
-        name: s.name,
-        natalPalace: at(s.palaceId).natalPalace,
-        timingPalace: at(s.palaceId).timingPalace,
-      })),
+      branch: palace.earthlyBranch,
+      natalPalace: palace.name,
+      natalMajorStars: palace.stars.filter((s) => s.isMajor).map((s) => s.name),
     };
   };
   return {
-    ...evidence,
-    inputVersion: 'resolved-layers-v4',
-    yearlyReadingBoundary: {
-      scope: '11단계 유년 설명에서 사용할 사화의 유일한 출처',
-      evidenceId: evidence.timing.yearly.id,
-      yearStem: evidence.timing.yearly.heavenlyStem,
-      soulPalace: position(evidence.timing.yearly.soulPalaceId),
-      transformationStatements: evidence.timing.yearly.transformations.map(
-        (t) =>
-          `${evidence.timing.yearly.year}년 유년 사화: ${t.starName} 화${t.type} · 본명반 ${position(t.palaceId).natalPalace}궁 · ${position(t.palaceId).branch} 위치`,
-      ),
-      rule: '유년 명궁이 위치한 본명반 궁의 천간은 연간이 아니다. 그 궁에서 출발하는 궁간 사화를 유년 사화로 사용하지 않는다. 11단계는 이 목록에 없는 사화를 서술하지 않는다.',
+    inputVersion: 'natal-reading-v3',
+    starReferences: content
+      .filter((c) =>
+        evidence.palaces.some((p) =>
+          p.stars.some((s) => `${s.category}:${s.name}` === c.star_key),
+        ),
+      )
+      .map((c) => ({
+        starKey: c.star_key,
+        version: c.version,
+        meaning: c.translation,
+        source: c.source_url,
+        sourceVersion: c.source_version,
+      }))
+      .sort((a, b) => a.starKey.localeCompare(b.starKey)),
+    source: evidence.source,
+    engine: evidence.engine,
+    chartType: evidence.chartType,
+    metadata: evidence.metadata,
+    bodyPalace: {
+      ...position(`palace:${evidence.metadata.bodyPalaceBranch}`),
+      meaning: terms.신궁.description,
+      distinction: '신궁은 신체·질병을 담당하는 궁이 아니며 질액궁과 구분한다.',
     },
-    timing: {
-      ...evidence.timing,
-      decadals: evidence.timing.decadals.map(resolve),
-      yearly: resolve(evidence.timing.yearly),
-      monthly: evidence.timing.monthly.map(resolve),
-    },
+    palaceAliases: evidence.palaceAliases,
+    relationOrder: evidence.relationOrder,
+    transformationLayer:
+      'palaces는 생년사화; flyingTransformations는 본명반 궁간 사화',
+    brightnessScale: evidence.brightnessScale,
+    brightnessSource: evidence.brightnessSource,
+    palaces: evidence.palaces.map((p) => ({
+      ...p,
+      aliases: [
+        ...new Set([
+          p.name,
+          evidence.palaceAliases[
+            p.name as keyof typeof evidence.palaceAliases
+          ] ?? p.name,
+          ...(p.earthlyBranch === evidence.metadata.bodyPalaceBranch
+            ? ['신궁']
+            : []),
+        ]),
+      ],
+    })),
+    patterns: evidence.patterns.filter((p) => p.matched),
     flyingTransformations: evidence.flyingTransformations.map((f) => ({
       ...f,
       source: position(f.sourcePalaceId),
       target: position(f.targetPalaceId),
     })),
+    excluded: [...evidence.excluded, '대한·유년·유월 및 시기별 해석'],
+    missing: evidence.missing,
   };
 }

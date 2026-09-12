@@ -1,3 +1,4 @@
+import { getStarContent } from '../content/star-content.server';
 import { expect, it } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Temporal } from '@js-temporal/polyfill';
@@ -30,6 +31,9 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
     );
     if (!chart.success) throw new Error('Evaluation case calculation failed');
     const evidence = consultationEvidence(chart.data.chart);
+    const published = await getStarContent();
+    if (published.status !== 'ready' || !published.entries.length)
+      throw new Error('Published content required');
     const original = globalThis.fetch;
     let calls = 0;
     let usage: unknown;
@@ -45,7 +49,9 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
       providerStatus = response.status;
       if (body.error)
         providerError = { code: body.error.code, type: body.error.type };
-      providerOutput = body.output;
+      providerOutput = body.output?.filter(
+        (item: { type: string }) => item.type === 'message',
+      );
       const message = body.output?.find(
         (item: { type: string }) => item.type === 'message',
       );
@@ -63,7 +69,7 @@ it.skipIf(process.env.ZIWEI_LIVE_EVAL !== '1')(
     };
     const started = performance.now();
     try {
-      const result = await explainChart(chart.data.chart);
+      const result = await explainChart(chart.data.chart, published.entries);
       const report = {
         caseId: selected.id,
         model: explanationModel,

@@ -1,3 +1,4 @@
+import type { StarContent } from '../../domain/content/star-content';
 import 'server-only';
 import OpenAI from 'openai';
 import type { TokenUsage } from './controls/usage';
@@ -14,10 +15,11 @@ import {
 } from '../../domain/interpretation/ai-explanation';
 
 export const explanationModel = 'gpt-5.4-mini-2026-03-17';
-export const explanationPromptVersion = 'concise-consultation-v1';
+export const explanationPromptVersion = 'grounded-passages-v6';
 
 export async function explainChart(
   chart: Chart,
+  content: StarContent[],
   onUsage?: (usage: TokenUsage) => void,
 ): Promise<AiExplanationResult> {
   const evidence = consultationEvidence(chart);
@@ -38,7 +40,7 @@ export async function explainChart(
       max_output_tokens: 16000,
       reasoning: { effort: 'low' },
       instructions: groundedInstructions,
-      input: JSON.stringify(groundedInput(evidence)),
+      input: JSON.stringify(groundedInput(evidence, content)),
       text: {
         format: zodTextFormat(
           aiExplanationSchemaFor(evidence),

@@ -5,6 +5,23 @@ import fixture from '../../domain/ziwei/fixtures/cust-1929.json';
 import { requestExplanation } from './request.server';
 import { privateDigest, actorAddress } from './controls/identity';
 import { estimatedMicrousd, validUsage } from './controls/usage';
+vi.mock('../content/star-content.server', () => ({
+  getStarContent: async () => ({
+    status: 'ready',
+    entries: [
+      {
+        star_key: 'major:자미',
+        version: 1,
+        title: '자미',
+        translation: '테스트 설명',
+        translation_kind: 'adaptation',
+        source_url: 'https://iztro.com/learn/major-star',
+        source_version: 'test',
+        license: 'MIT',
+      },
+    ],
+  }),
+}));
 const mocks = vi.hoisted(() => ({
   reserve: vi.fn(),
   finish: vi.fn(),
@@ -60,6 +77,15 @@ it('비활성 상태에서는 DB와 제공자를 호출하지 않는다', async 
   expect(await requestExplanation(chart)).toEqual({ status: 'not-requested' });
   expect(mocks.reserve).not.toHaveBeenCalled();
   expect(mocks.explain).not.toHaveBeenCalled();
+});
+it('본명반이 같으면 해석에 쓰지 않는 운한 변경으로 중복 식별이 바뀌지 않는다', async () => {
+  await requestExplanation(chart);
+  const changed = structuredClone(chart);
+  changed.timing.yearly.year += 1;
+  await requestExplanation(changed);
+  expect(mocks.reserve.mock.calls[0][0].p_fingerprint).toBe(
+    mocks.reserve.mock.calls[1][0].p_fingerprint,
+  );
 });
 it.each(['OPENAI_API_KEY', 'AI_USAGE_HMAC_SECRET'])(
   '필수 설정 %s 누락 시 호출하지 않는다',
@@ -132,7 +158,7 @@ it('IP·명반 원문 대신 HMAC을 전달하고 사용량 불명의 실패도 
   expect(mocks.explain).toHaveBeenCalledTimes(1);
 });
 it('구조 검증 실패도 토큰 비용에 포함하고 정산 장애로 결과를 잃지 않는다', async () => {
-  mocks.explain.mockImplementation(async (_, onUsage) => {
+  mocks.explain.mockImplementation(async (_, _content, onUsage) => {
     onUsage({ input: 1000, cached: 200, output: 100 });
     return {
       status: 'error',
@@ -161,7 +187,7 @@ it('구조 검증 실패도 토큰 비용에 포함하고 정산 장애로 결�
   );
 });
 it('잘못된 사용량은 비용을 낮추는 정산에 사용하지 않는다', async () => {
-  mocks.explain.mockImplementation(async (_, onUsage) => {
+  mocks.explain.mockImplementation(async (_, _content, onUsage) => {
     onUsage({ input: 1, cached: 200, output: -1 });
     throw new Error('private provider');
   });

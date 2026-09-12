@@ -1,37 +1,53 @@
 import type { ConsultationEvidence } from '../consultation-evidence';
 import { readingSections } from '../ai-explanation';
 
-/** Test data; not a generated consultation or production fallback. */
+/** Test-only structured passages, never production fallback content. */
 export function mockExplanation(evidence: ConsultationEvidence) {
-  const soul = evidence.palaces.find((palace) => palace.name === '명궁')!;
-  const career = evidence.palaces.find((palace) => palace.name === '관록')!;
-  const money = evidence.palaces.find((palace) => palace.name === '재백')!;
-  const partner = evidence.palaces.find((palace) => palace.name === '부처')!;
-  const inner = evidence.palaces.find((palace) => palace.name === '복덕')!;
-  const health = evidence.palaces.find((palace) => palace.name === '질액')!;
-  const social = evidence.palaces.find((palace) => palace.name === '노복')!;
-  const references = [soul, career, money, partner, inner, health, social];
-
+  const names = ['명궁', '관록', '재백', '부처', '복덕', '질액', '노복'];
+  const passage = (text: string, id: string) => ({
+    text,
+    evidence: [{ id, relevance: text, interpretation: text }],
+  });
+  const soul = evidence.palaces.find((p) => p.name === '명궁')!;
   return {
     overview: {
       paragraphs: [
-        '전체적인 성향과 생활 패턴을 짧고 자연스럽게 확인하기 위한 모의 해석입니다.',
+        passage('명궁을 전체 성향의 근거로 읽는 모의 해석입니다.', soul.id),
       ],
-      evidenceIds: ['chart', soul.id],
     },
-    sections: readingSections.map((section, index) => ({
-      id: section.id,
-      title: `${section.label}: 화면 형식을 확인하는 문장`,
-      paragraphs: [
-        `${section.label} 영역이 정해진 순서와 형식으로 표시되는지 확인하는 모의 문장입니다.`,
-      ],
-      bulletPoints:
-        index === 1 ? ['필요한 경우에만 짧은 목록을 표시합니다.'] : [],
-      evidenceIds: [references[index].id],
-    })),
-    closing: {
-      text: '한 줄로 정리하면, 이 문장은 결과 화면의 마지막 요약 형식을 확인하기 위한 모의 자료입니다.',
-      evidenceIds: ['chart', soul.id],
-    },
+    sections: readingSections.map((section, index) => {
+      const palace = evidence.palaces.find((p) => p.name === names[index])!;
+      return {
+        id: section.id,
+        title: passage(
+          `${section.label}: ${palace.name}의 의미를 확인하는 모의 제목`,
+          palace.id,
+        ),
+        paragraphs: [
+          {
+            ...passage(
+              `${palace.name}의 성향을 바탕으로 ${section.label}의 생활 모습을 설명하는 모의 문장입니다. 익숙한 선택의 기준을 살펴보는 내용입니다. 상황에 따라 다른 반응이 나올 수도 있습니다. 실제 경험에 따라 나타나는 정도는 다를 수 있습니다.`,
+              palace.id,
+            ),
+            id: 'p1' as 'p1' | 'p2' | 'p3',
+          },
+        ],
+        bulletPoints:
+          index === 1
+            ? [
+                {
+                  text: '결정하기 전에 기준을 정리해 보는 모의 조언입니다.',
+                  paragraphId: 'p1' as 'p1' | 'p2' | 'p3',
+                  reason:
+                    '첫 문단의 판단 성향에 따라 기준을 정리하는 행동을 제안합니다.',
+                },
+              ]
+            : [],
+      };
+    }),
+    closing: passage(
+      '한 줄로 정리하면, 명궁을 전체 성향의 근거로 읽는 모의 요약입니다.',
+      soul.id,
+    ),
   };
 }

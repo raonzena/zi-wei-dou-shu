@@ -135,6 +135,7 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
       max={ranges[field][1]}
       placeholder={placeholder}
       error={errors[field]}
+      disabled={pending}
       onChange={(value) => {
         if (field === 'year' || field === 'month')
           setDate((previous) => ({ ...previous, [field]: value }));
@@ -302,8 +303,8 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
               </div>
               <p id="time-help" className={styles.help}>
                 출생 기록에 적힌 당시의 현지 시각을 입력해주세요. 태어난 날짜에
-                적용되던 표준시와 서머타임을 반영합니다. 시각을 모르는 경우에는
-                명반을 계산할 수 없습니다.
+                적용되던 표준시와 서머타임을 반영합니다. 태어난 시각에 따라 궁과
+                별의 배치가 달라지므로, 명반을 보려면 시각을 입력해야 합니다.
               </p>
               {error('time')}
             </fieldset>
@@ -345,10 +346,9 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
               {includeAi && (
                 <p>
                   명반의 궁과 별·밝기, 명궁·신궁·명주·신주·오행국, 사화·격국
-                  구조, 대한·올해 유년·유월·유요 자료를 OpenAI에 보내 AI 해석을
-                  함께 제공합니다. 원본 출생 날짜·시각·성별은 보내지 않지만,
-                  대한의 나이와 연도 구간으로 출생 연도를 추정할 수 있습니다.
-                  요청 중복과 과도한 호출을 막기 위해 접속 IP와 명반을 비밀키로
+                  구조를 OpenAI에 보내 해석을 함께 제공합니다. 원본 출생
+                  날짜·시각·성별과 대한·유년·유월 자료는 보내지 않습니다. 요청
+                  중복과 과도한 호출을 막기 위해 접속 IP와 명반을 비밀키로
                   변환한 식별값, 처리 상태·시간·토큰 사용량·추정 비용을
                   기록합니다. IP·명반 원문과 해석 결과는 저장하지 않으며, 30일이
                   지난 운영 기록은 매일 삭제합니다. OpenAI는 부정 사용

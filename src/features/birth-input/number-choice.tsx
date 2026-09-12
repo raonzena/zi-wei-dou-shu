@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import ChevronDown from '../../assets/icons/chevron-down.svg';
 import { Autocomplete } from '@base-ui/react/autocomplete';
 import * as styles from './styles.css';
@@ -11,6 +12,7 @@ export function NumberChoice({
   max,
   placeholder,
   error,
+  disabled = false,
   onChange,
 }: {
   name: string;
@@ -19,20 +21,35 @@ export function NumberChoice({
   max: number;
   placeholder: string;
   error?: string;
+  disabled?: boolean;
   onChange?: (value: string) => void;
 }) {
+  const [value, setValue] = useState('');
+  const maxLength = name === 'year' ? 4 : 2;
   const items = Array.from({ length: max - min + 1 }, (_, i) =>
     String(name === 'year' ? max - i : min + i),
   );
   return (
     <div className={styles.field}>
       <label htmlFor={name}>{label}</label>
-      <Autocomplete.Root items={items} name={name} onValueChange={onChange}>
+      <Autocomplete.Root
+        disabled={disabled}
+        items={items}
+        name={name}
+        value={value}
+        onValueChange={(next) => {
+          const limited = next.slice(0, maxLength);
+          setValue(limited);
+          onChange?.(limited);
+        }}
+        openOnInputClick
+      >
         <Autocomplete.InputGroup className={styles.inputGroup}>
           <Autocomplete.Input
             id={name}
             className={styles.comboInput}
             inputMode="numeric"
+            maxLength={maxLength}
             required
             placeholder={placeholder}
             aria-invalid={!!error}

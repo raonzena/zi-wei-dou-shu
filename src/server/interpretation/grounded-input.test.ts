@@ -13,35 +13,30 @@ function prepare() {
   return consultationEvidence(r.data.chart);
 }
 afterEach(() => vi.unstubAllEnvs());
-it('대한·유년의 궁과 별을 서버에서 연결해 배열 추론을 없앤다', () => {
+it('본명반 배치만 보내고 시기 자료와 이전 12단계 안내를 제외한다', () => {
   const e = prepare(),
-    g = groundedInput(e);
-  expect(g.timing.yearly).not.toHaveProperty('palaceNames');
-  expect(
-    g.timing.decadals.find((d) => d.id === 'decadal:93')!.soulPalace,
-  ).toMatchObject({
-    natalPalace: '전택',
-    natalMajorStars: ['천기', '태음'],
-    timingPalace: '명궁',
-  });
-  expect(
-    g.timing.yearly.transformations.find((t) => t.type === '록'),
-  ).toMatchObject({ starName: '천동', natalPalace: '형제' });
-  expect(
-    g.timing.yearly.transformations.find((t) => t.type === '기'),
-  ).toMatchObject({ starName: '염정', natalPalace: '재백' });
-  for (const layer of [
-    ...g.timing.decadals,
-    g.timing.yearly,
-    ...g.timing.monthly,
-  ]) {
-    expect(layer.placements).toHaveLength(12);
-    for (const t of layer.transformations)
-      expect(
-        e.palaces
-          .find((p) => p.id === t.palaceId)!
-          .stars.some((s) => s.name === t.starName),
-      ).toBe(true);
+    g = groundedInput(e, []);
+  expect(g).not.toHaveProperty('timing');
+  expect(g).not.toHaveProperty('yearlyReadingBoundary');
+  expect(JSON.stringify(g)).not.toMatch(/(?:decadal|yearly|monthly):/);
+  expect(g.palaces).toMatchObject(e.palaces);
+  expect(g.palaces.find((p) => p.id === 'palace:묘')!.aliases).toContain(
+    '신궁',
+  );
+  expect(g.palaces.filter((p) => p.aliases.includes('신궁'))).toHaveLength(1);
+  expect(g.patterns.every((p) => p.matched)).toBe(true);
+  expect(g.bodyPalace).toMatchObject({ natalPalace: '부처', branch: '묘' });
+  expect(g.bodyPalace.meaning).toContain('행동과 삶의 관심사');
+  expect(g.flyingTransformations).toHaveLength(48);
+  for (const f of g.flyingTransformations) {
+    expect(f.source.palaceId).toBe(f.sourcePalaceId);
+    expect(f.target.palaceId).toBe(f.targetPalaceId);
+    expect(f.target.natalMajorStars).toEqual(
+      e.palaces
+        .find((p) => p.id === f.targetPalaceId)!
+        .stars.filter((s) => s.isMajor)
+        .map((s) => s.name),
+    );
   }
 });
 it('실제 관찰한 유년·대한 사화 혼동을 거부하고 계산된 쌍은 허용한다', () => {
@@ -80,18 +75,9 @@ it('AI는 기본 활성화되며 서버 플래그 false로 중단할 수 있다'
   expect(isAiExplanationEnabled()).toBe(true);
 });
 
-it('유년 명궁이 있는 궁의 천간과 연간이 다름을 명시한다', () => {
-  const e = prepare(),
-    g = groundedInput(e);
-  const natalFlying = e.flyingTransformations.find(
-    (f) => f.sourcePalaceId === e.timing.yearly.soulPalaceId && f.type === '록',
-  )!;
-  expect(natalFlying).toMatchObject({ heavenlyStem: '경', starName: '태양' });
-  expect(g.yearlyReadingBoundary.yearStem).toBe('병');
-  expect(g.yearlyReadingBoundary.transformationStatements).toContain(
-    '2026년 유년 사화: 천동 화록 · 본명반 형제궁 · 진 위치',
-  );
-  expect(
-    g.yearlyReadingBoundary.transformationStatements.join(' '),
-  ).not.toContain('태양 화록');
+it('사용하지 않는 유년 변경은 외부 전송 내용에 영향을 주지 않는다', () => {
+  const evidence = prepare();
+  const before = groundedInput(evidence, []);
+  evidence.timing.yearly.year += 1;
+  expect(groundedInput(evidence, [])).toEqual(before);
 });

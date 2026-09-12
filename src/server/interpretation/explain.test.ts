@@ -68,7 +68,7 @@ describe('OpenAI 설명 요청과 검증', () => {
   it('SDK 응답 사용량을 운영 기록 콜백에 전달한다', async () => {
     fetchMock.mockResolvedValue(response(valid()));
     const onUsage = vi.fn();
-    expect((await explainChart(reading(), onUsage)).status).toBe('ready');
+    expect((await explainChart(reading(), [], onUsage)).status).toBe('ready');
     expect(onUsage).toHaveBeenCalledExactlyOnceWith({
       input: 1000,
       cached: 200,
@@ -78,7 +78,7 @@ describe('OpenAI 설명 요청과 검증', () => {
 
   it('키가 없으면 외부 호출 없이 설정 오류를 반환한다', async () => {
     vi.stubEnv('OPENAI_API_KEY', '');
-    expect(await explainChart(reading())).toMatchObject({
+    expect(await explainChart(reading(), [])).toMatchObject({
       status: 'error',
       code: 'unavailable',
       retryable: false,
@@ -89,12 +89,12 @@ describe('OpenAI 설명 요청과 검증', () => {
     const chart = reading();
     chart.palaces.find((p) => p.name === '명궁')!.stars = [];
     fetchMock.mockResolvedValue(response(valid()));
-    expect((await explainChart(chart)).status).toBe('ready');
+    expect((await explainChart(chart, [])).status).toBe('ready');
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
-  it('원본 출생 정보를 제외하고 보충된 본명반·운한을 전송한다', async () => {
+  it('원본 출생 정보와 운한을 제외하고 본명반만 전송한다', async () => {
     fetchMock.mockResolvedValue(response(valid()));
-    const result = await explainChart(reading());
+    const result = await explainChart(reading(), []);
     expect(result.status).toBe('ready');
     const request = JSON.parse(fetchMock.mock.calls[0][1]!.body as string);
     expect(request).toMatchObject({
@@ -104,8 +104,13 @@ describe('OpenAI 설명 요청과 검증', () => {
       reasoning: { effort: 'low' },
     });
     expect(JSON.parse(request.input)).toEqual(
-      groundedInput(consultationEvidence(reading())),
+      groundedInput(consultationEvidence(reading()), []),
     );
+    expect(JSON.parse(request.input)).not.toHaveProperty('timing');
+    expect(JSON.parse(request.input)).not.toHaveProperty(
+      'yearlyReadingBoundary',
+    );
+    expect(request.input).not.toMatch(/(?:decadal|yearly|monthly):/);
     expect(request.instructions).toContain(userConsultationPrompt);
     expect(
       JSON.parse(request.input).palaces.every((p: { stars: object[] }) =>
@@ -115,8 +120,8 @@ describe('OpenAI 설명 요청과 검증', () => {
     expect(request.tools).toBeUndefined();
     expect(request.text.format.strict).toBe(true);
     const allowed =
-      request.text.format.schema.properties.sections.items.properties
-        .evidenceIds.items.enum;
+      request.text.format.schema.properties.sections.items.properties.paragraphs
+        .items.properties.evidence.items.properties.id.enum;
     expect(allowed).toContain('star:사:adjective:팔좌');
     expect(allowed).not.toContain('star:사:minor:팔좌');
     expect(request.instructions).toContain('relationship: 관계와 배우자');
@@ -136,24 +141,40 @@ describe('OpenAI 설명 요청과 검증', () => {
     }
     expect(JSON.stringify(result)).not.toContain('test-key');
   });
-  it.each(['unknown', 'duplicate', 'missing', 'extra'])(
+  it.each(['unknown', 'missing', 'extra'])(
     '근거가 %s인 응답을 거부한다',
     async (kind) => {
       const value = valid();
-      if (kind === 'unknown') value.sections[0].evidenceIds = ['invented'];
-      if (kind === 'duplicate')
-        value.sections[0].evidenceIds = ['chart', 'chart'];
+      if (kind === 'unknown')
+        value.sections[0].paragraphs[0].evidence[0].id = 'invented';
       if (kind === 'missing') value.sections.pop();
       if (kind === 'extra') value.sections.push(value.sections[0]);
       fetchMock.mockResolvedValue(response(value));
-      expect(await explainChart(reading())).toMatchObject({
+      expect(await explainChart(reading(), [])).toMatchObject({
         status: 'error',
       });
     },
   );
+  it('중복 근거는 정리하여 정상 응답으로 제공한다', async () => {
+    const value = valid();
+    const passage = value.sections[1].paragraphs[0];
+    passage.evidence.push({ ...passage.evidence[0] });
+    fetchMock.mockResolvedValue(response(value));
+    const result = await explainChart(reading(), []);
+    expect(result.status).toBe('ready');
+    if (result.status === 'ready') {
+      expect(result.sections[1].paragraphs[0].evidence).toEqual([
+        passage.evidence[0],
+      ]);
+      expect(result.sections[1].paragraphs.map((p) => p.text)).toEqual(
+        value.sections[1].paragraphs.map((p) => p.text),
+      );
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
   it('미완료 응답은 성공으로 표시하지 않는다', async () => {
     fetchMock.mockResolvedValue(response(valid(), 'incomplete'));
-    expect(await explainChart(reading())).toMatchObject({
+    expect(await explainChart(reading(), [])).toMatchObject({
       status: 'error',
       code: 'invalid-response',
     });
@@ -174,7 +195,7 @@ describe('OpenAI 설명 요청과 검증', () => {
         { headers: { 'content-type': 'application/json' } },
       ),
     );
-    expect(await explainChart(reading())).toMatchObject({
+    expect(await explainChart(reading(), [])).toMatchObject({
       status: 'error',
       code: 'invalid-response',
     });
@@ -192,7 +213,7 @@ describe('OpenAI 설명 요청과 검증', () => {
           { status, headers: { 'content-type': 'application/json' } },
         ),
       );
-      const result = await explainChart(reading());
+      const result = await explainChart(reading(), []);
       expect(result).toMatchObject({ status: 'error', code, retryable });
       expect(JSON.stringify(result)).not.toContain('private provider detail');
       expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -208,7 +229,7 @@ describe('OpenAI 설명 요청과 검증', () => {
           );
         }),
     );
-    const pending = explainChart(reading());
+    const pending = explainChart(reading(), []);
     await vi.advanceTimersByTimeAsync(150_100);
     expect(await pending).toMatchObject({
       status: 'error',
@@ -225,7 +246,7 @@ it('분야 순서가 뒤바뀌면 거부한다', async () => {
     value.sections[0],
   ];
   fetchMock.mockResolvedValue(response(value));
-  expect(await explainChart(reading())).toMatchObject({
+  expect(await explainChart(reading(), [])).toMatchObject({
     status: 'error',
     code: 'invalid-response',
   });
@@ -268,7 +289,7 @@ it.each([
       { status: 429, headers: { 'content-type': 'application/json' } },
     ),
   );
-  const result = await explainChart(reading());
+  const result = await explainChart(reading(), []);
   expect(result).toMatchObject({
     status: 'error',
     code: 'quota',
@@ -292,7 +313,7 @@ it.each(['rate_limit_exceeded', 'slow_down'])(
         { status: 429, headers: { 'content-type': 'application/json' } },
       ),
     );
-    expect(await explainChart(reading())).toMatchObject({
+    expect(await explainChart(reading(), [])).toMatchObject({
       status: 'error',
       code: 'rate-limit',
       retryable: true,
@@ -303,15 +324,15 @@ it.each(['rate_limit_exceeded', 'slow_down'])(
 
 it('간결한 분야별 해석을 허용한다', async () => {
   fetchMock.mockResolvedValue(response(valid()));
-  expect((await explainChart(reading())).status).toBe('ready');
+  expect((await explainChart(reading(), [])).status).toBe('ready');
 });
 it.each(['yearly:1800', 'decadal:3', 'monthly:2026:3:regular:normal'])(
   '시기 근거 %s를 간결한 본명반 해석에 넣으면 거부한다',
   async (id) => {
     const value = valid();
-    value.sections[0].evidenceIds = [id];
+    value.sections[0].paragraphs[0].evidence[0].id = id;
     fetchMock.mockResolvedValue(response(value));
-    expect(await explainChart(reading())).toMatchObject({
+    expect(await explainChart(reading(), [])).toMatchObject({
       status: 'error',
       code: 'invalid-response',
     });
@@ -322,9 +343,9 @@ it.each([
   '근거는 palace:사에 있습니다.',
 ])('사용자 문장에 내부 ID가 노출되면 거부한다: %s', async (paragraph) => {
   const value = valid();
-  value.sections[0].paragraphs[0] = paragraph;
+  value.sections[0].paragraphs[0].text = paragraph;
   fetchMock.mockResolvedValue(response(value));
-  expect(await explainChart(reading())).toMatchObject({
+  expect(await explainChart(reading(), [])).toMatchObject({
     status: 'error',
     code: 'invalid-response',
   });

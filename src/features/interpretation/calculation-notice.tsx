@@ -4,7 +4,7 @@ import * as styles from './styles.css';
 export function CalculationNotice({ facts }: { facts: ChartFactsData }) {
   return (
     <footer
-      className={styles.reading}
+      className={styles.calculationNotice}
       aria-labelledby="calculation-notice-title"
     >
       <h2 id="calculation-notice-title">계산 기준 안내</h2>

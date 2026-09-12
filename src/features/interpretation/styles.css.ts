@@ -21,6 +21,7 @@ globalStyle(`${evidence} ul`, {
   margin: '.25rem 0',
   paddingLeft: '1.25rem',
 });
+export const evidenceReason = style({ margin: '.125rem 0 .25rem' });
 export const evidenceSummary = style({
   cursor: 'pointer',
   padding: '.5rem 0',
@@ -129,3 +130,12 @@ export const summaryList = style({
 });
 globalStyle(`${summaryList} dt`, { color: colors.muted, fontSize: '.875rem' });
 globalStyle(`${summaryList} dd`, { margin: 0, fontWeight: 600 });
+
+export const calculationNotice = style([
+  reading,
+  {
+    borderTop: `1px solid ${colors.line}`,
+    marginTop: '1.5rem',
+    paddingTop: '1rem',
+  },
+]);

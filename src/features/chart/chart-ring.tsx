@@ -3,7 +3,7 @@ import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
 import { terms } from '../../content/glossary';
 import { positions } from './display';
-import { selectedPalaceAtom } from './selection';
+import { selectedPalace, selectedPalaceAtom } from './selection';
 import * as styles from './styles.css';
 
 export function ChartRing({
@@ -16,8 +16,7 @@ export function ChartRing({
   controlsId: string;
 }) {
   const [selected, setSelected] = useAtom(selectedPalaceAtom);
-  const selectedIndex =
-    selected ?? chart.palaces.find((p) => p.name === '명궁')!.index;
+  const selectedIndex = selectedPalace(chart, selected).index;
   return (
     <div className={styles.chart} aria-label="12궁 명반">
       <div className={styles.center}>

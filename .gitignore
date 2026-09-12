@@ -11,3 +11,5 @@ next-env.d.ts
 .pnpm-store/
 work/
 .vercel
+
+supabase/.temp/

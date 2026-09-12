@@ -1,30 +1,52 @@
-import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
+import type {
+  AiExplanationResult,
+  GroundedPassage,
+} from '../../domain/interpretation/ai-explanation';
 import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
 import type { Chart } from '../../domain/ziwei/chart';
 import { EvidenceReference } from './evidence-reference';
 import * as styles from './styles.css';
 
 function Evidence({
-  ids,
+  passages,
+  advice = [],
   chart,
   facts,
 }: {
-  ids: string[];
+  passages: { label: string; passage: GroundedPassage }[];
+  advice?: { label: string; paragraphLabel: string; reason: string }[];
   chart: Chart;
   facts: ChartFactsData;
 }) {
   return (
     <details className={styles.evidence}>
-      <summary className={styles.evidenceSummary}>
-        명반 근거 ({ids.length})
-      </summary>
-      <ul>
-        {ids.map((id) => (
-          <li key={id}>
-            <EvidenceReference id={id} chart={chart} facts={facts} />
-          </li>
-        ))}
-      </ul>
+      <summary className={styles.evidenceSummary}>풀이 근거</summary>
+      {passages.map(({ label, passage }) => (
+        <div key={label}>
+          <strong>{label}</strong>
+          <ul>
+            {passage.evidence.map(({ id, relevance, interpretation }) => (
+              <li key={id}>
+                <EvidenceReference id={id} chart={chart} facts={facts} />
+                <p className={styles.evidenceReason}>
+                  <strong>이 주제와의 관련성</strong> · {relevance}
+                </p>
+                <p className={styles.evidenceReason}>
+                  <strong>어떻게 해석했나요?</strong> · {interpretation}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      {advice.map((item) => (
+        <div key={item.label}>
+          <strong>
+            {item.label} · {item.paragraphLabel}에서 이어지는 조언
+          </strong>
+          <p className={styles.evidenceReason}>{item.reason}</p>
+        </div>
+      ))}
     </details>
   );
 }
@@ -69,10 +91,13 @@ export function AiExplanation({
         <>
           <div className={styles.overview}>
             {result.overview.paragraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+              <p key={index}>{paragraph.text}</p>
             ))}
             <Evidence
-              ids={result.overview.evidenceIds}
+              passages={result.overview.paragraphs.map((passage, index) => ({
+                label: `문단 ${index + 1}`,
+                passage,
+              }))}
               chart={chart}
               facts={facts}
             />
@@ -80,24 +105,39 @@ export function AiExplanation({
 
           {result.sections.map((section) => (
             <article key={section.id} className={styles.readingSection}>
-              <h3>{section.title}</h3>
+              <h3>{section.title.text}</h3>
               {section.paragraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p key={index}>{paragraph.text}</p>
               ))}
               {section.bulletPoints.length > 0 && (
                 <ul>
                   {section.bulletPoints.map((point, index) => (
-                    <li key={index}>{point}</li>
+                    <li key={index}>{point.text}</li>
                   ))}
                 </ul>
               )}
-              <Evidence ids={section.evidenceIds} chart={chart} facts={facts} />
+              <Evidence
+                passages={[
+                  { label: '제목', passage: section.title },
+                  ...section.paragraphs.map((passage, index) => ({
+                    label: `문단 ${index + 1}`,
+                    passage,
+                  })),
+                ]}
+                advice={section.bulletPoints.map((point, index) => ({
+                  label: `조언 ${index + 1}`,
+                  paragraphLabel: `문단 ${section.paragraphs.findIndex((p) => p.id === point.paragraphId) + 1}`,
+                  reason: point.reason,
+                }))}
+                chart={chart}
+                facts={facts}
+              />
             </article>
           ))}
 
           <p className={styles.closing}>{result.closing.text}</p>
           <Evidence
-            ids={result.closing.evidenceIds}
+            passages={[{ label: '마무리', passage: result.closing }]}
             chart={chart}
             facts={facts}
           />

@@ -2,6 +2,14 @@ import { style } from '@vanilla-extract/css';
 import { colors, serif } from '../../styles/theme.css';
 export const brand = style({
   display: 'flex',
+  width: 'fit-content',
+  textDecoration: 'none',
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${colors.accent}`,
+      outlineOffset: 4,
+    },
+  },
   gap: '1rem',
   alignItems: 'center',
   margin: '0 0 4rem',

@@ -32,18 +32,18 @@ export function createPalaceReading(palace: Chart['palaces'][number]) {
     detailedDescription: [
       context.description,
       `이 궁에서 살펴볼 중심 주제는 ‘${context.focus}’입니다.`,
-      '편안할 때 자연스럽게 드러나는 모습뿐 아니라 부담을 느낄 때 반복되는 반응도 함께 살펴볼 수 있습니다.',
+      '편안할 때의 모습과 부담을 느낄 때 반복하는 반응을 함께 살펴봅니다.',
       '한 번의 사건으로 결론을 내리기보다 비슷한 상황에서 되풀이되는 선택과 감정을 관찰하는 것이 중요합니다.',
     ],
     simplePractice: context.practice,
     detailedPractice: [
       context.practice,
       '먼저 최근 한 달 안에 이 생활 영역과 관련해 기억에 남는 상황 하나를 떠올려보세요.',
-      '그때 자연스럽게 잘한 선택과 힘이 많이 들었던 선택을 나누어 적으면 자신의 반복되는 방식을 발견하기 쉽습니다.',
-      '아래 별 설명은 정해진 결론이 아니라 다음 선택에서 활용할 강점과 조절할 부분을 찾는 기준으로 사용하세요.',
+      '그때 수월했던 일과 힘들었던 일을 나누어 적으면 비슷한 상황에서 어떤 선택을 반복하는지 알아보는 데 도움이 됩니다.',
+      '별 설명을 자신의 경험과 비교하며, 다음 선택에서 살릴 강점과 조절할 부분을 찾아보세요.',
     ],
     introduction: entries.length
-      ? `명반에서 이 영역에 놓인 중심 별은 ${entries.map((entry) => entry.starName).join('·')}입니다. 각 별이 상징하는 기본적인 모습을 ${context.focus}에 맞춰 풀어보면 다음과 같습니다.`
+      ? `명반에서 이 영역에 놓인 중심 별은 ${entries.map((entry) => entry.starName).join('·')}입니다. 이 별들의 기본 의미를 바탕으로 ${context.focus}을 살펴봅니다.`
       : '명반에서 이 영역에는 중심 별이 없습니다. 이 영역이 중요하지 않거나 좋지 않다는 뜻은 아닙니다. 지금 제공하는 기본 풀이만으로는 나의 모습을 설명하기 어려우므로 다른 별과 궁의 관계를 함께 살펴야 합니다.',
     scope:
       entries.length > 1

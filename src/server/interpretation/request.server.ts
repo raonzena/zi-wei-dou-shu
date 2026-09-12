@@ -1,8 +1,11 @@
+import { getStarContent } from '../content/star-content.server';
+import type { StarContent } from '../../domain/content/star-content';
 import 'server-only';
 import { headers } from 'next/headers';
 import type { Chart } from '../../domain/ziwei/chart';
 import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
 import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
+import { groundedInput } from './grounded-input';
 import { isAiExplanationEnabled } from './availability';
 import {
   explainChart,
@@ -39,11 +42,16 @@ export async function requestExplanation(
   if (!process.env.OPENAI_API_KEY?.trim()) return unavailable();
   let store: ReturnType<typeof usageStore>;
   let id: string;
+  let content: StarContent[];
   try {
     const secret = process.env.AI_USAGE_HMAC_SECRET?.trim();
     if (!secret || secret.length < 32) return unavailable();
     const actor = actorAddress(await headers(), process.env.VERCEL === '1');
     if (!actor) return unavailable();
+    const published = await getStarContent();
+    if (published.status !== 'ready' || published.entries.length === 0)
+      return unavailable();
+    content = published.entries;
     const actorHash = privateDigest(secret, 'actor', actor);
     const fingerprint = privateDigest(
       secret,
@@ -52,7 +60,7 @@ export async function requestExplanation(
         actorHash,
         model: explanationModel,
         prompt: explanationPromptVersion,
-        evidence: consultationEvidence(chart),
+        evidence: groundedInput(consultationEvidence(chart), content),
       }),
     );
     store = usageStore();
@@ -92,7 +100,7 @@ export async function requestExplanation(
   let usage: TokenUsage | undefined;
   let result: AiExplanationResult;
   try {
-    result = await explainChart(chart, (value) => {
+    result = await explainChart(chart, content, (value) => {
       if (validUsage(value)) usage = value;
     });
   } catch {

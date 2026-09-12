@@ -1,4 +1,5 @@
 'use client';
+import { ComprehensiveReading } from '../interpretation/comprehensive-reading';
 
 import { CalculationNotice } from '../interpretation/calculation-notice';
 import { ChartFacts } from '../interpretation/chart-facts';
@@ -15,6 +16,7 @@ import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
 import { terms } from '../../content/glossary';
 import { ChartRing } from './chart-ring';
+import { ReadingGuide } from './reading-guide';
 import { PalaceDetail } from './palace-detail';
 import * as styles from './styles.css';
 
@@ -70,7 +72,7 @@ export function ChartResult({
             activateOnFocus
           >
             <Tabs.Tab className={styles.tab} value="simple">
-              간편 명반
+              종합 풀이
             </Tabs.Tab>
             <Tabs.Tab className={styles.tab} value="detail">
               상세 명반
@@ -92,6 +94,7 @@ export function ChartResult({
               showTechnicalDetails={false}
             />
             <BasicReading reading={reading} />
+            <ComprehensiveReading chart={chart} />
             <AiExplanation
               result={ai}
               chart={chart}
@@ -99,22 +102,7 @@ export function ChartResult({
               pending={aiPending}
               onRetry={onRetryAi}
             />
-            <section className={styles.reading} aria-labelledby="reading-title">
-              <h2 id="reading-title">명반을 읽는 방법</h2>
-              <p>
-                열두 칸은 삶의 영역을 나눈 <Term term={terms.궁} />
-                입니다. 각 궁의 <Term term={terms.주성} />
-                부터 확인해보세요. 자세한 별의 배치는 상세 명반에서 볼 수
-                있습니다.
-              </p>
-              <p>
-                ‘주성 없음’은 그 궁에 14주성이 없다는 뜻입니다. 다른 별도 없거나
-                좋지 않은 결과라는 의미는 아닙니다.
-              </p>
-              <p className={styles.help}>
-                위의 기본 풀이와 함께 참고할 명반의 공통적인 읽는 법입니다.
-              </p>
-            </section>
+            <ReadingGuide id="simple-reading-guide" />
           </Tabs.Panel>
           <Tabs.Panel value="detail">
             <p className={styles.help}>
@@ -122,6 +110,7 @@ export function ChartResult({
             </p>
             <ChartRing chart={chart} detail controlsId="palace-detail" />
             <PalaceDetail chart={chart} id="palace-detail" />
+            <ReadingGuide id="detail-reading-guide" />
             <ChartFacts chart={chart} facts={facts} />
             <p className={styles.help}>
               현재는 14주성과 보조성 25개를 표시합니다. 밝기는 계산 자료 표에서
@@ -133,14 +122,16 @@ export function ChartResult({
           결과는 저장되지 않습니다. 새로고침하면 입력 화면으로 돌아갑니다. 공유
           기능은 아직 제공하지 않습니다.
         </p>
-        <button
-          type="button"
-          className={styles.back}
-          onClick={onBack}
-          disabled={aiPending}
-        >
-          출생 정보 수정
-        </button>
+        <div className={styles.resultActions}>
+          <button
+            type="button"
+            className={styles.back}
+            onClick={onBack}
+            disabled={aiPending}
+          >
+            출생 정보 수정
+          </button>
+        </div>
         <CalculationNotice facts={facts} />
       </section>
     </Provider>

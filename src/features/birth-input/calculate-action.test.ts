@@ -156,3 +156,25 @@ it('서버 플래그가 꺼져 있으면 변조된 on 요청도 외부 호출하
     vi.unstubAllEnvs();
   }
 });
+
+it.each([
+  ['year', '02000'],
+  ['month', '008'],
+  ['day', '016'],
+  ['hour', '012'],
+  ['minute', '000'],
+])(
+  'rejects excess digits in %s even when numerically valid',
+  (field, value) => {
+    const result = parseBirthForm(form({ [field]: value }));
+    expect(result.success).toBe(false);
+    if (!result.success)
+      expect(result.errors[field as 'year']).toContain('자릿수');
+  },
+);
+
+it('accepts two-digit values with a leading zero', () => {
+  expect(parseBirthForm(form({ month: '08', minute: '00' })).success).toBe(
+    true,
+  );
+});

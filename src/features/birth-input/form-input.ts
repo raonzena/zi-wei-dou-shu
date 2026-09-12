@@ -41,6 +41,8 @@ export function parseBirthForm(form: FormData): FormInputResult {
   }
   for (const field of numbers) {
     const value = input[field];
+    if (typeof value === 'string' && value.length > (field === 'year' ? 4 : 2))
+      errors[field] = `${labels[field]} 입력 자릿수를 확인해주세요.`;
     input[field] =
       typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : NaN;
   }
