@@ -123,6 +123,20 @@ it('distinguishes storage failure from a missing result and rejects invalid snap
   ).toThrow();
 });
 
+it('keeps older empty-palace snapshots readable without opposite reference data', () => {
+  const legacy = snapshot();
+  legacy.reading = {
+    ...legacy.reading,
+    version: 'ming-major-v4',
+    status: 'empty',
+    evidence: { ...legacy.reading.evidence, stars: [] },
+    entries: [],
+  };
+  expect(
+    parseSnapshot(legacy).reading.evidence.oppositeReference,
+  ).toBeUndefined();
+});
+
 it('requires an established owner cookie before saving', async () => {
   mocks.token = undefined;
   await expect(saveResult(snapshot(), 'b'.repeat(64))).rejects.toThrow(

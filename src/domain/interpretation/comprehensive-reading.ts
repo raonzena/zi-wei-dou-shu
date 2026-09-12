@@ -5,6 +5,7 @@ import {
   palaceStarReadings,
 } from '../../content/palace-reading-rules';
 import { consultationEvidence } from './consultation-evidence';
+import { findOppositePalace } from './palace-reading';
 
 export const readingTopics = [
   {
@@ -75,7 +76,10 @@ export function createComprehensiveReading(
       const palace = chart.palaces.find((p) => p.name === name)!;
       const fact = facts.palaces.find((p) => p.name === name)!;
       const context = palaceReadingContexts[name];
-      const major = palace.stars.filter((s) => s.isMajor);
+      const directMajor = palace.stars.filter((s) => s.isMajor);
+      const opposite =
+        directMajor.length === 0 ? findOppositePalace(chart, palace) : null;
+      const major = (opposite ?? palace).stars.filter((s) => s.isMajor);
       const supporting = palace.stars
         .filter((s) => !s.isMajor)
         .flatMap((star) => {
@@ -111,7 +115,13 @@ export function createComprehensiveReading(
           star,
           ...palaceStarReadings[star.name],
         })),
-        empty: major.length === 0,
+        empty: directMajor.length === 0,
+        oppositeReference: opposite
+          ? {
+              name: opposite.name,
+              earthlyBranch: opposite.earthlyBranch,
+            }
+          : null,
         supporting,
         interactions,
         transformations: palace.stars

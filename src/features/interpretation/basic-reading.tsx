@@ -13,11 +13,27 @@ export function BasicReading({ reading }: { reading: Reading }) {
         설명은 각 별을 전통적으로 풀이하는 방식이며, 제목이 나의 성격을 확정하는
         것은 아닙니다. 평소 내 모습과 닮은 점이 있는지 살펴보세요.
       </p>
-      {reading.status === 'empty' && (
+      {reading.status === 'empty' && reading.evidence.oppositeReference && (
+        <>
+          <p>
+            성향을 살피는 명궁에는 주성이 없습니다. 성격에 특징이 없거나 좋지
+            않다는 뜻은 아니에요. 이럴 때는 맞은편{' '}
+            {reading.evidence.oppositeReference?.palaceName}궁의 주성을 참고해
+            나의 기본 성향을 살펴볼 수 있습니다. 다만 맞은편 궁의 모습이 나에게
+            그대로 나타난다고 단정하지 않고, 명궁의 보조성과 주변 궁도 함께
+            살펴야 합니다.
+          </p>
+          <p className={styles.scope}>
+            아래 내용은 명궁의 주성 풀이가 아니라 맞은편 궁에서 참고한 별의 기본
+            의미입니다.
+          </p>
+        </>
+      )}
+      {reading.status === 'empty' && !reading.evidence.oppositeReference && (
         <p>
           성향을 살피는 자리에 이 기본 풀이가 다루는 주요 별이 없습니다. 성격에
-          특징이 없거나 좋지 않다는 뜻은 아니에요. 다른 자리에 있는 별까지 함께
-          살펴야 하므로, 여기서는 성향 설명을 제공하지 않습니다.
+          특징이 없거나 좋지 않다는 뜻은 아니에요. 이 결과에는 맞은편 궁의 참고
+          풀이가 저장되어 있지 않아, 여기서는 성향 설명을 제공하지 않습니다.
         </p>
       )}
       {reading.status === 'multiple' && (
@@ -32,6 +48,9 @@ export function BasicReading({ reading }: { reading: Reading }) {
           <h3>{entry.title}</h3>
           <p className={styles.evidence}>
             이 설명의 바탕이 된 별:{' '}
+            {reading.status === 'empty' &&
+              reading.evidence.oppositeReference &&
+              `${reading.evidence.oppositeReference?.palaceName}궁의 `}
             <Term term={starTerms[`major:${entry.starName}`]}>
               {entry.starName}
             </Term>
@@ -52,6 +71,15 @@ export function BasicReading({ reading }: { reading: Reading }) {
         <p className={styles.evidence}>
           계산 근거: {reading.evidence.earthlyBranch} 위치의 명궁 ·{' '}
           {reading.evidence.stars.join(' · ') || '주요 별 없음'}
+          {reading.evidence.oppositeReference && (
+            <>
+              {' '}
+              · 맞은편 {
+                reading.evidence.oppositeReference.earthlyBranch
+              } 위치의 {reading.evidence.oppositeReference.palaceName}궁 참고 ·{' '}
+              {reading.evidence.oppositeReference.stars.join(' · ')}
+            </>
+          )}
         </p>
         <p>
           <a href={reading.source} target="_blank" rel="noreferrer">

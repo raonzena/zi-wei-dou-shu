@@ -34,6 +34,13 @@ const snapshotSchema = z.strictObject({
       palaceName: z.string(),
       earthlyBranch: z.string(),
       stars: strings,
+      oppositeReference: z
+        .strictObject({
+          palaceName: z.string(),
+          earthlyBranch: z.string(),
+          stars: strings,
+        })
+        .optional(),
     }),
     entries: z.array(
       z.strictObject({

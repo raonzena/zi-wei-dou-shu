@@ -4,6 +4,7 @@ import {
   basicReadingSource,
   basicReadingVersion,
 } from '../../content/basic-reading-rules';
+import { findOppositePalace } from './palace-reading';
 
 export type BasicReading = {
   version: string;
@@ -14,6 +15,11 @@ export type BasicReading = {
     palaceName: string;
     earthlyBranch: string;
     stars: string[];
+    oppositeReference?: {
+      palaceName: string;
+      earthlyBranch: string;
+      stars: string[];
+    };
   };
   entries: {
     ruleId: string;
@@ -27,7 +33,14 @@ export type BasicReading = {
 export function createBasicReading(chart: Chart): BasicReading {
   const palace = chart.palaces.find((p) => p.name === '명궁');
   if (!palace) throw new Error('Missing soul palace');
-  const stars = palace.stars.filter((s) => s.category === 'major' && s.isMajor);
+  const directStars = palace.stars.filter(
+    (s) => s.category === 'major' && s.isMajor,
+  );
+  const opposite =
+    directStars.length === 0 ? findOppositePalace(chart, palace) : null;
+  const stars = (opposite ?? palace).stars.filter(
+    (s) => s.category === 'major' && s.isMajor,
+  );
   const entries = stars
     .map((star) => {
       if (!Object.hasOwn(basicReadingRules, star.name))
@@ -45,12 +58,25 @@ export function createBasicReading(chart: Chart): BasicReading {
     version: basicReadingVersion,
     source: basicReadingSource,
     status:
-      stars.length === 0 ? 'empty' : stars.length === 1 ? 'single' : 'multiple',
+      directStars.length === 0
+        ? 'empty'
+        : directStars.length === 1
+          ? 'single'
+          : 'multiple',
     evidence: {
       palaceIndex: palace.index,
       palaceName: palace.name,
       earthlyBranch: palace.earthlyBranch,
-      stars: entries.map((e) => e.starName),
+      stars: directStars.length ? entries.map((entry) => entry.starName) : [],
+      ...(opposite
+        ? {
+            oppositeReference: {
+              palaceName: opposite.name,
+              earthlyBranch: opposite.earthlyBranch,
+              stars: entries.map((entry) => entry.starName),
+            },
+          }
+        : {}),
     },
     entries,
   };

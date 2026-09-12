@@ -4,6 +4,7 @@ import fixture from '../ziwei/fixtures/cust-1929.json';
 import { createBasicReading } from './basic-reading';
 import { basicReadingRules } from '../../content/basic-reading-rules';
 import { starTerms } from '../../content/glossary';
+import { astro } from 'iztro';
 
 function referenceChart() {
   const result = calculateChart(fixture.input);
@@ -12,6 +13,30 @@ function referenceChart() {
 }
 
 describe('명궁 기본 풀이', () => {
+  it('무주성 명궁의 참고 주성은 iztro 2.6.1 조회 결과와 일치한다', () => {
+    const result = calculateChart({
+      ...fixture.input,
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 2,
+    });
+    if (!result.success) throw new Error(result.error.code);
+    const reading = createBasicReading(result.data.chart);
+    const iztroStars = astro
+      .getMajorStarBySolarDate(
+        result.data.birth.engineInput.solarDate,
+        result.data.birth.engineInput.timeIndex,
+        true,
+        'ko-KR',
+      )
+      .split(',');
+
+    expect(reading.status).toBe('empty');
+    expect(reading.evidence.oppositeReference?.stars).toEqual(iztroStars);
+    expect(reading.entries.map((entry) => entry.starName)).toEqual(iztroStars);
+  });
+
   it('독립 기준 명반의 명궁과 주성을 근거로 사용하고 다른 궁의 별은 섞지 않는다', () => {
     const chart = referenceChart();
     const reading = createBasicReading(chart);
@@ -24,12 +49,12 @@ describe('명궁 기본 풀이', () => {
       [...expected.majorStars].sort(),
     );
   });
-  it('같은 이름의 보조성을 주성으로 해석하지 않는다', () => {
+  it('같은 이름의 보조성을 명궁 주성으로 해석하지 않는다', () => {
     const chart = referenceChart();
     const soul = chart.palaces.find((p) => p.name === '명궁')!;
     soul.stars = [
       {
-        name: '천상',
+        name: '자미',
         category: 'adjective',
         isMajor: false,
         brightness: null,
@@ -37,20 +62,29 @@ describe('명궁 기본 풀이', () => {
       },
     ];
     expect(createBasicReading(chart).status).toBe('empty');
-    expect(createBasicReading(chart).entries).toEqual([]);
+    expect(createBasicReading(chart).evidence.stars).toEqual([]);
+    expect(
+      createBasicReading(chart).entries.map((entry) => entry.starName),
+    ).not.toContain('자미');
   });
-  it('주성 없음과 동궁을 단일 주성 풀이와 구분하고 대궁의 별을 임의로 빌리지 않는다', () => {
+  it('주성 없음은 맞은편 궁의 주성을 참고 근거로 구분하고 동궁은 직접 풀이한다', () => {
     const chart = referenceChart();
     const soul = chart.palaces.find((p) => p.name === '명궁')!;
     const major = chart.palaces
       .flatMap((p) => p.stars)
       .filter((s) => s.isMajor);
     soul.stars = [];
-    expect(createBasicReading(chart)).toMatchObject({
+    const empty = createBasicReading(chart);
+    expect(empty).toMatchObject({
       status: 'empty',
-      entries: [],
       evidence: { stars: [] },
     });
+    expect(empty.entries).toHaveLength(
+      empty.evidence.oppositeReference!.stars.length,
+    );
+    expect(empty.entries.map((entry) => entry.starName)).toEqual(
+      empty.evidence.oppositeReference!.stars,
+    );
     soul.stars = [major[0]];
     expect(createBasicReading(chart).status).toBe('single');
     soul.stars = major.slice(0, 2);

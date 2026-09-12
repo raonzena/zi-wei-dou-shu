@@ -80,7 +80,7 @@ export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
   const selected = useAtomValue(selectedPalaceAtom);
   const palace = selectedPalace(chart, selected);
   const stars = displayedStars(palace);
-  const reading = createPalaceReading(palace);
+  const reading = createPalaceReading(chart, palace);
   const major = stars.filter((star) => star.isMajor);
   const supporting = stars.filter((star) => !star.isMajor);
   return (
@@ -102,7 +102,7 @@ export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
       </div>
       <div className={styles.starExplanation}>
         <h3>{palace.name}의 주성으로 읽는 나의 모습</h3>
-        <PalaceReading palace={palace} />
+        <PalaceReading chart={chart} palace={palace} />
       </div>
       <p className={styles.help}>
         <Term term={terms.간지} />: {palace.heavenlyStem}
@@ -114,7 +114,10 @@ export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
       {major.length ? (
         <StarList stars={major} />
       ) : (
-        <p>이 궁에는 주성이 없습니다. 다른 궁과 별의 관계도 함께 살펴봅니다.</p>
+        <p>
+          이 궁에는 주성이 없습니다. 위 기본 풀이는 맞은편 궁의 주성을 참고하며,
+          아래에서는 이 궁에 실제 놓인 보조성을 확인할 수 있습니다.
+        </p>
       )}
       <h3>
         <Term term={terms.보조성} />

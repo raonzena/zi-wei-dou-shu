@@ -91,6 +91,58 @@ describe('보기별 명반과 궁 풀이', () => {
     expect(html).toContain('강점이 있습니다');
     expect(html).toContain('한 번의 사건으로 결론을 내리기보다');
   });
+  it('주성이 없는 궁은 맞은편 궁의 주성을 참고한 상세 풀이를 구분해 표시한다', () => {
+    const data = chart();
+    const empty = data.palaces.find((p) => !p.stars.some((s) => s.isMajor))!;
+    const oppositeBranch = [
+      '자',
+      '축',
+      '인',
+      '묘',
+      '진',
+      '사',
+      '오',
+      '미',
+      '신',
+      '유',
+      '술',
+      '해',
+    ][
+      ([
+        '자',
+        '축',
+        '인',
+        '묘',
+        '진',
+        '사',
+        '오',
+        '미',
+        '신',
+        '유',
+        '술',
+        '해',
+      ].indexOf(empty.earthlyBranch) +
+        6) %
+        12
+    ];
+    const opposite = data.palaces.find(
+      (p) => p.earthlyBranch === oppositeBranch,
+    )!;
+    const oppositeStar = opposite.stars.find((s) => s.isMajor)!;
+    const store = createStore();
+    store.set(selectedPalaceAtom, empty.index);
+    const html = renderToStaticMarkup(
+      <Provider store={store}>
+        <PalaceDetail chart={data} id="palace-detail" />
+      </Provider>,
+    );
+    expect(html).toContain('이 영역에는 주성이 없습니다');
+    expect(html).toContain(`맞은편 ${opposite.name}궁`);
+    expect(html).toContain(
+      `풀이 근거: 맞은편 ${opposite.name}궁의 ${oppositeStar.name}`,
+    );
+    expect(html).toContain('그대로 옮긴 결론은 아닙니다');
+  });
   it('발행된 설명만 제공하고 미발행 별은 검수 중으로 표시한다', () => {
     const data = chart();
     const main = selectedPalace(data, null);
