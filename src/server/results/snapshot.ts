@@ -1,0 +1,92 @@
+import { z } from 'zod';
+import { chartSchema, type Chart } from '../../domain/ziwei/chart';
+import type { BasicReading } from '../../domain/interpretation/basic-reading';
+import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
+import {
+  aiExplanationSchemaFor,
+  type AiExplanationResult,
+} from '../../domain/interpretation/ai-explanation';
+import { consultationEvidence } from '../../domain/interpretation/consultation-evidence';
+import {
+  starContentSchema,
+  type StarContentResult,
+} from '../../domain/content/star-content';
+
+export type ResultSnapshot = {
+  version: 1;
+  chart: Chart;
+  reading: BasicReading;
+  facts: ChartFactsData;
+  ai: AiExplanationResult;
+  content: StarContentResult;
+};
+export const resultIdSchema = z.uuid();
+const strings = z.array(z.string());
+const snapshotSchema = z.strictObject({
+  version: z.literal(1),
+  chart: chartSchema,
+  reading: z.strictObject({
+    version: z.string(),
+    source: z.url(),
+    status: z.enum(['single', 'multiple', 'empty']),
+    evidence: z.strictObject({
+      palaceIndex: z.number().int(),
+      palaceName: z.string(),
+      earthlyBranch: z.string(),
+      stars: strings,
+    }),
+    entries: z.array(
+      z.strictObject({
+        ruleId: z.string(),
+        starName: z.string(),
+        title: z.string(),
+        meaning: z.string(),
+      }),
+    ),
+  }),
+  facts: z.strictObject({
+    formatVersion: z.string(),
+    summary: z.array(z.strictObject({ label: z.string(), value: z.string() })),
+    policies: strings,
+    source: z.string(),
+    supported: strings,
+    unsupported: strings,
+    sectionScopes: z.record(z.string(), z.string()),
+    references: z.record(z.string(), z.string()),
+  }),
+  content: z.discriminatedUnion('status', [
+    z.strictObject({
+      status: z.literal('ready'),
+      entries: z.array(starContentSchema),
+    }),
+    z.strictObject({ status: z.literal('unavailable') }),
+  ]),
+  ai: z.unknown(),
+});
+export function parseSnapshot(value: unknown): ResultSnapshot {
+  const data = snapshotSchema.parse(value);
+  const ai = z
+    .discriminatedUnion('status', [
+      z.strictObject({ status: z.literal('not-requested') }),
+      z.strictObject({
+        status: z.literal('error'),
+        code: z.enum([
+          'unavailable',
+          'timeout',
+          'rate-limit',
+          'quota',
+          'invalid-response',
+          'provider',
+        ]),
+        message: z.string(),
+        retryable: z.boolean(),
+      }),
+      aiExplanationSchemaFor(consultationEvidence(data.chart)).extend({
+        status: z.literal('ready'),
+        model: z.string(),
+        promptVersion: z.string(),
+      }),
+    ])
+    .parse(data.ai);
+  return { ...data, ai };
+}

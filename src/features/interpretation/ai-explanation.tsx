@@ -62,7 +62,7 @@ export function AiExplanation({
   chart: Chart;
   facts: ChartFactsData;
   pending: boolean;
-  onRetry: () => void;
+  onRetry?: () => void;
 }) {
   if (result.status === 'not-requested') return null;
   return (
@@ -81,7 +81,7 @@ export function AiExplanation({
       ) : result.status === 'error' ? (
         <div role="status">
           <p>{result.message}</p>
-          {result.retryable && (
+          {result.retryable && onRetry && (
             <button type="button" className={styles.retry} onClick={onRetry}>
               설명 다시 시도
             </button>

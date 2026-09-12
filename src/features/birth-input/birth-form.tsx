@@ -2,12 +2,12 @@
 
 import { Brand, Seal } from '../../components/ui/brand';
 
-import { Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
-import { calculatePreview } from './calculate-action';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { createSavedResult } from '../results/actions';
+import { useRouter } from 'next/navigation';
 import { parseBirthForm, type InputErrors } from './form-input';
 import { NumberChoice } from './number-choice';
 import { birthInputRanges } from './input-ranges';
-import { ChartResult } from '../chart/chart-result';
 import { Term } from '../../components/ui/term';
 import { terms } from '../../content/glossary';
 import * as styles from './styles.css';
@@ -23,23 +23,13 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
   );
   const [errors, setErrors] = useState<InputErrors>({});
   const [pending, setPending] = useState(false);
-  const [aiPending, setAiPending] = useState(false);
-  const submittedForm = useRef<FormData | null>(null);
-  const aiBusy = useRef(false);
-  const [result, setResult] = useState<Extract<
-    Awaited<ReturnType<typeof calculatePreview>>,
-    { success: true }
-  > | null>(null);
+  const router = useRouter();
   const busy = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (Object.values(errors).some(Boolean)) summaryRef.current?.focus();
   }, [errors]);
-  useEffect(() => {
-    if (result) document.getElementById('preview-title')?.focus();
-  }, [result]);
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy.current) return;
@@ -52,18 +42,12 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
     busy.current = true;
     setErrors({});
     setPending(true);
+    let navigating = false;
     try {
-      const result = await calculatePreview(data);
+      const result = await createSavedResult(data);
       if (result.success) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('view');
-        window.history.replaceState(
-          null,
-          '',
-          url.pathname + url.search + url.hash,
-        );
-        submittedForm.current = data;
-        setResult(result);
+        navigating = true;
+        router.push(`/result/${result.id}`);
       } else setErrors(result.errors);
     } catch {
       setErrors({
@@ -71,50 +55,10 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
           '서버에 연결하지 못했습니다. 입력값은 유지됩니다. 연결을 확인하고 다시 시도해주세요.',
       });
     } finally {
-      busy.current = false;
-      setPending(false);
-    }
-  }
-  async function retryAi() {
-    if (aiBusy.current || !submittedForm.current || !result) return;
-    aiBusy.current = true;
-    setAiPending(true);
-    try {
-      const next = await calculatePreview(submittedForm.current);
-      setResult((previous) =>
-        previous
-          ? {
-              ...previous,
-              ai: next.success
-                ? next.ai
-                : {
-                    status: 'error',
-                    code: 'provider',
-                    message:
-                      'AI 설명을 다시 준비하지 못했습니다. 입력 정보를 확인해주세요.',
-                    retryable: false,
-                  },
-            }
-          : previous,
-      );
-    } catch {
-      setResult((previous) =>
-        previous
-          ? {
-              ...previous,
-              ai: {
-                status: 'error',
-                code: 'provider',
-                message:
-                  '서버에 연결하지 못했습니다. 연결을 확인한 뒤 다시 시도해주세요.',
-                retryable: true,
-              },
-            }
-          : previous,
-      );
-    } finally {
-      aiBusy.current = false;
-      setAiPending(false);
+      if (!navigating) {
+        busy.current = false;
+        setPending(false);
+      }
     }
   }
   const error = (field: keyof InputErrors) =>
@@ -159,35 +103,7 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
           </p>
         </section>
       )}
-      {result && !pending && (
-        <Suspense fallback={<p role="status">명반을 불러오고 있습니다.</p>}>
-          <ChartResult
-            chart={result.chart}
-            facts={result.facts}
-            reading={result.reading}
-            ai={result.ai}
-            aiPending={aiPending}
-            onRetryAi={retryAi}
-            onBack={() => {
-              const url = new URL(window.location.href);
-              url.searchParams.delete('view');
-              window.history.replaceState(
-                null,
-                '',
-                url.pathname + url.search + url.hash,
-              );
-              submittedForm.current = null;
-              setResult(null);
-              requestAnimationFrame(() =>
-                formRef.current
-                  ?.querySelector<HTMLInputElement>('#year')
-                  ?.focus(),
-              );
-            }}
-          />
-        </Suspense>
-      )}
-      <div hidden={pending || !!result}>
+      <div hidden={pending}>
         <Brand />
         <div className={styles.inputLayout}>
           <header>
@@ -340,8 +256,9 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
             <aside className={styles.notice}>
               <strong>입력 정보는 명반과 해석을 만드는 데 사용합니다.</strong>
               <p>
-                입력한 정보와 결과는 이 서비스에 저장하지 않습니다. 새로고침하면
-                입력값과 결과가 사라집니다.
+                명반과 풀이를 30일간 저장합니다. 결과 링크를 아는 사람은 누구나
+                볼 수 있으며, 운의 시기와 나이 정보로 출생 연도를 짐작할 수
+                있습니다. 원본 생년월일·시각·성별은 저장하지 않습니다.
               </p>
               {includeAi && (
                 <p>
@@ -350,9 +267,9 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
                   날짜·시각·성별과 대한·유년·유월 자료는 보내지 않습니다. 요청
                   중복과 과도한 호출을 막기 위해 접속 IP와 명반을 비밀키로
                   변환한 식별값, 처리 상태·시간·토큰 사용량·추정 비용을
-                  기록합니다. IP·명반 원문과 해석 결과는 저장하지 않으며, 30일이
-                  지난 운영 기록은 매일 삭제합니다. OpenAI는 부정 사용
-                  모니터링을 위해 API 내용을 보관할 수 있습니다.{' '}
+                  기록합니다. 호출 관리 기록에는 IP·명반 원문과 해석 결과를 넣지
+                  않으며, 30일이 지난 운영 기록은 매일 삭제합니다. OpenAI는 부정
+                  사용 모니터링을 위해 API 내용을 보관할 수 있습니다.{' '}
                   <a
                     href="https://developers.openai.com/api/docs/guides/your-data"
                     target="_blank"

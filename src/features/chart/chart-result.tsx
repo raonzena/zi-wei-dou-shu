@@ -28,14 +28,16 @@ export function ChartResult({
   aiPending,
   onRetryAi,
   onBack,
+  backLabel,
 }: {
   chart: Chart;
   facts: ChartFactsData;
   reading: Reading;
   ai: AiExplanationResult;
   aiPending: boolean;
-  onRetryAi: () => void;
+  onRetryAi?: () => void;
   onBack: () => void;
+  backLabel: string;
 }) {
   const params = useSearchParams();
   const view = params.get('view') === 'detail' ? 'detail' : 'simple';
@@ -119,8 +121,8 @@ export function ChartResult({
           </Tabs.Panel>
         </Tabs.Root>
         <p className={styles.help}>
-          결과는 저장되지 않습니다. 새로고침하면 입력 화면으로 돌아갑니다. 공유
-          기능은 아직 제공하지 않습니다.
+          결과 주소를 보관하면 새로고침하거나 다른 브라우저에서 열어도 같은
+          명반과 저장된 풀이를 확인할 수 있습니다.
         </p>
         <div className={styles.resultActions}>
           <button
@@ -129,7 +131,7 @@ export function ChartResult({
             onClick={onBack}
             disabled={aiPending}
           >
-            출생 정보 수정
+            {backLabel}
           </button>
         </div>
         <CalculationNotice facts={facts} />
