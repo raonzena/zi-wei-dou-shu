@@ -5,45 +5,65 @@ import {
   type ConsultationEvidence,
 } from './consultation-evidence';
 
-export const consultationStages = [
-  '명반 판독 요약',
-  '본명반의 핵심 구조',
-  '평생의 큰 흐름',
-  '금전운 분석',
-  '직업운 분석',
-  '연애운 분석',
-  '결혼과 장기 관계 분석',
-  '건강과 생활관리 분석',
-  '인간관계와 가족운 분석',
-  '대한 분석',
-  '유년 분석',
-  '현실 조언과 핵심 결론',
+export const readingSections = [
+  { id: 'core', label: '핵심 성향' },
+  { id: 'career', label: '일과 커리어' },
+  { id: 'money', label: '돈' },
+  { id: 'relationship', label: '관계와 배우자' },
+  { id: 'inner-life', label: '내면과 삶의 방향' },
+  { id: 'health', label: '건강과 컨디션' },
+  { id: 'social', label: '가족·대인관계' },
 ] as const;
 
-const proseSchema = z.strictObject({
-  terms: z.string().trim().min(1).max(500),
-  interpretation: z.string().trim().min(10).max(1600),
-  check: z.string().trim().min(5).max(800),
-});
-export const monthlyReadingSchema = proseSchema.extend({
-  interpretation: z.string().trim().min(10).max(800),
-  check: z.string().trim().min(5).max(400),
-});
-export const aiParagraphSchema = proseSchema.extend({
-  evidenceIds: z.array(z.string().min(1).max(100)).min(1).max(20),
-});
-const sectionSchema = z.strictObject({
-  step: z.number().int().min(2).max(12),
-  paragraphs: z.array(aiParagraphSchema).min(1).max(4),
-});
-export type AiParagraph = z.infer<typeof aiParagraphSchema>;
-export type MonthlyReading = z.infer<typeof monthlyReadingSchema> & {
-  periodId: string;
-};
+export const readingSectionIds = readingSections.map(
+  (section) => section.id,
+) as [
+  (typeof readingSections)[number]['id'],
+  ...(typeof readingSections)[number]['id'][],
+];
+
+const evidenceSchemaFor = (allowedIds: string[]) =>
+  z.array(z.enum(allowedIds)).min(1).max(20);
+
+const overviewSchemaFor = (allowedIds: string[]) =>
+  z.strictObject({
+    paragraphs: z.array(z.string().trim().min(20).max(1200)).min(1).max(2),
+    evidenceIds: evidenceSchemaFor(allowedIds),
+  });
+
+const sectionSchemaFor = (allowedIds: string[]) =>
+  z.strictObject({
+    id: z.enum(readingSectionIds),
+    title: z.string().trim().min(2).max(100),
+    paragraphs: z.array(z.string().trim().min(10).max(1200)).min(1).max(3),
+    bulletPoints: z.array(z.string().trim().min(5).max(500)).max(5),
+    evidenceIds: evidenceSchemaFor(allowedIds),
+  });
+
+const closingSchemaFor = (allowedIds: string[]) =>
+  z.strictObject({
+    text: z.string().trim().min(20).max(800),
+    evidenceIds: evidenceSchemaFor(allowedIds),
+  });
+
 export type ValidatedExplanation = {
-  sections: z.infer<typeof sectionSchema>[];
-  monthly: MonthlyReading[];
+  overview: {
+    paragraphs: string[];
+    evidenceIds: string[];
+  };
+  sections: {
+    id: (typeof readingSections)[number]['id'];
+    title: string;
+    paragraphs: string[];
+    bulletPoints: string[];
+    evidenceIds: string[];
+  }[];
+  closing: {
+    text: string;
+    evidenceIds: string[];
+  };
 };
+
 export type AiExplanationResult =
   | { status: 'not-requested' }
   | {
@@ -64,42 +84,35 @@ export type AiExplanationResult =
       promptVersion: string;
     } & ValidatedExplanation);
 
-/** Required keys come from the calculated periods, including each leap half. */
+/** The concise reading uses natal evidence only; timing remains in the detail facts. */
 export function aiExplanationSchemaFor(evidence: ConsultationEvidence) {
-  const monthlyIds = new Set(evidence.timing.monthly.map((m) => m.id));
-  const generalIds = [...evidenceIds(evidence)].filter(
-    (id) => !monthlyIds.has(id),
+  const timingIds = new Set([
+    ...evidence.timing.decadals.map((period) => period.id),
+    evidence.timing.yearly.id,
+    ...evidence.timing.monthly.map((period) => period.id),
+  ]);
+  const allowedIds = [...evidenceIds(evidence)].filter(
+    (id) => !timingIds.has(id),
   );
-  const paragraph = aiParagraphSchema.extend({
-    evidenceIds: z.array(z.enum(generalIds)).min(1).max(20),
-  });
   return z.strictObject({
+    overview: overviewSchemaFor(allowedIds),
     sections: z
-      .array(
-        sectionSchema.extend({ paragraphs: z.array(paragraph).min(1).max(4) }),
-      )
-      .length(11),
-    monthly: z.strictObject(
-      Object.fromEntries(
-        evidence.timing.monthly.map((m) => [m.id, monthlyReadingSchema]),
-      ),
-    ),
+      .array(sectionSchemaFor(allowedIds))
+      .length(readingSections.length),
+    closing: closingSchemaFor(allowedIds),
   });
 }
 
-function validateProse(p: z.infer<typeof proseSchema>) {
-  const prose = [p.terms, p.interpretation, p.check].join('\n');
+function validateProse(parts: string[]) {
+  const prose = parts.join('\n');
   if (
     /(?:decadal|yearly|monthly|flying|pattern|palace|star):[^\s]+/.test(prose)
   )
     throw new Error('Internal evidence ID in prose');
-  // A regression guard for an observed error, not a general truth detector.
-  if (
-    /유월[^.!?\n]{0,40}(?:자료|근거)[^.!?\n]{0,20}(?:없어|없습니다|미제공|부족)/.test(
-      prose,
-    )
-  )
-    throw new Error('Contradicts provided monthly evidence');
+}
+
+function validateEvidence(ids: string[]) {
+  if (new Set(ids).size !== ids.length) throw new Error('Duplicate evidence');
 }
 
 export function validateAiExplanation(
@@ -107,54 +120,39 @@ export function validateAiExplanation(
   evidence: ConsultationEvidence,
 ): ValidatedExplanation {
   const result = aiExplanationSchemaFor(evidence).parse(value);
+
+  validateProse(result.overview.paragraphs);
+  validateEvidence(result.overview.evidenceIds);
+  validateTransformationClaims(
+    result.overview.paragraphs.join('\n'),
+    result.overview.evidenceIds,
+    evidence,
+  );
+
   for (const [index, section] of result.sections.entries()) {
-    if (section.step !== index + 2) throw new Error('Invalid analysis order');
-    for (const p of section.paragraphs) {
-      validateProse(p);
-      if (
-        [3, 10, 11].includes(section.step) &&
-        p.evidenceIds.some((id) => id.startsWith('flying:'))
-      )
-        throw new Error('Natal flying reference in timing section');
-      if (
-        section.step === 11 &&
-        p.evidenceIds.some(
-          (id) =>
-            id.startsWith('decadal:') &&
-            id !== evidence.timing.yearly.currentDecadalId,
-        )
-      )
-        throw new Error('Noncurrent decadal in yearly section');
-      validateTransformationClaims(
-        [p.terms, p.interpretation, p.check].join('\n'),
-        section.step === 11 ? [evidence.timing.yearly.id] : p.evidenceIds,
-        evidence,
-      );
-      if (new Set(p.evidenceIds).size !== p.evidenceIds.length)
-        throw new Error('Duplicate evidence');
-      if (
-        [3, 10].includes(section.step) &&
-        !p.evidenceIds.some((id) =>
-          evidence.timing.decadals.some((d) => d.id === id),
-        )
-      )
-        throw new Error('Missing decadal evidence');
-      if (
-        section.step === 11 &&
-        !p.evidenceIds.includes(evidence.timing.yearly.id)
-      )
-        throw new Error('Missing yearly evidence');
-    }
-  }
-  const monthly = evidence.timing.monthly.map((m) => {
-    const reading = result.monthly[m.id];
-    validateProse(reading);
+    if (section.id !== readingSections[index].id)
+      throw new Error('Invalid reading section order');
+    const prose = [
+      section.title,
+      ...section.paragraphs,
+      ...section.bulletPoints,
+    ];
+    validateProse(prose);
+    validateEvidence(section.evidenceIds);
     validateTransformationClaims(
-      [reading.terms, reading.interpretation, reading.check].join('\n'),
-      [m.id],
+      prose.join('\n'),
+      section.evidenceIds,
       evidence,
     );
-    return { ...reading, periodId: m.id };
-  });
-  return { sections: result.sections, monthly };
+  }
+
+  validateProse([result.closing.text]);
+  validateEvidence(result.closing.evidenceIds);
+  validateTransformationClaims(
+    result.closing.text,
+    result.closing.evidenceIds,
+    evidence,
+  );
+
+  return result;
 }

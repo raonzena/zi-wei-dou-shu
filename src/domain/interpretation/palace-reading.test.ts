@@ -19,6 +19,19 @@ describe('선택한 궁의 기본 풀이', () => {
       expect(reading.entries.map((e) => e.starName).sort()).toEqual(
         [...expected.majorStars].sort(),
       );
+      expect(
+        reading.entries.every((entry) => entry.heading.endsWith('모습')),
+      ).toBe(true);
+      expect(reading.detailedDescription).toHaveLength(4);
+      expect(reading.detailedPractice).toHaveLength(4);
+      expect(
+        reading.entries.every(
+          (entry) =>
+            entry.detailedSentences.length === 4 &&
+            entry.simpleText ===
+              `${entry.detailedSentences[0]} ${entry.detailedSentences[3]}`,
+        ),
+      ).toBe(true);
       return reading;
     });
     expect(new Set(readings.map((r) => r.focus)).size).toBe(12);
@@ -48,7 +61,7 @@ describe('선택한 궁의 기본 풀이', () => {
     ];
     const result = createPalaceReading(palace);
     expect(result.entries).toEqual([]);
-    expect(result.introduction).toContain('주성이 없습니다');
+    expect(result.introduction).toContain('중심 별이 없습니다');
     expect(result.introduction).not.toContain('천상');
   });
   it('동궁의 별은 개별 의미로 표시하며 조합 풀이로 소개하지 않는다', () => {
