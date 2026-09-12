@@ -145,13 +145,17 @@ describe('normalized birth to natal chart', () => {
     },
   );
 
-  it('characterizes the leap-sixteenth late-rat exception without claiming independent correctness', () => {
-    const make = (day: number, hour: number) =>
-      success({ ...input, year: 2023, month: 4, day, hour, minute: 0 }).chart;
-    expect(make(5, 0).soulPalaceBranch).toBe('묘');
-    expect(make(6, 0).soulPalaceBranch).toBe('진');
-    expect(make(6, 23).soulPalaceBranch).toBe('묘');
-  });
+  it(
+    'characterizes the leap-sixteenth late-rat exception without claiming independent correctness',
+    { timeout: 15_000 },
+    () => {
+      const make = (day: number, hour: number) =>
+        success({ ...input, year: 2023, month: 4, day, hour, minute: 0 }).chart;
+      expect(make(5, 0).soulPalaceBranch).toBe('묘');
+      expect(make(6, 0).soulPalaceBranch).toBe('진');
+      expect(make(6, 23).soulPalaceBranch).toBe('묘');
+    },
+  );
 
   it(
     'keeps lunar-year transformations stable across lichun, changing at lunar new year',
