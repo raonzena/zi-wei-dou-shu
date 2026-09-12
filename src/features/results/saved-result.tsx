@@ -36,6 +36,7 @@ export function SavedResult({
   return (
     <StarContentProvider value={snapshot.content}>
       <ChartResult
+        resultId={id}
         chart={snapshot.chart}
         reading={snapshot.reading}
         facts={snapshot.facts}

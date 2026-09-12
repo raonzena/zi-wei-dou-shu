@@ -6,8 +6,16 @@ import {
   useAtomValue,
 } from 'jotai';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Providers } from './providers';
+
+vi.mock('../components/ui/toast.css', () => ({
+  viewport: 'viewport',
+  toast: 'toast',
+  content: 'content',
+  title: 'title',
+  close: 'close',
+}));
 
 describe('Providers의 SSR 상태 격리', () => {
   it('서로 다른 페이지 렌더링이 provider-less 전역 상태를 읽지 않는다', () => {

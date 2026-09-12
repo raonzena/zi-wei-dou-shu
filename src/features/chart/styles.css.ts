@@ -152,25 +152,6 @@ export const mutagen = style({
   flexShrink: 0,
 });
 export const reading = style({ fontSize: '.95rem', marginBottom: '2rem' });
-export const back = style({
-  font: 'inherit',
-  color: colors.ink,
-  border: `1px solid ${colors.line}`,
-  background: colors.paper,
-  borderRadius: '.25rem',
-  width: '100%',
-  padding: '1rem',
-  marginTop: '1rem',
-  cursor: 'pointer',
-  selectors: {
-    '&:focus-visible': {
-      outline: `3px solid ${colors.accent}`,
-      outlineOffset: 3,
-    },
-    '&:hover': { background: colors.tint },
-  },
-});
-
 export const centerTitle = style({
   fontFamily: serif,
   fontSize: 'clamp(1.25rem, 4vw, 2rem)',
@@ -189,9 +170,16 @@ export const disclosureSummary = style({
   },
 });
 export const resultActions = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  alignItems: 'start',
+  gap: '.75rem',
+  '@media': {
+    '(max-width: 640px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
+  },
   borderTop: `1px solid ${colors.line}`,
   marginTop: '1rem',
-  paddingTop: '.5rem',
+  paddingTop: '1rem',
 });
 
 export const readingGuide = style([

@@ -1,4 +1,6 @@
 'use client';
+import { ShareResult } from '../results/share-result';
+import { button as resultActionButton } from '../results/result-action.css';
 import { ComprehensiveReading } from '../interpretation/comprehensive-reading';
 
 import { CalculationNotice } from '../interpretation/calculation-notice';
@@ -21,6 +23,7 @@ import { PalaceDetail } from './palace-detail';
 import * as styles from './styles.css';
 
 export function ChartResult({
+  resultId,
   chart,
   facts,
   reading,
@@ -30,6 +33,7 @@ export function ChartResult({
   onBack,
   backLabel,
 }: {
+  resultId: string;
   chart: Chart;
   facts: ChartFactsData;
   reading: Reading;
@@ -125,9 +129,10 @@ export function ChartResult({
           명반과 저장된 풀이를 확인할 수 있습니다.
         </p>
         <div className={styles.resultActions}>
+          <ShareResult key={resultId} id={resultId} view={view} />
           <button
             type="button"
-            className={styles.back}
+            className={resultActionButton}
             onClick={onBack}
             disabled={aiPending}
           >
