@@ -57,7 +57,7 @@ GitHub Actions는 main push와 pull request에서 lockfile 설치, `pnpm check`,
 
 ## Supabase
 
-SDK는 설치되어 있다. 첫 화면·빌드·테스트에 Supabase 환경변수는 필요하지 않다. 실제 연결은 소유권·보관 정책과 데이터 모델을 확정한 뒤 구현한다.
+SDK와 AI 사용량 제어용 PostgreSQL RPC가 연결되어 있다. Production은 `https://zequziabehplkeaufjcq.supabase.co`를 사용하며, 첫 화면·빌드·테스트에는 Supabase 환경변수가 필요하지 않다. 결과 저장·공유를 위한 소유권·보관 정책과 데이터 모델은 별도로 확정해야 한다.
 
 연결 단계에서 `.env.example`을 `.env.local`로 복사하고 프로젝트 값을 입력한다. `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`는 공개 키이고 `SUPABASE_SECRET_KEY`는 서버 전용 키다. 서버 키를 공개 환경변수에 넣지 않는다. `.env.local`은 Git에 포함하지 않는다.
 
