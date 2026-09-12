@@ -5,7 +5,10 @@ import {
   palaceStarReadings,
 } from '../../content/palace-reading-rules';
 import { consultationEvidence } from './consultation-evidence';
-import { findOppositePalace } from './palace-reading';
+import {
+  createStarCombinationReading,
+  findOppositePalace,
+} from './palace-reading';
 
 export const readingTopics = [
   {
@@ -115,6 +118,9 @@ export function createComprehensiveReading(
           star,
           ...palaceStarReadings[star.name],
         })),
+        combination: createStarCombinationReading(
+          major.map((star) => star.name),
+        ),
         empty: directMajor.length === 0,
         oppositeReference: opposite
           ? {

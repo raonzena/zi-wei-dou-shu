@@ -21,6 +21,7 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
         direct.map((s) => s.name),
       );
       expect(p.oppositeReference).toBeNull();
+      expect(p.combination === null).toBe(direct.length === 1);
     } else {
       expect(p.empty).toBe(true);
       expect(p.oppositeReference).toBeTruthy();
@@ -30,6 +31,7 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
       expect(p.stars.map((x) => x.star.name)).toEqual(
         opposite.stars.filter((s) => s.isMajor).map((s) => s.name),
       );
+      expect(p.combination === null).toBe(p.stars.length === 1);
     }
     expect(p.related).toHaveLength(3);
     expect(p.related.some((x) => x.name === p.name)).toBe(false);

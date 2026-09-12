@@ -4,7 +4,10 @@ import {
   basicReadingSource,
   basicReadingVersion,
 } from '../../content/basic-reading-rules';
-import { findOppositePalace } from './palace-reading';
+import {
+  createStarCombinationReading,
+  findOppositePalace,
+} from './palace-reading';
 
 export type BasicReading = {
   version: string;
@@ -27,6 +30,7 @@ export type BasicReading = {
     title: string;
     meaning: string;
   }[];
+  combination: ReturnType<typeof createStarCombinationReading>;
 };
 
 /** Accepts the validated service chart. No birth details or engine calls are needed. */
@@ -79,5 +83,8 @@ export function createBasicReading(chart: Chart): BasicReading {
         : {}),
     },
     entries,
+    combination: createStarCombinationReading(
+      entries.map((entry) => entry.starName),
+    ),
   };
 }

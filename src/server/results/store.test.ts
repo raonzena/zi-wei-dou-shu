@@ -125,6 +125,7 @@ it('distinguishes storage failure from a missing result and rejects invalid snap
 
 it('keeps older empty-palace snapshots readable without opposite reference data', () => {
   const legacy = snapshot();
+  Reflect.deleteProperty(legacy.reading, 'combination');
   legacy.reading = {
     ...legacy.reading,
     version: 'ming-major-v4',
@@ -135,6 +136,7 @@ it('keeps older empty-palace snapshots readable without opposite reference data'
   expect(
     parseSnapshot(legacy).reading.evidence.oppositeReference,
   ).toBeUndefined();
+  expect(parseSnapshot(legacy).reading.combination).toBeNull();
 });
 
 it('requires an established owner cookie before saving', async () => {

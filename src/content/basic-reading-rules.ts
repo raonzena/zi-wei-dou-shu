@@ -1,6 +1,6 @@
 // Adapted from Sylar Long / iztro-docs, MIT License. See THIRD_PARTY_NOTICES.md.
 // Single-star traits only; combination-dependent claims are not generalized.
-export const basicReadingVersion = 'ming-major-v5';
+export const basicReadingVersion = 'ming-major-v6';
 export const basicReadingSource = 'https://iztro.com/learn/major-star';
 export const basicReadingRules: Record<
   string,

@@ -50,6 +50,18 @@ const snapshotSchema = z.strictObject({
         meaning: z.string(),
       }),
     ),
+    combination: z
+      .strictObject({
+        starNames: strings,
+        heading: z.string(),
+        summary: z.string(),
+        strength: z.string(),
+        caution: z.string(),
+        balance: z.string(),
+      })
+      .nullable()
+      .optional()
+      .transform((value) => value ?? null),
   }),
   facts: z.strictObject({
     formatVersion: z.string(),

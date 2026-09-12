@@ -87,9 +87,18 @@ describe('명궁 기본 풀이', () => {
     );
     soul.stars = [major[0]];
     expect(createBasicReading(chart).status).toBe('single');
-    soul.stars = major.slice(0, 2);
-    expect(createBasicReading(chart).status).toBe('multiple');
-    expect(createBasicReading(chart).entries).toHaveLength(2);
+    const pair = chart.palaces
+      .find(
+        (palace) => palace.stars.filter((star) => star.isMajor).length === 2,
+      )!
+      .stars.filter((star) => star.isMajor);
+    soul.stars = structuredClone(pair);
+    const multiple = createBasicReading(chart);
+    expect(multiple.status).toBe('multiple');
+    expect(multiple.entries).toHaveLength(2);
+    expect(multiple.combination?.starNames).toEqual(
+      pair.map((star) => star.name).sort(),
+    );
   });
   it('궁·별 배열 순서에 영향받지 않고 원본이나 반환값의 참조를 공유하지 않는다', () => {
     const chart = referenceChart();

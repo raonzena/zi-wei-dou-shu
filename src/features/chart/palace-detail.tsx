@@ -13,7 +13,6 @@ import {
 import { displayedStars, starKey, type Star } from './display';
 import { selectedPalace, selectedPalaceAtom } from './selection';
 import { PalaceReading } from '../interpretation/palace-reading';
-import { createPalaceReading } from '../../domain/interpretation/palace-reading';
 import * as styles from './styles.css';
 
 function StarList({ stars }: { stars: Star[] }) {
@@ -80,7 +79,6 @@ export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
   const selected = useAtomValue(selectedPalaceAtom);
   const palace = selectedPalace(chart, selected);
   const stars = displayedStars(palace);
-  const reading = createPalaceReading(chart, palace);
   const major = stars.filter((star) => star.isMajor);
   const supporting = stars.filter((star) => !star.isMajor);
   return (
@@ -97,11 +95,9 @@ export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
             </>
           )}
         </h2>
-        <h3>어떤 생활 영역을 보여주나요?</h3>
-        <p>{reading.detailedDescription.join(' ')}</p>
       </div>
       <div className={styles.starExplanation}>
-        <h3>{palace.name}의 주성으로 읽는 나의 모습</h3>
+        <h3>{palace.name}의 주성 풀이</h3>
         <PalaceReading chart={chart} palace={palace} />
       </div>
       <p className={styles.help}>

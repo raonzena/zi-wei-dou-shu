@@ -38,34 +38,56 @@ export function BasicReading({ reading }: { reading: Reading }) {
       )}
       {reading.status === 'multiple' && (
         <p className={styles.scope}>
-          성향을 살피는 자리에 주요 별이 둘 있습니다. 각 별이 뜻하는 모습을
-          하나씩 소개할게요. 두 별이 함께 있을 때의 의미까지 풀이한 내용은
-          아닙니다.
+          성향을 살피는 자리에 주요 별이 둘 있습니다. 별 하나만 대표로 고르지
+          않고 두 성향이 함께 만드는 핵심 특징을 설명합니다.
         </p>
       )}
-      {reading.entries.map((entry) => (
-        <article key={entry.ruleId} className={styles.entry}>
-          <h3>{entry.title}</h3>
+      {reading.combination && (
+        <article className={styles.entry}>
+          <h3>{reading.combination.heading}</h3>
           <p className={styles.evidence}>
-            이 설명의 바탕이 된 별:{' '}
+            이 설명의 바탕이 된 두 별:{' '}
             {reading.status === 'empty' &&
               reading.evidence.oppositeReference &&
               `${reading.evidence.oppositeReference?.palaceName}궁의 `}
-            <Term term={starTerms[`major:${entry.starName}`]}>
-              {entry.starName}
-            </Term>
+            {reading.combination.starNames.map((starName, index) => (
+              <span key={starName}>
+                {index > 0 && ' · '}
+                <Term term={starTerms[`major:${starName}`]}>{starName}</Term>
+              </span>
+            ))}
           </p>
-          {entry.meaning.split('\n\n').map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          <p>
+            {reading.combination.summary} {reading.combination.strength}{' '}
+            {reading.combination.caution} {reading.combination.balance}
+          </p>
         </article>
-      ))}
+      )}
+      {!reading.combination &&
+        reading.entries.map((entry) => (
+          <article key={entry.ruleId} className={styles.entry}>
+            <h3>{entry.title}</h3>
+            <p className={styles.evidence}>
+              이 설명의 바탕이 된 별:{' '}
+              {reading.status === 'empty' &&
+                reading.evidence.oppositeReference &&
+                `${reading.evidence.oppositeReference?.palaceName}궁의 `}
+              <Term term={starTerms[`major:${entry.starName}`]}>
+                {entry.starName}
+              </Term>
+            </p>
+            {entry.meaning.split('\n\n').map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </article>
+        ))}
       <details className={styles.sources}>
         <summary>이 설명은 무엇을 바탕으로 하나요?</summary>
         <p>
-          성향을 살피는 자리인 <Term term={palaceTerms.명궁} />의 주요 별만
-          설명합니다. 다른 별과의 관계나 함께 놓였을 때의 의미까지 종합하지는
-          않았습니다. 일·관계·돈에 대한 주제별 해석은 이 기본 풀이에 포함하지
+          성향을 살피는 자리인 <Term term={palaceTerms.명궁} />의 주성을
+          설명합니다. 주성이 둘이면 두 별의 기본 의미를 함께 연결하고, 명궁이
+          비었으면 맞은편 궁의 주성을 참고합니다. 밝기·사화·보조성까지 합친
+          해석과 일·관계·돈에 대한 주제별 해석은 이 기본 풀이에 포함하지
           않습니다.
         </p>
         <p className={styles.evidence}>

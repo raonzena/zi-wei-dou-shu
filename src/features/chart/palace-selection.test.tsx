@@ -83,8 +83,14 @@ describe('보기별 명반과 궁 풀이', () => {
       </Provider>,
     );
     expect(html).toContain('최근 한 달 안에');
-    expect(html).toMatch(/<h3>[^<]*주성으로 읽는 나의 모습<\/h3>/);
-    expect(html).not.toMatch(/<summary[^>]*>[^<]*주성으로 읽는 나의 모습/);
+    expect(html).toMatch(/<h3>[^<]*주성 풀이<\/h3>/);
+    expect(html).not.toMatch(/<summary[^>]*>[^<]*주성 풀이/);
+    const individual = html.indexOf('말보다 행동으로 해결하려는 모습');
+    const combination = html.indexOf('두 별이 함께 만드는 특징');
+    const palaceContext = html.indexOf('이 조합은 명궁에서 어떻게 나타나나요?');
+    expect(individual).toBeGreaterThan(-1);
+    expect(combination).toBeGreaterThan(individual);
+    expect(palaceContext).toBeGreaterThan(combination);
     expect(html).toContain('별의 의미 읽기');
     expect(html).toContain('별 설명을 불러오지 못했습니다');
     expect(html).not.toMatch(/<details[^>]*\sopen/);

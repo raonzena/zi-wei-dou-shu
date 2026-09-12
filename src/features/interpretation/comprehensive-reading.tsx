@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import type { Chart } from '../../domain/ziwei/chart';
 import { createComprehensiveReading } from '../../domain/interpretation/comprehensive-reading';
+import { palaceLabel } from '../../domain/interpretation/palace-reading';
 import { StarContentContext } from '../chart/star-content-context';
 import * as styles from './styles.css';
 
@@ -37,20 +38,34 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                   {reading.empty && reading.oppositeReference && (
                     <p>
                       이 영역에는 주성이 없어 맞은편{' '}
-                      {reading.oppositeReference.name}궁의 주성을 참고합니다.
-                      맞은편 궁의 모습이 이 영역에 그대로 나타난다는 뜻은
-                      아니며, 이 영역의 보조성과 주변 궁의 관계도 함께 살펴야
-                      합니다.
+                      {palaceLabel(reading.oppositeReference.name)}의 주성을
+                      참고합니다. 맞은편 궁의 모습이 이 영역에 그대로 나타난다는
+                      뜻은 아니며, 이 영역의 보조성과 주변 궁의 관계도 함께
+                      살펴야 합니다.
                     </p>
                   )}
-                  {reading.stars.map((item) => (
-                    <div key={item.star.name}>
+                  {reading.combination ? (
+                    <div>
                       <p>
-                        {item.meaning} {item.strength} {item.caution}
+                        <strong>{reading.combination.heading}</strong>
                       </p>
-                      <p>{item.balance}</p>
+                      <p>
+                        {reading.combination.summary}{' '}
+                        {reading.combination.strength}{' '}
+                        {reading.combination.caution}{' '}
+                        {reading.combination.balance}
+                      </p>
                     </div>
-                  ))}
+                  ) : (
+                    reading.stars.map((item) => (
+                      <div key={item.star.name}>
+                        <p>
+                          {item.meaning} {item.strength} {item.caution}
+                        </p>
+                        <p>{item.balance}</p>
+                      </div>
+                    ))
+                  )}
                 </>
               )}
               {reading.interactions.map((item) => (
@@ -70,15 +85,19 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                   {reading.empty && reading.oppositeReference && (
                     <>
                       {' '}
-                      · 맞은편 {reading.oppositeReference.name}궁 참고 주성:{' '}
+                      · 맞은편 {palaceLabel(
+                        reading.oppositeReference.name,
+                      )}{' '}
+                      참고 주성:{' '}
                       {reading.stars.map((s) => s.star.name).join(' · ')}
                     </>
                   )}
                 </p>
                 {reading.stars.length > 1 && (
                   <p>
-                    두 주성의 기본 뜻을 각각 설명했습니다. 모든 쌍성 조합을
-                    종합한 규칙은 아닙니다.
+                    두 주성의 개별 뜻을 바탕으로 이 조합의 공통 강점과 주의점을
+                    설명했습니다. 밝기·사화·보조성까지 종합한 전문 조합 풀이는
+                    아닙니다.
                   </p>
                 )}
                 {reading.supporting.map(({ star, entry }) => (
