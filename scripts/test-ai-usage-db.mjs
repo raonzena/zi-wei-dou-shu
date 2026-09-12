@@ -8,7 +8,7 @@ import { setTimeout } from 'node:timers/promises';
 
 // Only a disposable Docker database is used. Never reads application credentials.
 const name = `ziwei-ai-test-${process.pid}`;
-const image = 'public.ecr.aws/supabase/postgres:17.6.1.166';
+const image = 'ghcr.io/supabase/postgres:17.6.1.166';
 function docker(args, input) {
   return execFileSync('docker', args, {
     input,
