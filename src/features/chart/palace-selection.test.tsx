@@ -26,6 +26,7 @@ vi.mock('./styles.css', () => ({
   chart: 'chart',
   detail: 'detail',
   help: 'help',
+  hanja: 'hanja',
   sourceMeta: 'sourceMeta',
   sourceMetaLine: 'sourceMetaLine',
   mutagen: 'mutagen',
@@ -149,6 +150,6 @@ it('궁 이름과 무관하게 왼쪽 상단을 기본 선택하고 수동 선�
     expect(html).toContain(
       `aria-pressed="true" aria-controls="reading" aria-label="${other.name.endsWith('궁') ? other.name : `${other.name}궁`} 선택"`,
     );
-    expect(html).toContain(`${other.name}</span>`);
+    expect(html).toContain(`${other.name} (`);
   }
 });

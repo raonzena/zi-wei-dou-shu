@@ -3,7 +3,12 @@ import { StarContentContext } from './star-content-context';
 import { useAtomValue } from 'jotai';
 import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
-import { palaceTerms, starTerms, terms } from '../../content/glossary';
+import {
+  palaceHanja,
+  palaceTerms,
+  starTerms,
+  terms,
+} from '../../content/glossary';
 
 import { displayedStars, starKey, type Star } from './display';
 import { selectedPalace, selectedPalaceAtom } from './selection';
@@ -82,7 +87,9 @@ export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
     <section id={id} className={styles.detail} aria-labelledby={`${id}-title`}>
       <div aria-live="polite" aria-atomic="true">
         <h2 id={`${id}-title`}>
-          <Term term={palaceTerms[palace.name]}>{palace.name}</Term>
+          <Term term={palaceTerms[palace.name]}>
+            {palace.name} ({palaceHanja[palace.name]})
+          </Term>
           {palace.isBodyPalace && (
             <>
               {' '}

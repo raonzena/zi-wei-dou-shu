@@ -208,3 +208,9 @@ export const sourceMeta = style({
   overflowWrap: 'anywhere',
 });
 export const sourceMetaLine = style({ margin: 0 });
+
+export const hanja = style({
+  display: 'inline-block',
+  fontSize: '.75em',
+  fontWeight: 400,
+});

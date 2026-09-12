@@ -65,13 +65,13 @@ export const terms: Record<string, TermDefinition> = {
     source: palaceSource,
   },
   주성: {
-    label: '주성',
+    label: '주성 (主星)',
     description:
       '궁을 해석할 때 중심이 되는 14개의 별입니다. 한 궁에 없거나 둘 이상 함께 놓일 수 있습니다.',
     source: starSource,
   },
   보조성: {
-    label: '보조성',
+    label: '보조성 (補助星)',
     description:
       '주성과 함께 궁을 해석할 때 참고하는 별입니다. 이 화면에서는 주성 외에 표시하는 별을 묶어 부릅니다.',
     source: starSource,
@@ -131,6 +131,20 @@ const palaceDescriptions: Record<string, string> = {
   전택: '주거와 가족, 재산의 축적을 살펴보는 궁입니다.',
   복덕: '내면의 관심사와 정신적 만족을 살펴보는 궁입니다.',
   부모: '부모와의 관계를 살펴보는 궁입니다.',
+};
+export const palaceHanja: Record<string, string> = {
+  명궁: '命宮',
+  형제: '兄弟',
+  부처: '夫妻',
+  자녀: '子女',
+  재백: '財帛',
+  질액: '疾厄',
+  천이: '遷移',
+  노복: '奴僕',
+  관록: '官祿',
+  전택: '田宅',
+  복덕: '福德',
+  부모: '父母',
 };
 export const palaceTerms: Record<string, TermDefinition> = Object.fromEntries(
   Object.entries(palaceDescriptions).map(([name, description]) => [

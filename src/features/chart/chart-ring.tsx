@@ -1,8 +1,8 @@
 import { useAtom } from 'jotai';
 import type { Chart } from '../../domain/ziwei/chart';
 import { Term } from '../../components/ui/term';
-import { terms } from '../../content/glossary';
-import { positions } from './display';
+import { palaceHanja, starTerms, terms } from '../../content/glossary';
+import { positions, starKey } from './display';
 import { selectedPalace, selectedPalaceAtom } from './selection';
 import * as styles from './styles.css';
 
@@ -59,9 +59,20 @@ export function ChartRing({
               }
               onClick={detail ? () => setSelected(palace.index) : undefined}
             >
-              <strong className={styles.palaceTitle}>{palace.name}</strong>
+              <strong className={styles.palaceTitle}>
+                {palace.name}{' '}
+                <span className={styles.hanja} lang="zh-Hant">
+                  ({palaceHanja[palace.name]})
+                </span>
+              </strong>
               <span className={styles.stars}>
-                {majorStars.map((star) => star.name).join(' · ') || '주성 없음'}
+                {majorStars.length
+                  ? majorStars.map((star) => (
+                      <span key={starKey(star)}>
+                        {starTerms[starKey(star)].label}
+                      </span>
+                    ))
+                  : '주성 없음'}
               </span>
               {detail && (
                 <span className={styles.branch}>
@@ -70,7 +81,7 @@ export function ChartRing({
                 </span>
               )}
               {palace.isBodyPalace && (
-                <span className={styles.bodyLabel}>신궁</span>
+                <span className={styles.bodyLabel}>신궁 (身宮)</span>
               )}
             </Cell>
           </article>
