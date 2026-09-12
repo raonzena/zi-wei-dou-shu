@@ -26,9 +26,12 @@ vi.mock('./styles.css', () => ({
   chart: 'chart',
   detail: 'detail',
   help: 'help',
+  sourceMeta: 'sourceMeta',
+  sourceMetaLine: 'sourceMetaLine',
   mutagen: 'mutagen',
   palace: 'palace',
   palaceSelect: 'palaceSelect',
+  palaceContent: 'palaceContent',
   palaceTitle: 'palaceTitle',
   starExplanation: 'starExplanation',
   disclosureSummary: 'disclosureSummary',
@@ -47,39 +50,29 @@ function chart() {
   return result.data.chart;
 }
 
-describe('종합 풀이의 궁 선택', () => {
-  it('열두 궁을 모두 선택 버튼으로 제공하고 쉬운 풀이 영역과 연결한다', () => {
+describe('보기별 명반과 궁 풀이', () => {
+  it('종합 명반은 열두 궁을 유지하고 선택 버튼과 선택 강조를 표시하지 않는다', () => {
     const html = renderToStaticMarkup(
       <Provider>
-        <ChartRing
-          chart={chart()}
-          detail={false}
-          controlsId="simple-palace-reading"
-        />
+        <ChartRing chart={chart()} detail={false} />
       </Provider>,
     );
-    expect(html.match(/aria-controls="simple-palace-reading"/g)).toHaveLength(
-      12,
-    );
-    expect(html).toContain('궁을 선택해\n쉽게 살펴보세요');
+    expect(html.match(/<article/g)).toHaveLength(12);
+    expect(html).not.toContain('<button');
+    expect(html).not.toContain('aria-controls');
+    expect(html).not.toContain('aria-pressed');
+    expect(html).not.toContain('data-selected="true"');
+    expect(html).not.toContain('궁을 선택해');
   });
 
-  it('종합 풀이에는 쉬운 제목을 표시하고 상세 별 목록은 제외한다', () => {
+  it('상세 명반은 열두 궁의 선택 버튼을 풀이 영역과 연결한다', () => {
     const html = renderToStaticMarkup(
       <Provider>
-        <PalaceDetail
-          chart={chart()}
-          id="simple-palace-reading"
-          showTechnicalDetails={false}
-        />
+        <ChartRing chart={chart()} detail controlsId="palace-detail" />
       </Provider>,
     );
-    expect(html).toContain('어떤 생활 영역을 보여주나요?');
-    expect(html).toContain('이 영역에서 나는 어떤 모습인가요?');
-    expect(html).toContain('생활에서는 어떻게 활용하면 좋을까요?');
-    expect(html).not.toContain('간지');
-    expect(html).not.toContain('보조성');
-    expect(html).not.toContain('최근 한 달 안에');
+    expect(html.match(/aria-controls="palace-detail"/g)).toHaveLength(12);
+    expect(html.match(/aria-pressed="true"/g)).toHaveLength(1);
   });
 
   it('상세 풀이에만 각 항목의 네 문장 설명을 표시한다', () => {
@@ -89,7 +82,8 @@ describe('종합 풀이의 궁 선택', () => {
       </Provider>,
     );
     expect(html).toContain('최근 한 달 안에');
-    expect(html).toContain('주성으로 읽는 나의 모습');
+    expect(html).toMatch(/<h3>[^<]*주성으로 읽는 나의 모습<\/h3>/);
+    expect(html).not.toMatch(/<summary[^>]*>[^<]*주성으로 읽는 나의 모습/);
     expect(html).toContain('별의 의미 읽기');
     expect(html).toContain('별 설명을 불러오지 못했습니다');
     expect(html).not.toMatch(/<details[^>]*\sopen/);
@@ -148,12 +142,8 @@ it('궁 이름과 무관하게 왼쪽 상단을 기본 선택하고 수동 선�
     store.set(selectedPalaceAtom, other.index);
     const html = renderToStaticMarkup(
       <Provider store={store}>
-        <ChartRing chart={changed} detail={false} controlsId="reading" />
-        <PalaceDetail
-          chart={changed}
-          id="reading"
-          showTechnicalDetails={false}
-        />
+        <ChartRing chart={changed} detail controlsId="reading" />
+        <PalaceDetail chart={changed} id="reading" />
       </Provider>,
     );
     expect(html).toContain(

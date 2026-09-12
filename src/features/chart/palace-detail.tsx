@@ -38,16 +38,18 @@ function StarList({ stars }: { stars: Star[] }) {
                   {entry.translation.split('\n\n').map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
-                  <p className={styles.help}>
-                    {entry.translation_kind === 'adaptation'
-                      ? '원문을 바탕으로 편집한 한국어 설명'
-                      : '한국어 번역'}{' '}
-                    · 설명 버전 {entry.version}
-                  </p>
-                  <a href={entry.source_url} target="_blank" rel="noreferrer">
-                    출처: iztro 별 설명 (중국어, 새 탭)
-                  </a>
-                  <p className={styles.help}>{entry.license}</p>
+                  <div className={styles.sourceMeta}>
+                    <p className={styles.sourceMetaLine}>
+                      {entry.translation_kind === 'adaptation'
+                        ? '원문을 바탕으로 편집한 한국어 설명'
+                        : '한국어 번역'}{' '}
+                      · 설명 버전 {entry.version}
+                    </p>
+                    <a href={entry.source_url} target="_blank" rel="noreferrer">
+                      출처: iztro 별 설명 (중국어, 새 탭)
+                    </a>
+                    <p className={styles.sourceMetaLine}>{entry.license}</p>
+                  </div>
                 </>
               ) : (
                 <p>
@@ -69,15 +71,7 @@ function StarList({ stars }: { stars: Star[] }) {
     </ul>
   );
 }
-export function PalaceDetail({
-  chart,
-  id,
-  showTechnicalDetails = true,
-}: {
-  chart: Chart;
-  id: string;
-  showTechnicalDetails?: boolean;
-}) {
+export function PalaceDetail({ chart, id }: { chart: Chart; id: string }) {
   const selected = useAtomValue(selectedPalaceAtom);
   const palace = selectedPalace(chart, selected);
   const stars = displayedStars(palace);
@@ -97,52 +91,36 @@ export function PalaceDetail({
           )}
         </h2>
         <h3>어떤 생활 영역을 보여주나요?</h3>
-        <p>
-          {showTechnicalDetails
-            ? reading.detailedDescription.join(' ')
-            : reading.simpleDescription}
-        </p>
+        <p>{reading.detailedDescription.join(' ')}</p>
       </div>
-      {showTechnicalDetails ? (
-        <details key={palace.index} className={styles.starExplanation}>
-          <summary className={styles.disclosureSummary}>
-            {palace.name}의 주성으로 읽는 나의 모습
-          </summary>
-          <PalaceReading palace={palace} detailed />
-        </details>
-      ) : (
+      <div className={styles.starExplanation}>
+        <h3>{palace.name}의 주성으로 읽는 나의 모습</h3>
         <PalaceReading palace={palace} />
+      </div>
+      <p className={styles.help}>
+        <Term term={terms.간지} />: {palace.heavenlyStem}
+        {palace.earthlyBranch}
+      </p>
+      <h3>
+        <Term term={terms.주성} />
+      </h3>
+      {major.length ? (
+        <StarList stars={major} />
+      ) : (
+        <p>이 궁에는 주성이 없습니다. 다른 궁과 별의 관계도 함께 살펴봅니다.</p>
       )}
-      {showTechnicalDetails && (
-        <>
-          <p className={styles.help}>
-            <Term term={terms.간지} />: {palace.heavenlyStem}
-            {palace.earthlyBranch}
-          </p>
-          <h3>
-            <Term term={terms.주성} />
-          </h3>
-          {major.length ? (
-            <StarList stars={major} />
-          ) : (
-            <p>
-              이 궁에는 주성이 없습니다. 다른 궁과 별의 관계도 함께 살펴봅니다.
-            </p>
-          )}
-          <h3>
-            <Term term={terms.보조성} />
-          </h3>
-          {supporting.length ? (
-            <StarList stars={supporting} />
-          ) : (
-            <p>이 궁에는 현재 표시 범위에 해당하는 보조성이 없습니다.</p>
-          )}
-          <p className={styles.help}>
-            <Term term={terms.사화} />는 해당 별 옆에 표시합니다. 별 하나만으로
-            성격이나 미래를 단정하지 않습니다.
-          </p>
-        </>
+      <h3>
+        <Term term={terms.보조성} />
+      </h3>
+      {supporting.length ? (
+        <StarList stars={supporting} />
+      ) : (
+        <p>이 궁에는 현재 표시 범위에 해당하는 보조성이 없습니다.</p>
       )}
+      <p className={styles.help}>
+        <Term term={terms.사화} />는 해당 별 옆에 표시합니다. 별 하나만으로
+        성격이나 미래를 단정하지 않습니다.
+      </p>
     </section>
   );
 }

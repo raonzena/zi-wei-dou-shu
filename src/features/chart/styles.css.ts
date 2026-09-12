@@ -64,7 +64,7 @@ export const palace = style({
     },
   },
 });
-export const palaceSelect = style({
+export const palaceContent = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -78,14 +78,19 @@ export const palaceSelect = style({
   background: 'transparent',
   color: colors.ink,
   textAlign: 'left',
-  cursor: 'pointer',
-  selectors: {
-    '&:focus-visible': {
-      outline: `2px solid ${colors.accent}`,
-      outlineOffset: 0,
+});
+export const palaceSelect = style([
+  palaceContent,
+  {
+    cursor: 'pointer',
+    selectors: {
+      '&:focus-visible': {
+        outline: `2px solid ${colors.accent}`,
+        outlineOffset: 0,
+      },
     },
   },
-});
+]);
 export const palaceTitle = style({
   fontFamily: serif,
   fontSize: '1.125rem',
@@ -191,3 +196,15 @@ export const readingGuide = style([
   },
 ]);
 export const readingGuideTitle = style({ marginTop: 0 });
+
+export const sourceMeta = style({
+  display: 'grid',
+  justifyItems: 'start',
+  gap: '.25rem',
+  marginTop: '.5rem',
+  fontSize: '10px',
+  lineHeight: 1.5,
+  color: colors.muted,
+  overflowWrap: 'anywhere',
+});
+export const sourceMetaLine = style({ margin: 0 });

@@ -13,7 +13,7 @@ export function ChartRing({
 }: {
   chart: Chart;
   detail: boolean;
-  controlsId: string;
+  controlsId?: string;
 }) {
   const [selected, setSelected] = useAtom(selectedPalaceAtom);
   const selectedIndex = selectedPalace(chart, selected).index;
@@ -31,28 +31,33 @@ export function ChartRing({
         <span className={styles.centerHint}>
           {detail
             ? '궁을 선택해\n자세히 살펴보세요'
-            : '궁을 선택해\n쉽게 살펴보세요'}
+            : '열두 궁의 배치를\n살펴보세요'}
         </span>
       </div>
       {chart.palaces.map((palace) => {
         const majorStars = palace.stars.filter((star) => star.isMajor);
+        const Cell = detail ? 'button' : 'div';
         return (
           <article
             key={palace.index}
             className={styles.palace}
-            data-selected={palace.index === selectedIndex}
+            data-selected={detail && palace.index === selectedIndex}
             style={{
               gridRow: positions[palace.earthlyBranch][0],
               gridColumn: positions[palace.earthlyBranch][1],
             }}
           >
-            <button
-              type="button"
-              className={styles.palaceSelect}
-              aria-pressed={palace.index === selectedIndex}
-              aria-controls={controlsId}
-              aria-label={`${palace.name.endsWith('궁') ? palace.name : `${palace.name}궁`} 선택`}
-              onClick={() => setSelected(palace.index)}
+            <Cell
+              type={detail ? 'button' : undefined}
+              className={detail ? styles.palaceSelect : styles.palaceContent}
+              aria-pressed={detail ? palace.index === selectedIndex : undefined}
+              aria-controls={detail ? controlsId : undefined}
+              aria-label={
+                detail
+                  ? `${palace.name.endsWith('궁') ? palace.name : `${palace.name}궁`} 선택`
+                  : undefined
+              }
+              onClick={detail ? () => setSelected(palace.index) : undefined}
             >
               <strong className={styles.palaceTitle}>{palace.name}</strong>
               <span className={styles.stars}>
@@ -67,7 +72,7 @@ export function ChartRing({
               {palace.isBodyPalace && (
                 <span className={styles.bodyLabel}>신궁</span>
               )}
-            </button>
+            </Cell>
           </article>
         );
       })}
