@@ -40,6 +40,26 @@ export const entry = style({
   marginTop: '.75rem',
   paddingTop: '.25rem',
 });
+export const overview = style({
+  fontSize: '1.0625rem',
+  marginBottom: '1.75rem',
+});
+export const readingSection = style({
+  borderTop: `1px solid ${colors.line}`,
+  padding: '1rem 0 .5rem',
+});
+globalStyle(`${readingSection} h3`, { margin: '0 0 .75rem' });
+globalStyle(`${readingSection} p`, { margin: '.5rem 0' });
+globalStyle(`${readingSection} ul`, {
+  margin: '.75rem 0',
+  paddingLeft: '1.25rem',
+});
+export const closing = style({
+  borderTop: `2px solid ${colors.accent}`,
+  fontWeight: 600,
+  marginTop: '1.25rem',
+  paddingTop: '1.25rem',
+});
 export const question = style({
   background: colors.tint,
   padding: '1rem',

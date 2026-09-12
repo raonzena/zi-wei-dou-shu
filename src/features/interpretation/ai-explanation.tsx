@@ -1,34 +1,34 @@
-import {
-  consultationStages,
-  type AiExplanationResult,
-  type AiParagraph,
-} from '../../domain/interpretation/ai-explanation';
+import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
 import type { ChartFactsData } from '../../domain/interpretation/chart-facts.server';
 import type { Chart } from '../../domain/ziwei/chart';
 import { EvidenceReference } from './evidence-reference';
-import { Term } from '../../components/ui/term';
-import { extendedTerms } from '../../content/glossary';
 import * as styles from './styles.css';
 
-function ReadingText({
-  reading,
+function Evidence({
+  ids,
+  chart,
+  facts,
 }: {
-  reading: Pick<AiParagraph, 'terms' | 'interpretation' | 'check'>;
+  ids: string[];
+  chart: Chart;
+  facts: ChartFactsData;
 }) {
   return (
-    <>
-      <p>
-        <strong>용어의 뜻</strong> · {reading.terms}
-      </p>
-      <p>{reading.interpretation}</p>
-      <p className={styles.question}>
-        <strong>생활에서 점검하기</strong>
-        <br />
-        {reading.check}
-      </p>
-    </>
+    <details className={styles.evidence}>
+      <summary className={styles.evidenceSummary}>
+        명반 근거 ({ids.length})
+      </summary>
+      <ul>
+        {ids.map((id) => (
+          <li key={id}>
+            <EvidenceReference id={id} chart={chart} facts={facts} />
+          </li>
+        ))}
+      </ul>
+    </details>
   );
 }
+
 export function AiExplanation({
   result,
   chart,
@@ -49,8 +49,8 @@ export function AiExplanation({
       aria-labelledby="ai-explanation-title"
       aria-busy={pending}
     >
-      <p className={styles.eyebrow}>계산 자료를 바탕으로 이어지는 해석</p>
-      <h2 id="ai-explanation-title">나의 명반을 깊이 읽어보기</h2>
+      <p className={styles.eyebrow}>명반에서 읽는 나의 성향과 생활 패턴</p>
+      <h2 id="ai-explanation-title">나의 명반 해석</h2>
       {pending ? (
         <p role="status">
           해석을 다시 준비하고 있습니다. 계산 자료와 기본 풀이는 계속 볼 수
@@ -66,67 +66,42 @@ export function AiExplanation({
           )}
         </div>
       ) : result.status === 'ready' ? (
-        result.sections.map((section) => (
-          <details key={section.step} className={styles.entry}>
-            <summary className={styles.sectionSummary}>
-              {section.step}. {consultationStages[section.step - 1]}
-            </summary>
-            <p className={styles.scope}>{facts.sectionScopes[section.step]}</p>
-            {section.paragraphs.map((p, index) => (
-              <article key={index} className={styles.entry}>
-                <details className={styles.evidence}>
-                  <summary className={styles.evidenceSummary}>
-                    명반 근거 ({p.evidenceIds.length})
-                  </summary>
-                  <ul>
-                    {p.evidenceIds.map((id) => (
-                      <li key={id}>
-                        <EvidenceReference
-                          id={id}
-                          chart={chart}
-                          facts={facts}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-                <ReadingText reading={p} />
-              </article>
+        <>
+          <div className={styles.overview}>
+            {result.overview.paragraphs.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
             ))}
-            {section.step === 11 && (
-              <>
-                <h3>
-                  올해 전체 <Term term={extendedTerms.유월} /> 해석
-                </h3>
-                {result.monthly.map((reading) => {
-                  const period = chart.timing.monthly.find(
-                    (m) => m.id === reading.periodId,
-                  )!;
-                  return (
-                    <details key={reading.periodId} className={styles.entry}>
-                      <summary className={styles.sectionSummary}>
-                        {facts.references[reading.periodId]}
-                      </summary>
-                      <p className={styles.evidence}>
-                        계산 근거 · 유월 명궁:{' '}
-                        {facts.references[period.soulPalaceId]}
-                      </p>
-                      <p className={styles.evidence}>
-                        {period.transformations
-                          .map(
-                            (t) =>
-                              `화${t.type}: ${t.starName}(${facts.references[t.palaceId]})`,
-                          )
-                          .join(' · ')}
-                      </p>
-                      <ReadingText reading={reading} />
-                    </details>
-                  );
-                })}
-              </>
-            )}
-          </details>
-        ))
+            <Evidence
+              ids={result.overview.evidenceIds}
+              chart={chart}
+              facts={facts}
+            />
+          </div>
+
+          {result.sections.map((section) => (
+            <article key={section.id} className={styles.readingSection}>
+              <h3>{section.title}</h3>
+              {section.paragraphs.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+              {section.bulletPoints.length > 0 && (
+                <ul>
+                  {section.bulletPoints.map((point, index) => (
+                    <li key={index}>{point}</li>
+                  ))}
+                </ul>
+              )}
+              <Evidence ids={section.evidenceIds} chart={chart} facts={facts} />
+            </article>
+          ))}
+
+          <p className={styles.closing}>{result.closing.text}</p>
+          <Evidence
+            ids={result.closing.evidenceIds}
+            chart={chart}
+            facts={facts}
+          />
+        </>
       ) : null}
     </section>
   );

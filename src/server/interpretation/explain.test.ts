@@ -115,23 +115,24 @@ describe('OpenAI 설명 요청과 검증', () => {
     expect(request.tools).toBeUndefined();
     expect(request.text.format.strict).toBe(true);
     const allowed =
-      request.text.format.schema.properties.sections.items.properties.paragraphs
-        .items.properties.evidenceIds.items.enum;
+      request.text.format.schema.properties.sections.items.properties
+        .evidenceIds.items.enum;
     expect(allowed).toContain('star:사:adjective:팔좌');
     expect(allowed).not.toContain('star:사:minor:팔좌');
-    expect(request.instructions).toContain('7: 결혼과 장기 관계 분석');
-    expect(request.instructions).toContain('8: 건강과 생활관리 분석');
-    expect(request.text.format.schema.properties.monthly.required).toEqual(
-      consultationEvidence(reading()).timing.monthly.map((m) => m.id),
-    );
-    expect(
-      request.text.format.schema.properties.monthly.additionalProperties,
-    ).toBe(false);
+    expect(request.instructions).toContain('relationship: 관계와 배우자');
+    expect(request.instructions).toContain('health: 건강과 컨디션');
+    expect(request.instructions).toContain('한 줄로 정리하면');
+    expect(request.text.format.schema.properties.monthly).toBeUndefined();
     if (result.status === 'ready') {
-      expect(result.sections.map((s) => s.step)).toEqual([
-        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+      expect(result.sections.map((s) => s.id)).toEqual([
+        'core',
+        'career',
+        'money',
+        'relationship',
+        'inner-life',
+        'health',
+        'social',
       ]);
-      expect(result.monthly).toHaveLength(12);
     }
     expect(JSON.stringify(result)).not.toContain('test-key');
   });
@@ -139,10 +140,9 @@ describe('OpenAI 설명 요청과 검증', () => {
     '근거가 %s인 응답을 거부한다',
     async (kind) => {
       const value = valid();
-      if (kind === 'unknown')
-        value.sections[0].paragraphs[0].evidenceIds = ['invented'];
+      if (kind === 'unknown') value.sections[0].evidenceIds = ['invented'];
       if (kind === 'duplicate')
-        value.sections[0].paragraphs[0].evidenceIds = ['chart', 'chart'];
+        value.sections[0].evidenceIds = ['chart', 'chart'];
       if (kind === 'missing') value.sections.pop();
       if (kind === 'extra') value.sections.push(value.sections[0]);
       fetchMock.mockResolvedValue(response(value));
@@ -218,16 +218,7 @@ describe('OpenAI 설명 요청과 검증', () => {
   });
 });
 
-it('대한 근거 ID 없이 시기 해석을 반환하면 거부한다', async () => {
-  const value = valid();
-  value.sections[8] = { ...value.sections[0], step: 10 };
-  fetchMock.mockResolvedValue(response(value));
-  expect(await explainChart(reading())).toMatchObject({
-    status: 'error',
-    code: 'invalid-response',
-  });
-});
-it('분석 단계가 뒤바뀌면 거부한다', async () => {
+it('분야 순서가 뒤바뀌면 거부한다', async () => {
   const value = valid();
   [value.sections[0], value.sections[1]] = [
     value.sections[1],
@@ -310,15 +301,15 @@ it.each(['rate_limit_exceeded', 'slow_down'])(
   },
 );
 
-it('전달한 대한·유년과 각 월별 필수 항목을 사용한 해석을 허용한다', async () => {
+it('간결한 분야별 해석을 허용한다', async () => {
   fetchMock.mockResolvedValue(response(valid()));
   expect((await explainChart(reading())).status).toBe('ready');
 });
-it.each(['yearly:1800', 'decadal:3'])(
-  '올해 유년 근거 대신 %s를 인용하면 거부한다',
+it.each(['yearly:1800', 'decadal:3', 'monthly:2026:3:regular:normal'])(
+  '시기 근거 %s를 간결한 본명반 해석에 넣으면 거부한다',
   async (id) => {
     const value = valid();
-    value.sections[9].paragraphs[0].evidenceIds = [id];
+    value.sections[0].evidenceIds = [id];
     fetchMock.mockResolvedValue(response(value));
     expect(await explainChart(reading())).toMatchObject({
       status: 'error',
@@ -326,28 +317,15 @@ it.each(['yearly:1800', 'decadal:3'])(
     });
   },
 );
-it('실호출에서 누락된 3월은 필수 객체 키 누락으로 거부한다', async () => {
+it.each([
+  '현재 대한인 decadal:93에서는 책임이 커집니다.',
+  '근거는 palace:사에 있습니다.',
+])('사용자 문장에 내부 ID가 노출되면 거부한다: %s', async (paragraph) => {
   const value = valid();
-  delete value.monthly['monthly:2026:3:regular:normal'];
+  value.sections[0].paragraphs[0] = paragraph;
   fetchMock.mockResolvedValue(response(value));
   expect(await explainChart(reading())).toMatchObject({
     status: 'error',
     code: 'invalid-response',
   });
 });
-
-it.each([
-  '유월은 별도로 계산할 근거가 없어 여기서는 다루지 않습니다.',
-  '현재 대한인 decadal:93에서는 책임이 커집니다.',
-])(
-  '실호출에서 발견한 모순·내부 ID 노출을 거부한다: %s',
-  async (interpretation) => {
-    const value = valid();
-    value.sections[0].paragraphs[0].interpretation = interpretation;
-    fetchMock.mockResolvedValue(response(value));
-    expect(await explainChart(reading())).toMatchObject({
-      status: 'error',
-      code: 'invalid-response',
-    });
-  },
-);
