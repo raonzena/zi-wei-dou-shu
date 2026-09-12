@@ -10,17 +10,18 @@ export function PalaceReading({
   const reading = createPalaceReading(palace);
   return (
     <div>
-      <h3>내 명반에서 읽는 모습</h3>
+      <h3>이 영역에서 나는 어떤 모습인가요?</h3>
       <p>{reading.introduction}</p>
       {reading.entries.map((entry) => (
         <div key={entry.starName}>
-          <h4>{entry.starName}에서 읽는 태도</h4>
+          <h4>{entry.heading}</h4>
           <p>
             {entry.meaning} {entry.balance}
           </p>
+          <p className={styles.readingBasis}>풀이 근거: {entry.starName}</p>
         </div>
       ))}
-      <h4>생활에 적용해보기</h4>
+      <h4>생활에서는 어떻게 활용하면 좋을까요?</h4>
       <p>{reading.practice}</p>
       {reading.entries.length > 0 && (
         <p className={styles.scope}>{reading.scope}</p>

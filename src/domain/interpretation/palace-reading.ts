@@ -19,8 +19,8 @@ export function createPalaceReading(palace: Chart['palaces'][number]) {
     ...context,
     entries,
     introduction: entries.length
-      ? `이 궁에 배치된 주성은 ${entries.map((entry) => entry.starName).join('·')}입니다. 아래 별의 의미를 ${context.focus}에 비추어 살펴볼 수 있습니다.`
-      : '이 궁에는 주성이 없습니다. 이 영역이 중요하지 않거나 좋지 않다는 뜻은 아닙니다. 이 궁의 주성만으로는 자신의 태도를 설명하기 어려우므로, 보조성과 다른 궁의 관계까지 함께 살펴야 합니다.',
+      ? `명반에서 이 영역에 놓인 중심 별은 ${entries.map((entry) => entry.starName).join('·')}입니다. 각 별이 상징하는 기본적인 모습을 ${context.focus}에 맞춰 풀어보면 다음과 같습니다.`
+      : '명반에서 이 영역에는 중심 별이 없습니다. 이 영역이 중요하지 않거나 좋지 않다는 뜻은 아닙니다. 지금 제공하는 기본 풀이만으로는 나의 모습을 설명하기 어려우므로 다른 별과 궁의 관계를 함께 살펴야 합니다.',
     scope:
       entries.length > 1
         ? '함께 놓인 별의 기본 의미를 각각 풀었습니다. 별들이 서로 보완하거나 달라지는 부분까지 종합한 풀이는 아닙니다.'

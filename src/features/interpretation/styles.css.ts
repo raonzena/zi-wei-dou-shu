@@ -35,6 +35,11 @@ export const scope = style({
   borderLeft: `3px solid ${colors.accent}`,
   paddingLeft: '1rem',
 });
+export const readingBasis = style({
+  color: colors.muted,
+  fontSize: '.75rem',
+  marginTop: '-.25rem',
+});
 export const entry = style({
   borderTop: `1px solid ${colors.line}`,
   marginTop: '.75rem',

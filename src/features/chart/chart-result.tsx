@@ -77,7 +77,20 @@ export function ChartResult({
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="simple">
-            <ChartRing chart={chart} detail={false} />
+            <p className={styles.help}>
+              궁을 선택하면 아래에서 그 생활 영역과 나에게 나타나는 모습을 쉽게
+              확인할 수 있습니다.
+            </p>
+            <ChartRing
+              chart={chart}
+              detail={false}
+              controlsId="simple-palace-reading"
+            />
+            <PalaceDetail
+              chart={chart}
+              id="simple-palace-reading"
+              showTechnicalDetails={false}
+            />
             <BasicReading reading={reading} />
             <AiExplanation
               result={ai}
@@ -107,8 +120,8 @@ export function ChartResult({
             <p className={styles.help}>
               궁을 선택하면 아래에서 별의 한자 이름과 사화를 확인할 수 있습니다.
             </p>
-            <ChartRing chart={chart} detail />
-            <PalaceDetail chart={chart} />
+            <ChartRing chart={chart} detail controlsId="palace-detail" />
+            <PalaceDetail chart={chart} id="palace-detail" />
             <ChartFacts chart={chart} facts={facts} />
             <p className={styles.help}>
               현재는 14주성과 보조성 25개를 표시합니다. 밝기는 계산 자료 표에서
