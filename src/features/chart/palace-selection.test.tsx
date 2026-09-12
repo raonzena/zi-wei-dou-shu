@@ -75,5 +75,17 @@ describe('간편 명반의 궁 선택', () => {
     expect(html).toContain('생활에서는 어떻게 활용하면 좋을까요?');
     expect(html).not.toContain('간지');
     expect(html).not.toContain('보조성');
+    expect(html).not.toContain('최근 한 달 안에');
+  });
+
+  it('상세 풀이에만 각 항목의 네 문장 설명을 표시한다', () => {
+    const html = renderToStaticMarkup(
+      <Provider>
+        <PalaceDetail chart={chart()} id="palace-detail" />
+      </Provider>,
+    );
+    expect(html).toContain('최근 한 달 안에');
+    expect(html).toContain('강점이 있습니다');
+    expect(html).toContain('한 번의 사건으로 결론을 내리기보다');
   });
 });

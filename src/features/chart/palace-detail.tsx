@@ -5,7 +5,7 @@ import { palaceTerms, starTerms, terms } from '../../content/glossary';
 import { displayedStars, starKey, type Star } from './display';
 import { selectedPalaceAtom } from './selection';
 import { PalaceReading } from '../interpretation/palace-reading';
-import { palaceReadingContexts } from '../../content/palace-reading-rules';
+import { createPalaceReading } from '../../domain/interpretation/palace-reading';
 import * as styles from './styles.css';
 
 function StarList({ stars }: { stars: Star[] }) {
@@ -38,6 +38,7 @@ export function PalaceDetail({
     selected === null ? p.name === '명궁' : p.index === selected,
   )!;
   const stars = displayedStars(palace);
+  const reading = createPalaceReading(palace);
   const major = stars.filter((star) => star.isMajor);
   const supporting = stars.filter((star) => !star.isMajor);
   return (
@@ -53,9 +54,13 @@ export function PalaceDetail({
           )}
         </h2>
         <h3>어떤 생활 영역을 보여주나요?</h3>
-        <p>{palaceReadingContexts[palace.name].description}</p>
+        <p>
+          {showTechnicalDetails
+            ? reading.detailedDescription.join(' ')
+            : reading.simpleDescription}
+        </p>
       </div>
-      <PalaceReading palace={palace} />
+      <PalaceReading palace={palace} detailed={showTechnicalDetails} />
       {showTechnicalDetails && (
         <>
           <p className={styles.help}>

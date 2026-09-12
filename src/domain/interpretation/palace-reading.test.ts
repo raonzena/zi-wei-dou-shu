@@ -22,6 +22,16 @@ describe('선택한 궁의 기본 풀이', () => {
       expect(
         reading.entries.every((entry) => entry.heading.endsWith('모습')),
       ).toBe(true);
+      expect(reading.detailedDescription).toHaveLength(4);
+      expect(reading.detailedPractice).toHaveLength(4);
+      expect(
+        reading.entries.every(
+          (entry) =>
+            entry.detailedSentences.length === 4 &&
+            entry.simpleText ===
+              `${entry.detailedSentences[0]} ${entry.detailedSentences[3]}`,
+        ),
+      ).toBe(true);
       return reading;
     });
     expect(new Set(readings.map((r) => r.focus)).size).toBe(12);
