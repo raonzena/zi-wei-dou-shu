@@ -58,4 +58,4 @@
 
 | 2026-09-12 | [해석 근거 크기와 접기](2026-09-12-collapsible-reading-evidence.md) | 완료 — 근거 크기·접기·여백 검증 |
 
-| 2026-09-12 | [AI 일시 중지와 호출 운영 제어](2026-09-12-ai-usage-controls.md) | 운영 AI 중지 완료 · 호출 제어 로컬 검증 완료 · Supabase 연결 대기 |
+| 2026-09-12 | [AI 일시 중지와 호출 운영 제어](2026-09-12-ai-usage-controls.md) | 운영 AI 중지 유지 · Supabase·Vercel Production 연결 완료 |
