@@ -83,6 +83,7 @@ export function createComprehensiveReading(
       const opposite =
         directMajor.length === 0 ? findOppositePalace(chart, palace) : null;
       const major = (opposite ?? palace).stars.filter((s) => s.isMajor);
+      const usesBasicPersonalitySummary = (opposite ?? palace).name === '명궁';
       const supporting = palace.stars
         .filter((s) => !s.isMajor)
         .flatMap((star) => {
@@ -121,6 +122,7 @@ export function createComprehensiveReading(
         combination: createStarCombinationReading(
           major.map((star) => star.name),
         ),
+        usesBasicPersonalitySummary,
         empty: directMajor.length === 0,
         oppositeReference: opposite
           ? {
