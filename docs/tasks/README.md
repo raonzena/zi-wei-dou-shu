@@ -5,6 +5,7 @@
 | 2026-09-13 | [명궁 성향 풀이 중복 제거](2026-09-13-deduplicate-personality-reading.md)            | 구현·검증 완료                                    |
 | 2026-09-13 | [두 주성 조합 풀이](2026-09-13-two-major-star-combinations.md)                       | 구현·검증 완료                                    |
 | 2026-09-13 | [무주성 궁의 대궁 참고 풀이](2026-09-13-empty-palace-reading.md)                     | 구현·코드 검증 완료                               |
+| 2026-09-13 | [전역 지침 저장소 반영](2026-09-13-repository-global-instructions.md)                | 반영 완료                                         |
 | 2026-09-13 | [결과 중복 저장 방지](2026-09-13-result-deduplication.md)                            | 구현·DB 적용 완료 · 앱 배포 전                    |
 | 2026-09-13 | [결과 중복 방지 검토](2026-09-13-result-deduplication-review.md)                     | 검토 완료 · 구현 미확정                           |
 | 2026-09-13 | [명반 한자 병기](2026-09-13-chart-hanja-labels.md)                                   | 구현 완료                                         |
