@@ -25,6 +25,11 @@ export function evaluateExplanation(
     const texts = result.sections.flatMap((section) =>
       section.paragraphs.map((p) => p.text),
     );
+    const overviewCount = result.overview.paragraphs.reduce(
+      (sum, paragraph) =>
+        sum + (paragraph.text.match(/[.!?](?:["”’])?(?:\s|$)/g)?.length ?? 0),
+      0,
+    );
     const sentenceFlags = result.sections.flatMap((section) => {
       const sectionText = section.paragraphs.map((p) => p.text).join(' ');
       const count = section.paragraphs.reduce(
@@ -36,7 +41,7 @@ export function evaluateExplanation(
         ...(count < 7 || count > 8
           ? [`${section.id}: 본문 ${count}문장으로 7~8문장 기준 확인 필요`]
           : []),
-        ...(!/(?:예를 들어|가령|이를테면)/.test(sectionText)
+        ...(!/(?:때|상황|과정|일정|선택|관계|생활)/.test(sectionText)
           ? [`${section.id}: 구체적인 생활 예시 확인 필요`]
           : []),
       ];
@@ -46,6 +51,9 @@ export function evaluateExplanation(
       contractPass: true,
       evidencePass: true,
       reviewFlags: [
+        ...(overviewCount < 4 || overviewCount > 5
+          ? [`전체 요약 ${overviewCount}문장으로 4~5문장 기준 확인 필요`]
+          : []),
         ...sentenceFlags,
         ...(texts.length !== new Set(texts).size
           ? ['분야별 해석에 완전히 같은 문장이 반복됩니다.']

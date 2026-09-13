@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { calculateChart } from '../ziwei/calculate-chart.server';
 import fixture from '../ziwei/fixtures/cust-1929.json';
-import { createBasicReading } from './basic-reading';
+import {
+  createBasicReading,
+  createOverallPersonalitySummary,
+} from './basic-reading';
 import { basicReadingRules } from '../../content/basic-reading-rules';
 import { starTerms } from '../../content/glossary';
 import { astro } from 'iztro';
@@ -99,6 +102,30 @@ describe('명궁 기본 풀이', () => {
     expect(multiple.combination?.starNames).toEqual(
       pair.map((star) => star.name).sort(),
     );
+  });
+  it('명식의 형태와 강점·아쉬움·보완점을 4~5문장으로 요약한다', () => {
+    const chart = referenceChart();
+    const soul = chart.palaces.find((p) => p.name === '명궁')!;
+    const major = chart.palaces
+      .flatMap((p) => p.stars)
+      .filter((s) => s.isMajor);
+
+    soul.stars = [major[0]];
+    const single = createOverallPersonalitySummary(createBasicReading(chart));
+    expect(single).toHaveLength(5);
+    expect(single[0]).toContain('명궁');
+
+    const pair = chart.palaces
+      .find(
+        (palace) => palace.stars.filter((star) => star.isMajor).length === 2,
+      )!
+      .stars.filter((star) => star.isMajor);
+    soul.stars = structuredClone(pair);
+    const multiple = createOverallPersonalitySummary(createBasicReading(chart));
+    expect(multiple).toHaveLength(5);
+    expect(multiple[0]).toContain('두 주성이 함께 자리한 명식');
+    expect(multiple.join(' ')).toContain(pair[0].name);
+    expect(multiple.join(' ')).toContain(pair[1].name);
   });
   it('궁·별 배열 순서에 영향받지 않고 원본이나 반환값의 참조를 공유하지 않는다', () => {
     const chart = referenceChart();

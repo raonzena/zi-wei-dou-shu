@@ -1,9 +1,6 @@
 import type { Chart } from '../ziwei/chart';
 import type { StarContent } from '../content/star-content';
-import {
-  palaceStarReadingExamples,
-  palaceStarReadings,
-} from '../../content/palace-reading-rules';
+import { palaceStarReadings } from '../../content/palace-reading-rules';
 import { consultationEvidence } from './consultation-evidence';
 import {
   createStarCombinationReading,
@@ -12,53 +9,39 @@ import {
 
 export const readingTopics = [
   {
-    id: 'personality',
-    title: '나의 성향과 새로운 환경',
+    id: 'core',
+    title: '핵심 성향',
     palaces: ['명궁', '천이'],
-    connection:
-      '평소의 판단 방식과 낯선 환경에서 드러나는 반응을 나누어 설명합니다.',
-  },
-  {
-    id: 'career',
-    title: '일과 커리어',
-    palaces: ['관록'],
-    connection:
-      '어떤 방식으로 일할 때 강점이 드러나는지, 책임과 성과를 어떻게 다루는지 설명합니다.',
-  },
-  {
-    id: 'money',
-    title: '돈과 생활의 기반',
-    palaces: ['재백', '전택'],
-    connection:
-      '돈을 벌고 쓰는 기준과 집·생활 기반을 관리하는 방식을 설명합니다. 재산의 규모를 예측하지는 않습니다.',
-  },
-  {
-    id: 'relationships',
-    title: '연인과 배우자 관계',
-    palaces: ['부처'],
-    connection:
-      '관계에서 무엇을 기대하고 감정을 어떻게 표현하는지 설명합니다. 상대의 운명이나 관계의 결과를 예측하지는 않습니다.',
   },
   {
     id: 'inner',
     title: '내면과 삶의 방향',
     palaces: ['복덕'],
-    connection:
-      '혼자 있을 때 마음이 향하는 곳과 만족·회복에 필요한 방식을 설명합니다. 신궁의 위치는 행동과 관심사의 참고 자료입니다.',
+  },
+  {
+    id: 'career',
+    title: '일과 커리어',
+    palaces: ['관록'],
+  },
+  {
+    id: 'money',
+    title: '재물운',
+    palaces: ['재백', '전택'],
+  },
+  {
+    id: 'relationships',
+    title: '연애 및 결혼운',
+    palaces: ['부처'],
   },
   {
     id: 'health',
     title: '건강과 컨디션',
     palaces: ['질액'],
-    connection:
-      '피로 신호에 반응하는 습관과 생활 리듬을 설명합니다. 질병을 진단하거나 발생 시기를 예측하지는 않습니다.',
   },
   {
     id: 'family',
-    title: '가족과 주변 사람들',
+    title: '가족과 대인관계',
     palaces: ['부모', '형제', '자녀', '노복'],
-    connection:
-      '부모·형제자매·자녀·친구와 도움과 책임을 나누는 방식을 관계별로 설명합니다. 한 관계의 특징을 모든 사람에게 적용하지 않습니다.',
   },
 ] as const;
 
@@ -84,20 +67,171 @@ const palaceQuestions: Record<string, string> = {
   부모: '부모의 기대와 도움을 어떻게 받아들이나요?',
 };
 
-const palaceExamples: Record<string, string> = {
-  명궁: '예를 들어 새 일을 맡았을 때 목표부터 정하는지, 주변 사람과 먼저 상의하는지에서 이런 성향이 드러날 수 있습니다.',
-  형제: '예를 들어 가족이 도움을 청했을 때 바로 나서는지, 먼저 사정과 역할을 확인하는지에서 가까운 사람을 대하는 방식이 드러날 수 있습니다.',
-  부처: '예를 들어 함께 주말 계획을 세우거나 집안일을 나눌 때 먼저 방향을 제안하는지, 상대의 의견을 기다리는지에 이런 성향이 나타날 수 있습니다.',
-  자녀: '예를 들어 누군가를 가르치거나 돌볼 때 답을 바로 알려주는지, 스스로 해볼 시간을 주는지에 돌봄 방식이 드러날 수 있습니다.',
-  재백: '예를 들어 예상하지 못한 지출이 생겼을 때 바로 결제하는지, 여러 선택지를 비교하는지에서 돈을 대하는 기준이 나타날 수 있습니다.',
-  질액: '예를 들어 일정이 몰렸을 때 끝까지 밀어붙이는지, 피로를 느끼면 계획을 조정하는지에서 생활 리듬을 다루는 방식이 드러날 수 있습니다.',
-  천이: '예를 들어 처음 가는 모임에서 먼저 말을 거는지, 분위기와 사람을 파악한 뒤 움직이는지에 낯선 환경에서의 반응이 나타날 수 있습니다.',
-  노복: '예를 들어 공동 작업을 시작할 때 역할부터 정하는지, 관계와 분위기를 만든 뒤 일을 나누는지에서 협력 방식이 드러날 수 있습니다.',
-  관록: '예를 들어 마감이 있는 일을 맡았을 때 계획을 세우는 순서와 문제가 생겼을 때 책임지는 방식에서 일할 때의 강점이 나타날 수 있습니다.',
-  전택: '예를 들어 이사나 큰 지출을 결정할 때 안정적인 조건을 우선하는지, 더 나은 환경을 위해 변화를 택하는지에 생활 기반을 대하는 태도가 드러날 수 있습니다.',
-  복덕: '예를 들어 쉬는 날 혼자 조용히 시간을 보내는지, 사람을 만나거나 새로운 활동을 찾는지에서 마음이 회복되는 방식이 나타날 수 있습니다.',
-  부모: '예를 들어 진로나 생활 방식에 관한 가족의 의견을 들을 때 그대로 따르는지, 자신의 기준을 설명하는지에 기대를 받아들이는 방식이 드러날 수 있습니다.',
+const starContextTraits: Record<string, string> = {
+  자미: '전체 흐름을 보고 방향과 기준을 정하는 태도',
+  천기: '여러 가능성을 비교하며 상황에 맞게 방법을 바꾸는 태도',
+  태양: '생각을 분명히 드러내고 먼저 움직이는 태도',
+  무곡: '실행할 일을 정하면 말보다 행동으로 해결하는 태도',
+  천동: '갈등을 줄이고 편안한 흐름을 유지하려는 태도',
+  염정: '자신의 기준에 맞는지 꼼꼼히 확인하는 태도',
+  천부: '현재 조건을 안정적으로 관리하며 실속을 챙기는 태도',
+  태음: '감정과 주변 변화를 세심하게 살핀 뒤 움직이는 태도',
+  탐랑: '새로운 가능성과 즐거움을 적극적으로 찾는 태도',
+  거문: '이유와 조건을 말로 확인하며 판단하는 태도',
+  천상: '사람들의 입장과 역할을 조율하는 태도',
+  천량: '원칙과 책임을 지키며 필요한 사람을 돌보는 태도',
+  칠살: '필요한 결정을 스스로 내리고 꾸준히 밀고 나가는 태도',
+  파군: '현재 방식이 맞지 않으면 바꾸고 새 기준을 만드는 태도',
 };
+
+const healthContextTraits: Record<string, string> = {
+  자미: '생활 리듬의 전체 흐름을 보고 회복 기준을 정하는 태도',
+  천기: '몸 상태의 변화에 따라 휴식과 활동 계획을 조정하는 태도',
+  태양: '활력이 있을 때 적극적으로 움직이며 활동량을 넓히는 태도',
+  무곡: '피로해도 하던 일을 마친 뒤에 쉬려는 태도',
+  천동: '무리하기보다 편안한 리듬과 충분한 휴식을 선호하는 태도',
+  염정: '몸의 작은 변화와 생활 기준을 꼼꼼히 확인하는 태도',
+  천부: '익숙하고 안정적인 수면·식사 리듬을 유지하려는 태도',
+  태음: '감정과 환경 변화가 컨디션에 미치는 영향을 세심히 살피는 태도',
+  탐랑: '관심 있는 활동에 에너지를 많이 쓰고 다양한 자극을 찾는 태도',
+  거문: '불편한 원인과 생활 조건을 자세히 확인하려는 태도',
+  천상: '일정과 주변 사람을 고려해 휴식 시간을 조율하는 태도',
+  천량: '회복을 위한 기준을 정하고 규칙적인 생활 리듬을 지키려는 태도',
+  칠살: '피로가 있어도 정한 일정은 끝까지 밀고 나가려는 태도',
+  파군: '현재 생활 리듬이 맞지 않으면 수면과 휴식 방식을 바꾸는 태도',
+};
+
+const palaceDetails: Record<
+  string,
+  {
+    situation: string;
+    strength: string;
+    tension: string;
+    scene: string;
+  }
+> = {
+  명궁: {
+    situation: '평소 판단하고 선택할 때',
+    strength:
+      '자신에게 중요한 기준이 분명한 상황에서는 선택의 속도와 책임지는 방식에 강점이 드러납니다.',
+    tension:
+      '반대로 주변의 기대와 자신의 기준이 다르면 결정을 미루거나 한쪽 입장만 고수할 수 있습니다.',
+    scene:
+      '새 일을 맡았을 때 목표부터 정하는지, 함께할 사람의 의견부터 듣는지에서 평소의 판단 방식이 드러납니다.',
+  },
+  천이: {
+    situation: '낯선 환경에 적응하고 새로운 사람을 만날 때',
+    strength:
+      '처음 보는 상황에서도 자신이 맡을 역할과 주변 분위기를 파악하면 적응 속도가 빨라질 수 있습니다.',
+    tension:
+      '익숙하지 않은 자리에서 평소보다 지나치게 앞서거나 반대로 반응을 오래 살피면 본래의 장점이 잘 드러나지 않을 수 있습니다.',
+    scene:
+      '처음 가는 모임에서 먼저 말을 거는지, 사람과 분위기를 파악한 뒤 움직이는지에 바깥 환경에서의 반응이 나타납니다.',
+  },
+  복덕: {
+    situation: '혼자 쉬고 마음의 만족을 찾을 때',
+    strength:
+      '남에게 보여주는 성과와 별개로 자신이 편안해지는 활동을 알면 감정과 에너지를 안정적으로 회복할 수 있습니다.',
+    tension:
+      '해야 할 일을 계속 떠올리거나 다른 사람의 기준에 맞는 휴식을 선택하면 쉬고도 마음이 개운하지 않을 수 있습니다.',
+    scene:
+      '일정이 없는 날 조용히 혼자 보내는지, 사람을 만나거나 새로운 활동을 찾는지에서 마음을 회복하는 방식이 드러납니다.',
+  },
+  관록: {
+    situation: '일의 우선순위와 책임을 정할 때',
+    strength:
+      '자신에게 맞는 역할과 일하는 조건을 만나면 업무를 시작하고 끝내는 과정에서 강점이 분명하게 나타납니다.',
+    tension:
+      '성과를 내는 방식과 조직이 기대하는 방식이 다르면 능력이 있어도 불필요한 충돌이나 피로가 생길 수 있습니다.',
+    scene:
+      '마감이 있는 일을 맡았을 때 계획을 세우는 순서와 문제가 생겼을 때 책임지는 방식에서 일할 때의 강점이 드러납니다.',
+  },
+  재백: {
+    situation: '수입과 지출의 기준을 정할 때',
+    strength:
+      '무엇에 돈과 시간을 쓸 가치가 있는지 기준을 세우면 필요한 자원을 더 안정적으로 관리할 수 있습니다.',
+    tension:
+      '안정감, 편리함, 즐거움 가운데 무엇을 우선하는지가 분명하지 않으면 같은 지출을 두고도 만족과 후회가 번갈아 나타날 수 있습니다.',
+    scene:
+      '예상하지 못한 지출이 생겼을 때 바로 결제하는지, 가격과 필요성을 비교한 뒤 결정하는지에서 돈을 대하는 기준이 드러납니다.',
+  },
+  전택: {
+    situation: '집과 생활 기반을 관리할 때',
+    strength:
+      '편안함과 유지 비용을 함께 고려하면 오래 지낼 수 있는 생활 환경을 안정적으로 만들 수 있습니다.',
+    tension:
+      '변화와 안정 가운데 한쪽만 우선하면 더 나은 환경을 놓치거나 필요 이상의 비용을 감당할 수 있습니다.',
+    scene:
+      '이사나 큰 물건을 결정할 때 익숙한 조건을 지키는지, 더 나은 생활을 위해 변화를 택하는지에 생활 기반을 대하는 태도가 나타납니다.',
+  },
+  부처: {
+    situation: '연인이나 배우자와 기대와 역할을 조율할 때',
+    strength:
+      '애정 표현과 생활의 책임을 서로 이해할 수 있는 방식으로 나누면 관계에서 자신의 장점이 잘 드러납니다.',
+    tension:
+      '상대가 알아주기를 기다리거나 자신의 방식만 당연하다고 여기면 작은 차이도 반복되는 갈등이 될 수 있습니다.',
+    scene:
+      '함께 주말 계획을 세우거나 집안일을 나눌 때 먼저 의견을 말하는지, 상대의 제안을 기다리는지에 관계 방식이 나타납니다.',
+  },
+  질액: {
+    situation: '피로 신호에 반응하고 생활 리듬을 조정할 때',
+    strength:
+      '몸의 변화를 알아차리는 시점과 자신에게 맞는 회복 방법을 알면 일정이 많을 때도 컨디션을 안정적으로 관리할 수 있습니다.',
+    tension:
+      '해야 할 일을 우선해 피로를 뒤늦게 알아차리거나, 생활 습관을 한꺼번에 바꾸면 오히려 꾸준한 리듬을 만들기 어려울 수 있습니다.',
+    scene:
+      '일정이 몰렸을 때 끝까지 밀어붙이는지, 수면과 휴식을 위해 계획을 조정하는지에서 컨디션을 다루는 방식이 드러납니다.',
+  },
+  부모: {
+    situation: '부모의 기대와 도움을 받아들일 때',
+    strength:
+      '가족의 조언과 자신의 판단을 구분할 수 있으면 도움을 받으면서도 중요한 선택의 주도권을 지킬 수 있습니다.',
+    tension:
+      '고마움과 부담을 한꺼번에 느끼면 필요한 대화를 미루거나 가족의 의견에 반대로만 반응할 수 있습니다.',
+    scene:
+      '진로나 생활 방식에 관한 가족의 의견을 들을 때 바로 따르는지, 자신의 기준과 이유를 설명하는지에 관계의 경계가 나타납니다.',
+  },
+  형제: {
+    situation: '형제자매나 가까운 가족과 도움을 주고받을 때',
+    strength:
+      '친밀함과 각자의 책임을 함께 존중하면 가까운 관계를 유지하면서도 부담을 공정하게 나눌 수 있습니다.',
+    tension:
+      '가까운 사이라는 이유로 설명을 생략하면 도움을 주고도 서운하거나 상대의 부탁을 부담으로만 느낄 수 있습니다.',
+    scene:
+      '가족이 도움을 청했을 때 바로 나서는지, 먼저 사정과 맡을 범위를 확인하는지에서 가까운 사람을 대하는 방식이 드러납니다.',
+  },
+  자녀: {
+    situation: '누군가를 돌보거나 성장을 도울 때',
+    strength:
+      '필요한 도움과 스스로 해볼 시간을 구분하면 상대의 성장을 지지하면서 안정적인 관계를 이어갈 수 있습니다.',
+    tension:
+      '잘되기를 바라는 마음이 앞서면 상대가 선택할 기회를 줄이거나 결과에 대한 책임까지 대신 떠안을 수 있습니다.',
+    scene:
+      '어려움을 겪는 사람에게 답을 바로 알려주는지, 스스로 시도할 시간을 주는지에서 돌봄과 기대를 표현하는 방식이 나타납니다.',
+  },
+  노복: {
+    situation: '친구나 동료와 협력하고 역할을 나눌 때',
+    strength:
+      '친밀함과 별개로 역할과 약속을 분명히 하면 다양한 사람과 안정적으로 협력할 수 있습니다.',
+    tension:
+      '관계의 분위기나 일의 성과 가운데 한쪽만 우선하면 친한 사람과도 책임 범위를 두고 갈등이 생길 수 있습니다.',
+    scene:
+      '공동 작업을 시작할 때 역할과 마감부터 정하는지, 관계를 편안하게 만든 뒤 일을 나누는지에서 협력 방식이 드러납니다.',
+  },
+};
+
+function createContextualSentences(palaceName: string, starNames: string[]) {
+  const detail = palaceDetails[palaceName];
+  const traits = starNames.map((name) =>
+    palaceName === '질액' ? healthContextTraits[name] : starContextTraits[name],
+  );
+  const traitSentence =
+    traits.length === 1
+      ? `${detail.situation} ${traits[0]}가 두드러집니다.`
+      : `${detail.situation} ${traits[0]}와 ${traits[1]}가 함께 나타납니다.`;
+
+  return [traitSentence, detail.strength, detail.tension, detail.scene];
+}
 
 export function createComprehensiveReading(
   chart: Chart,
@@ -113,7 +247,9 @@ export function createComprehensiveReading(
       const opposite =
         directMajor.length === 0 ? findOppositePalace(chart, palace) : null;
       const major = (opposite ?? palace).stars.filter((s) => s.isMajor);
-      const usesBasicPersonalitySummary = (opposite ?? palace).name === '명궁';
+      const combination = createStarCombinationReading(
+        major.map((star) => star.name),
+      );
       const supporting = palace.stars
         .filter((s) => !s.isMajor)
         .flatMap((star) => {
@@ -144,16 +280,20 @@ export function createComprehensiveReading(
       return {
         name,
         question: palaceQuestions[name],
-        example: palaceExamples[name],
-        stars: major.map((star) => ({
-          star,
-          ...palaceStarReadings[star.name],
-          ...palaceStarReadingExamples[star.name],
-        })),
-        combination: createStarCombinationReading(
+        sentences: createContextualSentences(
+          name,
           major.map((star) => star.name),
         ),
-        usesBasicPersonalitySummary,
+        stars: major.map((star) => ({
+          star,
+          heading: palaceStarReadings[star.name].heading,
+        })),
+        combination: combination
+          ? {
+              starNames: combination.starNames,
+              heading: combination.heading,
+            }
+          : null,
         empty: directMajor.length === 0,
         oppositeReference: opposite
           ? {

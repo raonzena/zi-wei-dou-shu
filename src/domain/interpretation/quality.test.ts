@@ -264,6 +264,16 @@ describe('간결한 상담 결과 계약', () => {
     );
   });
 
+  it('전체 요약이 4~5문장을 벗어나면 검토 대상으로 표시한다', () => {
+    const { evidence } = prepare();
+    const value = mockExplanation(evidence);
+    value.overview.paragraphs[0].text =
+      '첫 번째 문장입니다. 두 번째 문장입니다. 세 번째 문장입니다.';
+    expect(evaluateExplanation(value, evidence).reviewFlags).toContain(
+      '전체 요약 3문장으로 4~5문장 기준 확인 필요',
+    );
+  });
+
   it('사용자 문장에 내부 근거 ID가 노출되면 거부한다', () => {
     const { evidence } = prepare();
     const value = mockExplanation(evidence);

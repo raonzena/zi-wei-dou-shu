@@ -5,12 +5,12 @@ import { type ConsultationEvidence } from './consultation-evidence';
 
 export const readingSections = [
   { id: 'core', label: '핵심 성향' },
-  { id: 'career', label: '일과 커리어' },
-  { id: 'money', label: '돈' },
-  { id: 'relationship', label: '관계와 배우자' },
   { id: 'inner-life', label: '내면과 삶의 방향' },
+  { id: 'career', label: '일과 커리어' },
+  { id: 'money', label: '재물운' },
+  { id: 'relationship', label: '연애 및 결혼운' },
   { id: 'health', label: '건강과 컨디션' },
-  { id: 'social', label: '가족·대인관계' },
+  { id: 'social', label: '가족과 대인관계' },
 ] as const;
 
 export const readingSectionIds = readingSections.map(
