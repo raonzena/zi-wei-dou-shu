@@ -1,7 +1,7 @@
 import type { Chart } from '../ziwei/chart';
 import type { StarContent } from '../content/star-content';
 import {
-  palaceReadingContexts,
+  palaceStarReadingExamples,
   palaceStarReadings,
 } from '../../content/palace-reading-rules';
 import { consultationEvidence } from './consultation-evidence';
@@ -16,56 +16,87 @@ export const readingTopics = [
     title: '나의 성향과 새로운 환경',
     palaces: ['명궁', '천이'],
     connection:
-      '익숙한 곳에서의 선택과 낯선 곳에서의 반응을 함께 살펴, 상황에 따라 달라지는 내 모습을 이해합니다.',
+      '평소의 판단 방식과 낯선 환경에서 드러나는 반응을 나누어 설명합니다.',
   },
   {
     id: 'career',
     title: '일과 커리어',
     palaces: ['관록'],
-    connection: '직업명보다 일을 맡고 수행하는 태도에 초점을 맞춥니다.',
+    connection:
+      '어떤 방식으로 일할 때 강점이 드러나는지, 책임과 성과를 어떻게 다루는지 설명합니다.',
   },
   {
     id: 'money',
     title: '돈과 생활의 기반',
     palaces: ['재백', '전택'],
     connection:
-      '돈을 얻고 쓰는 태도와 생활의 기반을 유지하는 태도를 함께 살펴봅니다. 집을 꾸리고 함께 생활하는 데 돈과 자원을 어떻게 사용하는지 살펴보는 내용입니다. 재산의 규모를 예측하지는 않습니다.',
+      '돈을 벌고 쓰는 기준과 집·생활 기반을 관리하는 방식을 설명합니다. 재산의 규모를 예측하지는 않습니다.',
   },
   {
     id: 'relationships',
     title: '연인과 배우자 관계',
     palaces: ['부처'],
     connection:
-      '상대의 운명을 예측하기보다 관계에서 기대하고 표현하는 방식을 살펴봅니다.',
+      '관계에서 무엇을 기대하고 감정을 어떻게 표현하는지 설명합니다. 상대의 운명이나 관계의 결과를 예측하지는 않습니다.',
   },
   {
     id: 'inner',
     title: '내면과 삶의 방향',
     palaces: ['복덕'],
     connection:
-      '만족과 휴식의 기준을 살펴봅니다. 신궁의 위치는 행동과 관심사의 참고 자료로 함께 확인합니다.',
+      '혼자 있을 때 마음이 향하는 곳과 만족·회복에 필요한 방식을 설명합니다. 신궁의 위치는 행동과 관심사의 참고 자료입니다.',
   },
   {
     id: 'health',
     title: '건강과 컨디션',
     palaces: ['질액'],
     connection:
-      '생활을 관리하는 태도와 무리·휴식의 균형을 살핍니다. 질병의 진단이나 발생 시기를 계산하지 않습니다.',
+      '피로 신호에 반응하는 습관과 생활 리듬을 설명합니다. 질병을 진단하거나 발생 시기를 예측하지는 않습니다.',
   },
   {
     id: 'family',
     title: '가족과 주변 사람들',
     palaces: ['부모', '형제', '자녀', '노복'],
     connection:
-      '기대와 돌봄, 가까운 가족을 존중하는 태도, 친구·동료와의 협력을 나누어 살펴봅니다. 한 관계의 특징을 모든 사람에게 적용하지 않습니다.',
+      '부모·형제자매·자녀·친구와 도움과 책임을 나누는 방식을 관계별로 설명합니다. 한 관계의 특징을 모든 사람에게 적용하지 않습니다.',
   },
 ] as const;
 
 const transformationMeaning = {
-  록: '이 영역에서 무엇에 관심을 갖고 만족하는지 살펴봅니다. 편안하게 여기는 방식과 실제로 도움이 되는 방식이 같은지도 돌아보세요.',
-  권: '이 영역에서는 스스로 방향을 정하고 책임지려는 마음에 주목합니다. 책임을 맡는 것과 모든 결정을 혼자 하는 것을 구분해보세요.',
-  과: '이 영역에서는 다른 사람에게 자신을 어떻게 보여주고 어떤 인정을 받고 싶은지 살펴봅니다. 외부의 평가와 스스로 납득하는 기준을 나누어 생각해보세요.',
-  기: '이 영역에서 무엇을 오래 고민하고 부담스러워하는지 살펴봅니다. 좋지 않은 사건의 예고로 받아들이기보다 반복해서 신경 쓰이는 상황을 돌아보세요.',
+  록: '좋아하고 익숙하게 느끼는 대상에 관심이 자연스럽게 모일 수 있습니다. 만족을 주는 선택을 반복하며 그 대상에 시간과 자원을 더 쓰는 경향도 나타날 수 있습니다.',
+  권: '맡은 일의 방향을 스스로 정하고 책임지려는 마음이 강하게 나타날 수 있습니다. 주도권이 필요한 상황에서는 빠르게 나서지만 역할이 불분명하면 결정을 혼자 떠안을 수 있습니다.',
+  과: '자신의 능력과 준비한 결과를 다른 사람에게 인정받는 일을 중요하게 여길 수 있습니다. 내용을 정돈해 보여주는 데 강점이 있지만 주변의 평가에 민감해질 수도 있습니다.',
+  기: '마음에 걸리는 일을 쉽게 넘기지 못하고 오래 고민하는 경향이 나타날 수 있습니다. 작은 불확실성도 반복해서 확인하거나 부담을 혼자 안고 갈 수 있지만 좋지 않은 사건을 예고한다는 뜻은 아닙니다.',
+};
+
+const palaceQuestions: Record<string, string> = {
+  명궁: '평소에는 어떤 방식으로 판단하고 선택하나요?',
+  형제: '형제자매나 가까운 가족을 어떻게 대하나요?',
+  부처: '연인이나 배우자와 어떤 관계를 원하나요?',
+  자녀: '돌봄과 기대를 어떤 방식으로 표현하나요?',
+  재백: '돈을 벌고 쓸 때 무엇을 중요하게 여기나요?',
+  질액: '피로와 생활 리듬을 어떻게 다루나요?',
+  천이: '낯선 환경에서는 어떤 모습이 나타나나요?',
+  노복: '친구·동료와 어떤 방식으로 협력하나요?',
+  관록: '어떤 방식으로 일할 때 강점이 드러나나요?',
+  전택: '집과 생활 기반을 어떻게 꾸리려 하나요?',
+  복덕: '무엇에서 만족을 느끼고 어떻게 쉬나요?',
+  부모: '부모의 기대와 도움을 어떻게 받아들이나요?',
+};
+
+const palaceExamples: Record<string, string> = {
+  명궁: '예를 들어 새 일을 맡았을 때 목표부터 정하는지, 주변 사람과 먼저 상의하는지에서 이런 성향이 드러날 수 있습니다.',
+  형제: '예를 들어 가족이 도움을 청했을 때 바로 나서는지, 먼저 사정과 역할을 확인하는지에서 가까운 사람을 대하는 방식이 드러날 수 있습니다.',
+  부처: '예를 들어 함께 주말 계획을 세우거나 집안일을 나눌 때 먼저 방향을 제안하는지, 상대의 의견을 기다리는지에 이런 성향이 나타날 수 있습니다.',
+  자녀: '예를 들어 누군가를 가르치거나 돌볼 때 답을 바로 알려주는지, 스스로 해볼 시간을 주는지에 돌봄 방식이 드러날 수 있습니다.',
+  재백: '예를 들어 예상하지 못한 지출이 생겼을 때 바로 결제하는지, 여러 선택지를 비교하는지에서 돈을 대하는 기준이 나타날 수 있습니다.',
+  질액: '예를 들어 일정이 몰렸을 때 끝까지 밀어붙이는지, 피로를 느끼면 계획을 조정하는지에서 생활 리듬을 다루는 방식이 드러날 수 있습니다.',
+  천이: '예를 들어 처음 가는 모임에서 먼저 말을 거는지, 분위기와 사람을 파악한 뒤 움직이는지에 낯선 환경에서의 반응이 나타날 수 있습니다.',
+  노복: '예를 들어 공동 작업을 시작할 때 역할부터 정하는지, 관계와 분위기를 만든 뒤 일을 나누는지에서 협력 방식이 드러날 수 있습니다.',
+  관록: '예를 들어 마감이 있는 일을 맡았을 때 계획을 세우는 순서와 문제가 생겼을 때 책임지는 방식에서 일할 때의 강점이 나타날 수 있습니다.',
+  전택: '예를 들어 이사나 큰 지출을 결정할 때 안정적인 조건을 우선하는지, 더 나은 환경을 위해 변화를 택하는지에 생활 기반을 대하는 태도가 드러날 수 있습니다.',
+  복덕: '예를 들어 쉬는 날 혼자 조용히 시간을 보내는지, 사람을 만나거나 새로운 활동을 찾는지에서 마음이 회복되는 방식이 나타날 수 있습니다.',
+  부모: '예를 들어 진로나 생활 방식에 관한 가족의 의견을 들을 때 그대로 따르는지, 자신의 기준을 설명하는지에 기대를 받아들이는 방식이 드러날 수 있습니다.',
 };
 
 export function createComprehensiveReading(
@@ -78,7 +109,6 @@ export function createComprehensiveReading(
     readings: topic.palaces.map((name) => {
       const palace = chart.palaces.find((p) => p.name === name)!;
       const fact = facts.palaces.find((p) => p.name === name)!;
-      const context = palaceReadingContexts[name];
       const directMajor = palace.stars.filter((s) => s.isMajor);
       const opposite =
         directMajor.length === 0 ? findOppositePalace(chart, palace) : null;
@@ -98,7 +128,7 @@ export function createComprehensiveReading(
           ? [
               {
                 stars: ['천마', '타라'],
-                text: '새로운 가능성을 찾고 싶은 마음과 충분히 살핀 뒤 움직이고 싶은 마음이 함께 나타날 수 있습니다. 변화의 속도와 준비할 시간을 나누어 정하면 두 태도를 함께 활용할 수 있습니다.',
+                text: '새로운 가능성을 찾고 싶은 마음과 충분히 확인한 뒤 움직이고 싶은 마음이 함께 나타날 수 있습니다. 변화를 바라면서도 준비가 충분하다고 느낄 때까지 결정을 미루는 식으로 두 태도가 번갈아 나타날 수 있습니다.',
               },
             ]
           : []),
@@ -113,11 +143,12 @@ export function createComprehensiveReading(
       ];
       return {
         name,
-        focus: context.focus,
-        description: context.description,
+        question: palaceQuestions[name],
+        example: palaceExamples[name],
         stars: major.map((star) => ({
           star,
           ...palaceStarReadings[star.name],
+          ...palaceStarReadingExamples[star.name],
         })),
         combination: createStarCombinationReading(
           major.map((star) => star.name),
@@ -141,7 +172,6 @@ export function createComprehensiveReading(
         related: fact.relatedPalaceIds
           .slice(1)
           .map((id) => facts.palaces.find((p) => p.id === id)!),
-        practice: context.practice,
       };
     }),
   }));
