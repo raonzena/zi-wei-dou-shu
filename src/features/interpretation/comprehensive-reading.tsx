@@ -13,11 +13,10 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
   );
   return (
     <section className={styles.reading} aria-labelledby="comprehensive-title">
-      <h2 id="comprehensive-title">생활의 여러 모습을 함께 살펴보는 풀이</h2>
+      <h2 id="comprehensive-title">별의 조합으로 보는 일·돈·관계</h2>
       <p>
-        나를 대하는 방식부터 일과 관계까지, 서로 다른 생활 영역을 함께
-        살펴봅니다. 잘 맞는 모습과 다르게 느껴지는 모습을 자신의 경험에 비추어
-        읽어보세요.
+        명반에 놓인 별의 성향이 평소 선택, 일, 돈, 관계와 휴식에서 어떻게 나타날
+        수 있는지 생활 장면과 함께 설명합니다.
       </p>
       {sections.map((section) => (
         <article className={styles.entry} key={section.id}>
@@ -25,30 +24,30 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
           <p>{section.connection}</p>
           {section.readings.map((reading) => (
             <div key={reading.name}>
-              <h4>{reading.focus}</h4>
-              <p>{reading.description}</p>
+              <h4>{reading.question}</h4>
               {reading.empty && reading.stars.length === 0 ? (
                 <p>
-                  이 영역과 맞은편 영역에는 주성이 없어 보조성과 주변 궁의
-                  관계를 함께 살펴야 합니다. 해당 영역이 비어 있거나 중요하지
-                  않다는 뜻은 아닙니다.
+                  {palaceLabel(reading.name)}과 맞은편 궁에는 주성이 없습니다.
+                  이 생활 주제가 비어 있거나 중요하지 않다는 뜻은 아니지만, 현재
+                  제공하는 주성 풀이만으로는 구체적인 성향을 설명하기
+                  어렵습니다.
                 </p>
               ) : (
                 <>
                   {reading.empty && reading.oppositeReference && (
                     <p>
-                      이 영역에는 주성이 없어 맞은편{' '}
+                      {palaceLabel(reading.name)}에는 주성이 없어 맞은편{' '}
                       {palaceLabel(reading.oppositeReference.name)}의 주성을
-                      참고합니다. 맞은편 궁의 모습이 이 영역에 그대로 나타난다는
-                      뜻은 아니며, 이 영역의 보조성과 주변 궁의 관계도 함께
-                      살펴야 합니다.
+                      참고합니다. 맞은편 궁의 모습이 그대로 나타난다는 뜻은
+                      아니며, 이 궁의 보조성과 주변 궁에 따라 표현되는 정도는
+                      달라질 수 있습니다.
                     </p>
                   )}
                   {reading.usesBasicPersonalitySummary ? (
                     <p>
                       {reading.empty
-                        ? '이 궁이 참고하는 맞은편 명궁의 주성은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 여기서는 낯선 환경에서 사람을 만나고 적응하는 맥락만 확인합니다.'
-                        : '명궁 주성의 기본 성향은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 여기서는 익숙한 상황에서 판단하고 선택하는 맥락만 확인합니다.'}
+                        ? '맞은편 명궁 주성의 기본 성향은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 같은 성향이 낯선 환경에서는 사람을 만나고 적응하는 반응으로 이어질 수 있습니다.'
+                        : '명궁 주성의 기본 성향은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 같은 성향이 평소 판단하고 선택하는 방식으로 이어질 수 있습니다.'}
                     </p>
                   ) : reading.combination ? (
                     <div>
@@ -59,28 +58,28 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                         {reading.combination.summary}{' '}
                         {reading.combination.strength}{' '}
                         {reading.combination.caution}{' '}
-                        {reading.combination.balance}
+                        {reading.combination.example}
                       </p>
                     </div>
                   ) : (
                     reading.stars.map((item) => (
                       <div key={item.star.name}>
                         <p>
-                          {item.meaning} {item.strength} {item.caution}
+                          {item.meaning} {item.strength} {item.caution}{' '}
+                          {item.example}
                         </p>
-                        <p>{item.balance}</p>
                       </div>
                     ))
                   )}
                 </>
               )}
+              {reading.stars.length > 0 && <p>{reading.example}</p>}
               {reading.interactions.map((item) => (
                 <p key={item.stars.join(':')}>{item.text}</p>
               ))}
               {reading.transformations.map((item) => (
                 <p key={item.star.name}>{item.text}</p>
               ))}
-              <p>{reading.practice}</p>
               <details className={styles.sources}>
                 <summary>이 풀이의 근거와 함께 볼 특징</summary>
                 <p className={styles.evidence}>
