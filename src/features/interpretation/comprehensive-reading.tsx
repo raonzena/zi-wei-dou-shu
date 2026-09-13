@@ -44,7 +44,13 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                       살펴야 합니다.
                     </p>
                   )}
-                  {reading.combination ? (
+                  {reading.usesBasicPersonalitySummary ? (
+                    <p>
+                      {reading.empty
+                        ? '이 궁이 참고하는 맞은편 명궁의 주성은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 여기서는 낯선 환경에서 사람을 만나고 적응하는 맥락만 확인합니다.'
+                        : '명궁 주성의 기본 성향은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 여기서는 익숙한 상황에서 판단하고 선택하는 맥락만 확인합니다.'}
+                    </p>
+                  ) : reading.combination ? (
                     <div>
                       <p>
                         <strong>{reading.combination.heading}</strong>
@@ -93,13 +99,14 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                     </>
                   )}
                 </p>
-                {reading.stars.length > 1 && (
-                  <p>
-                    두 주성의 개별 뜻을 바탕으로 이 조합의 공통 강점과 주의점을
-                    설명했습니다. 밝기·사화·보조성까지 종합한 전문 조합 풀이는
-                    아닙니다.
-                  </p>
-                )}
+                {reading.stars.length > 1 &&
+                  !reading.usesBasicPersonalitySummary && (
+                    <p>
+                      두 주성의 개별 뜻을 바탕으로 이 조합의 공통 강점과
+                      주의점을 설명했습니다. 밝기·사화·보조성까지 종합한 전문
+                      조합 풀이는 아닙니다.
+                    </p>
+                  )}
                 {reading.supporting.map(({ star, entry }) => (
                   <p key={entry.star_key}>
                     <strong>{star.name}</strong> · {entry.translation}

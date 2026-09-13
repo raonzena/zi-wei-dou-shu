@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { calculateChart } from '../../domain/ziwei/calculate-chart.server';
 import fixture from '../../domain/ziwei/fixtures/cust-1929.json';
 import { createBasicReading } from '../../domain/interpretation/basic-reading';
+import { findOppositePalace } from '../../domain/interpretation/palace-reading';
 import { BasicReading } from './basic-reading';
 import { ComprehensiveReading } from './comprehensive-reading';
 import { StarContentContext } from '../chart/star-content-context';
@@ -55,4 +56,29 @@ it('일곱 분야 종합 풀이에서 무주성 궁의 맞은편 참고 근거�
   expect(html).toContain(`${empty.name} · 주성: 없음`);
   expect(html).toContain('참고 주성:');
   expect(html).toContain('그대로 나타난다는 뜻은 아니며');
+});
+
+it('명궁 주성 조합의 같은 문장을 기본 풀이와 종합 풀이에서 반복하지 않는다', () => {
+  const data = chart();
+  const basic = createBasicReading(data);
+  const heading = basic.combination?.heading;
+  if (!heading)
+    throw new Error('Fixture needs two major stars in the soul palace');
+  const soul = data.palaces.find((palace) => palace.name === '명궁')!;
+  const opposite = findOppositePalace(data, soul);
+  if (!opposite) throw new Error('Fixture needs an opposite palace');
+  opposite.stars = opposite.stars.filter((star) => !star.isMajor);
+
+  const html = renderToStaticMarkup(
+    <StarContentContext value={{ status: 'ready', entries: [] }}>
+      <BasicReading reading={basic} />
+      <ComprehensiveReading chart={data} />
+    </StarContentContext>,
+  );
+
+  expect(html.split(heading)).toHaveLength(2);
+  expect(html).toContain('명궁 주성의 기본 성향은');
+  expect(html).toContain('이 궁이 참고하는 맞은편 명궁의 주성은');
+  expect(html).toContain('익숙한 상황에서 판단하고 선택하는 맥락만');
+  expect(html).toContain('낯선 환경에서 사람을 만나고 적응하는 맥락만');
 });
