@@ -34,7 +34,7 @@
 - `prettier --check .`: 통과했다.
 - `eslint .`: 통과했다.
 - `next typegen`, `tsc --noEmit`: 통과했다.
-- `vitest run`: 테스트 298개가 통과했고 1개는 기존 설정대로 제외됐다.
+- `vitest run`: 중복 테스트 정리 후 테스트 297개가 통과했고 1개는 기존 설정대로 제외됐다.
 - `pnpm run build`: Webpack 운영 빌드가 통과했다.
 - `pnpm check` 자체는 실행 환경의 전역 pnpm 11을 선택해 엔진 검사에서 중단됐다. 같은 하위 검사들을 프로젝트 지정 pnpm 10.33.2로 각각 실행해 모두 통과했다.
 

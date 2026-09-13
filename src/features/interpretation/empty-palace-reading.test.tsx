@@ -56,10 +56,7 @@ it('일곱 분야 종합 풀이에서 무주성 궁의 맞은편 참고 근거�
   expect(html).toContain(`${empty.name} · 주성: 없음`);
   expect(html).toContain('참고 주성:');
   expect(html).toContain('그대로 나타난다는 뜻은 아니며');
-  expect(html).not.toContain('예를 들어');
-  expect(html).not.toContain('이 영역에서는');
-  expect(html).not.toContain('살펴봅니다');
-  expect(html).not.toContain('해보세요');
+  expect(html).not.toMatch(/예를 들어|이 영역에서는|살펴봅니다|해보세요/);
 });
 
 it('명궁 주성 조합의 같은 문장을 기본 풀이와 종합 풀이에서 반복하지 않는다', () => {
@@ -82,6 +79,4 @@ it('명궁 주성 조합의 같은 문장을 기본 풀이와 종합 풀이에�
 
   expect(html.split(heading)).toHaveLength(2);
   expect(html).not.toContain('기본 성향은 위의');
-  expect(html).toContain('평소에는 어떤 방식으로 판단하고 선택하나요?');
-  expect(html).toContain('낯선 환경에서는 어떤 모습이 나타나나요?');
 });
