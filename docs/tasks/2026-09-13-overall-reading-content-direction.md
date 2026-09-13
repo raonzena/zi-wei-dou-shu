@@ -37,7 +37,8 @@
 - `corepack pnpm@10.33.2 exec next typegen && corepack pnpm@10.33.2 exec tsc --noEmit`: 통과했다.
 - `corepack pnpm@10.33.2 exec vitest run`: 테스트 300개가 통과했고 실호출 테스트 1개는 기존 설정대로 제외됐다.
 - `corepack pnpm@10.33.2 run build`: Next.js 운영 빌드가 통과했다.
-- 브라우저 시각 검증은 PR 미리보기 배포 후 진행한다.
+- GitHub Actions의 `pnpm check`, AI DB, 결과 DB, 운영 빌드가 모두 통과했고 Vercel 미리보기 배포도 성공했다.
+- 미리보기의 기존 저장 결과 URL은 Preview 환경의 Supabase 저장소 연결을 사용할 수 없어 ‘결과를 불러오지 못했습니다’ 화면을 표시했다. 콘텐츠의 실제 브라우저 렌더링은 확인하지 못했다.
 
 ## 요구사항 대조
 
@@ -49,7 +50,7 @@
 
 ## 남은 문제와 추후 개선점
 
-- PR 미리보기에서 실제 브라우저 화면과 저장된 이전 결과의 표시를 확인해야 한다.
+- `main`에 병합해 Production 환경변수를 사용하는 배포가 끝난 뒤 실제 브라우저 화면과 저장된 이전 결과의 표시를 확인해야 한다.
 - AI는 운영에서 비활성 상태이므로 프롬프트의 실호출 문장 품질은 별도 검증이 필요하다.
 
 ## 참고 자료
