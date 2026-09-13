@@ -15,7 +15,7 @@ import {
 } from '../../domain/interpretation/ai-explanation';
 
 export const explanationModel = 'gpt-5.4-mini-2026-03-17';
-export const explanationPromptVersion = 'grounded-passages-v6';
+export const explanationPromptVersion = 'grounded-passages-v7';
 
 export async function explainChart(
   chart: Chart,

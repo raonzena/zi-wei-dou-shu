@@ -26,14 +26,20 @@ export function evaluateExplanation(
       section.paragraphs.map((p) => p.text),
     );
     const sentenceFlags = result.sections.flatMap((section) => {
+      const sectionText = section.paragraphs.map((p) => p.text).join(' ');
       const count = section.paragraphs.reduce(
         (sum, p) =>
           sum + (p.text.match(/[.!?](?:["”’])?(?:\s|$)/g)?.length ?? 0),
         0,
       );
-      return count < 4 || count > 5
-        ? [`${section.id}: 본문 ${count}문장으로 4~5문장 기준 확인 필요`]
-        : [];
+      return [
+        ...(count < 7 || count > 8
+          ? [`${section.id}: 본문 ${count}문장으로 7~8문장 기준 확인 필요`]
+          : []),
+        ...(!/(?:예를 들어|가령|이를테면)/.test(sectionText)
+          ? [`${section.id}: 구체적인 생활 예시 확인 필요`]
+          : []),
+      ];
     });
     return {
       ...base,

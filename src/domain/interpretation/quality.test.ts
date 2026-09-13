@@ -194,6 +194,16 @@ describe('간결한 상담 결과 계약', () => {
     expect(() => validateAiExplanation(value, evidence)).toThrow();
   });
 
+  it('생활 예시가 없는 분야를 검토 대상으로 표시한다', () => {
+    const { evidence } = prepare();
+    const value = mockExplanation(evidence);
+    value.sections[0].paragraphs[0].text =
+      '첫 번째 모의 문장입니다. 두 번째 모의 문장입니다. 세 번째 모의 문장입니다. 네 번째 모의 문장입니다. 다섯 번째 모의 문장입니다. 여섯 번째 모의 문장입니다. 일곱 번째 모의 문장입니다.';
+    expect(evaluateExplanation(value, evidence).reviewFlags).toContain(
+      'core: 구체적인 생활 예시 확인 필요',
+    );
+  });
+
   it('조언은 같은 분야의 실제 문단을 참조하며 빈 조언 목록도 허용한다', () => {
     const { evidence } = prepare();
     const value = mockExplanation(evidence);
@@ -237,6 +247,21 @@ describe('간결한 상담 결과 계약', () => {
     });
     value.sections[1].paragraphs[0] = value.sections[0].paragraphs[0];
     expect(evaluateExplanation(value, evidence).reviewFlags).toHaveLength(1);
+  });
+
+  it.each([
+    ['여섯', 6],
+    ['아홉', 9],
+  ] as const)('%s 문장인 분야를 분량 검토 대상으로 표시한다', (_, count) => {
+    const { evidence } = prepare();
+    const value = mockExplanation(evidence);
+    value.sections[0].paragraphs[0].text = Array.from(
+      { length: count },
+      (_, index) => `${index + 1}번째 모의 문장입니다.`,
+    ).join(' ');
+    expect(evaluateExplanation(value, evidence).reviewFlags).toContain(
+      `core: 본문 ${count}문장으로 7~8문장 기준 확인 필요`,
+    );
   });
 
   it('사용자 문장에 내부 근거 ID가 노출되면 거부한다', () => {

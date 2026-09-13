@@ -11,6 +11,7 @@ import {
   starContentSchema,
   type StarContentResult,
 } from '../../domain/content/star-content';
+import { palaceStarCombinationExamples } from '../../content/palace-reading-rules';
 
 export type ResultSnapshot = {
   version: 1;
@@ -58,10 +59,25 @@ const snapshotSchema = z.strictObject({
         strength: z.string(),
         caution: z.string(),
         balance: z.string(),
+        example: z.string().optional(),
+        reflection: z.string().optional(),
       })
       .nullable()
       .optional()
-      .transform((value) => value ?? null),
+      .transform((value) => {
+        if (!value) return null;
+        const examples =
+          palaceStarCombinationExamples[[...value.starNames].sort().join('+')];
+        const example = value.example ?? examples?.example;
+        const reflection = value.reflection ?? examples?.reflection;
+        if (!example || !reflection)
+          throw new Error('Unsupported saved major star combination');
+        return {
+          ...value,
+          example,
+          reflection,
+        };
+      }),
   }),
   facts: z.strictObject({
     formatVersion: z.string(),

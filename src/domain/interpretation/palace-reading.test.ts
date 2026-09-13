@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { calculateChart } from '../ziwei/calculate-chart.server';
 import fixture from '../ziwei/fixtures/cust-1929.json';
 import { createPalaceReading } from './palace-reading';
-import { palaceStarCombinationReadings } from '../../content/palace-reading-rules';
+import {
+  palaceStarCombinationExamples,
+  palaceStarCombinationReadings,
+  palaceStarReadingExamples,
+  palaceStarReadings,
+} from '../../content/palace-reading-rules';
+
+const sentenceCount = (value: string | string[]) =>
+  (Array.isArray(value) ? value.join(' ') : value).match(/[.!?](?=\s|$)/g)
+    ?.length ?? 0;
 
 function chart() {
   const result = calculateChart(fixture.input);
@@ -58,14 +67,20 @@ describe('선택한 궁의 기본 풀이', () => {
       expect(
         reading.entries.every((entry) => entry.heading.endsWith('모습')),
       ).toBe(true);
-      expect(reading.detailedDescription).toHaveLength(4);
-      expect(reading.detailedPractice).toHaveLength(4);
+      expect(sentenceCount(reading.detailedDescription)).toBeGreaterThanOrEqual(
+        7,
+      );
+      expect(sentenceCount(reading.detailedDescription)).toBeLessThanOrEqual(8);
+      expect(sentenceCount(reading.detailedPractice)).toBe(7);
       expect(
         reading.entries.every(
           (entry) =>
-            entry.detailedSentences.length === 4 &&
+            sentenceCount(entry.detailedSentences) === 7 &&
+            entry.detailedSentences.some((sentence) =>
+              sentence.includes('예를 들어'),
+            ) &&
             entry.simpleText ===
-              `${entry.detailedSentences[0]} ${entry.detailedSentences[3]}`,
+              `${entry.detailedSentences[0]} ${entry.detailedSentences[4]}`,
         ),
       ).toBe(true);
       return reading;
@@ -108,7 +123,7 @@ describe('선택한 궁의 기본 풀이', () => {
         (entry) =>
           entry.borrowedFromOpposite &&
           entry.sourcePalaceName === opposite.name &&
-          entry.detailedSentences.length === 4,
+          sentenceCount(entry.detailedSentences) === 7,
       ),
     ).toBe(true);
     expect(result.introduction).toContain('주성이 없습니다');
@@ -127,6 +142,17 @@ describe('선택한 궁의 기본 풀이', () => {
       result.entries.map((entry) => entry.starName).sort(),
     );
     expect(result.combination?.summary).toBeTruthy();
+    expect(result.combination?.example).toContain('예를 들어');
+    expect(
+      sentenceCount([
+        result.combination!.summary,
+        result.combination!.strength,
+        result.combination!.example,
+        result.combination!.caution,
+        result.combination!.balance,
+        result.combination!.reflection,
+      ]),
+    ).toBe(7);
     expect(result.scope).toContain('공통 강점');
     expect(result.scope).toContain('전문 조합 풀이는 아닙니다');
   });
@@ -158,6 +184,12 @@ describe('선택한 궁의 기본 풀이', () => {
         '천량+태양',
         '태양+태음',
       ].sort(),
+    );
+    expect(Object.keys(palaceStarCombinationExamples).sort()).toEqual(
+      Object.keys(palaceStarCombinationReadings).sort(),
+    );
+    expect(Object.keys(palaceStarReadingExamples).sort()).toEqual(
+      Object.keys(palaceStarReadings).sort(),
     );
     expect(
       Object.values(palaceStarCombinationReadings).every(
