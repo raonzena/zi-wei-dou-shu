@@ -34,9 +34,11 @@ export function PalaceReading({
           <h4>두 별이 함께 만드는 특징</h4>
           <h5>{reading.combination.heading}</h5>
           <p>{reading.combination.summary}</p>
+          <p>{reading.combination.strength}</p>
+          <p>{reading.combination.example}</p>
           <p>
-            {reading.combination.strength} {reading.combination.caution}{' '}
-            {reading.combination.balance}
+            {reading.combination.caution} {reading.combination.balance}{' '}
+            {reading.combination.reflection}
           </p>
           <p className={styles.readingBasis}>
             조합 근거:{' '}

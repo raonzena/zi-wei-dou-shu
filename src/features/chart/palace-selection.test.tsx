@@ -76,7 +76,7 @@ describe('보기별 명반과 궁 풀이', () => {
     expect(html.match(/aria-pressed="true"/g)).toHaveLength(1);
   });
 
-  it('상세 풀이에만 각 항목의 네 문장 설명을 표시한다', () => {
+  it('상세 풀이에만 각 항목의 일곱 문장과 생활 예시를 표시한다', () => {
     const html = renderToStaticMarkup(
       <Provider>
         <PalaceDetail chart={chart()} id="palace-detail" />
@@ -95,6 +95,7 @@ describe('보기별 명반과 궁 풀이', () => {
     expect(html).toContain('별 설명을 불러오지 못했습니다');
     expect(html).not.toMatch(/<details[^>]*\sopen/);
     expect(html).toContain('강점이 있습니다');
+    expect(html).toContain('예를 들어');
     expect(html).toContain('한 번의 사건으로 결론을 내리기보다');
   });
   it('주성이 없는 궁은 맞은편 궁의 주성을 참고한 상세 풀이를 구분해 표시한다', () => {

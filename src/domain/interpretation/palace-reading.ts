@@ -1,7 +1,10 @@
 import type { Chart } from '../ziwei/chart';
 import {
+  palaceReadingContextExamples,
   palaceReadingContexts,
+  palaceStarCombinationExamples,
   palaceStarCombinationReadings,
+  palaceStarReadingExamples,
   palaceStarReadings,
 } from '../../content/palace-reading-rules';
 
@@ -44,8 +47,9 @@ export function createStarCombinationReading(starNames: string[]) {
   if (starNames.length !== 2) return null;
   const names = [...starNames].sort();
   const rule = palaceStarCombinationReadings[names.join('+')];
-  if (!rule) throw new Error('Unsupported major star combination');
-  return { starNames: names, ...rule };
+  const examples = palaceStarCombinationExamples[names.join('+')];
+  if (!rule || !examples) throw new Error('Unsupported major star combination');
+  return { starNames: names, ...rule, ...examples };
 }
 
 export function createPalaceReading(
@@ -53,7 +57,8 @@ export function createPalaceReading(
   palace: Chart['palaces'][number],
 ) {
   const context = palaceReadingContexts[palace.name];
-  if (!context) throw new Error('Unsupported palace');
+  const contextExamples = palaceReadingContextExamples[palace.name];
+  if (!context || !contextExamples) throw new Error('Unsupported palace');
   const directStars = palace.stars.filter(
     (star) => star.category === 'major' && star.isMajor,
   );
@@ -65,7 +70,8 @@ export function createPalaceReading(
   );
   const entries = stars.map((star) => {
     const rule = palaceStarReadings[star.name];
-    if (!rule) throw new Error('Unsupported major star');
+    const examples = palaceStarReadingExamples[star.name];
+    if (!rule || !examples) throw new Error('Unsupported major star');
     return {
       starName: star.name,
       sourcePalaceName: sourcePalace.name,
@@ -75,8 +81,10 @@ export function createPalaceReading(
       detailedSentences: [
         rule.meaning,
         rule.strength,
+        examples.example,
         rule.caution,
         rule.balance,
+        examples.reflection,
       ],
     };
   });
@@ -93,17 +101,21 @@ export function createPalaceReading(
       combination
         ? `이 궁에서는 두 별의 조합이 ${context.focus}에서 ‘${combination.heading.replace(/ 모습$/, '')} 방식’으로 드러날 수 있습니다.`
         : `이 궁에서 살펴볼 중심 주제는 ‘${context.focus}’입니다.`,
+      ...contextExamples.examples,
       combination
         ? '두 성향이 동시에 드러나는 때와 한쪽 성향이 더 강해지는 때를 나누어 살펴보세요.'
         : '편안할 때의 모습과 부담을 느낄 때 반복하는 반응을 함께 살펴봅니다.',
+      '상황이 시작될 때의 반응과 일이 끝난 뒤 남는 감정을 함께 보면 반복되는 모습을 더 분명히 알 수 있습니다.',
       '한 번의 사건으로 결론을 내리기보다 비슷한 상황에서 되풀이되는 선택과 감정을 관찰하는 것이 중요합니다.',
     ],
     simplePractice: context.practice,
     detailedPractice: [
       context.practice,
-      '먼저 최근 한 달 안에 이 생활 영역과 관련해 기억에 남는 상황 하나를 떠올려보세요.',
-      '그때 수월했던 일과 힘들었던 일을 나누어 적으면 비슷한 상황에서 어떤 선택을 반복하는지 알아보는 데 도움이 됩니다.',
-      '별 설명을 자신의 경험과 비교하며, 다음 선택에서 살릴 강점과 조절할 부분을 찾아보세요.',
+      ...contextExamples.practiceExamples,
+      '최근 한 달 안에 이 생활 영역과 관련해 기억에 남는 상황 하나를 더 떠올려보세요.',
+      '그때 수월했던 일과 힘들었던 일을 나누어 적어보세요.',
+      '다음 선택에서 바꿔볼 가장 작은 행동 하나를 정해보세요.',
+      '일주일 동안 시도한 날과 어려웠던 날을 표시하면 자신에게 맞는 방법을 찾는 데 도움이 됩니다.',
     ],
     introduction: entries.length
       ? opposite
