@@ -43,13 +43,8 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                       달라질 수 있습니다.
                     </p>
                   )}
-                  {reading.usesBasicPersonalitySummary ? (
-                    <p>
-                      {reading.empty
-                        ? '맞은편 명궁 주성의 기본 성향은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 같은 성향이 낯선 환경에서는 사람을 만나고 적응하는 반응으로 이어질 수 있습니다.'
-                        : '명궁 주성의 기본 성향은 위의 ‘나를 알아보는 기본 풀이’에서 설명했습니다. 같은 성향이 평소 판단하고 선택하는 방식으로 이어질 수 있습니다.'}
-                    </p>
-                  ) : reading.combination ? (
+                  {!reading.usesBasicPersonalitySummary &&
+                  reading.combination ? (
                     <div>
                       <p>
                         <strong>{reading.combination.heading}</strong>
@@ -61,7 +56,7 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                         {reading.combination.example}
                       </p>
                     </div>
-                  ) : (
+                  ) : !reading.usesBasicPersonalitySummary ? (
                     reading.stars.map((item) => (
                       <div key={item.star.name}>
                         <p>
@@ -70,7 +65,7 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                         </p>
                       </div>
                     ))
-                  )}
+                  ) : null}
                 </>
               )}
               {reading.stars.length > 0 && <p>{reading.example}</p>}

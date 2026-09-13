@@ -40,9 +40,10 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
     expect(p.related).toHaveLength(3);
     expect(p.related.some((x) => x.name === p.name)).toBe(false);
     expect(p.question).toMatch(/\?$/);
-    expect(p.example).toMatch(/^예를 들어/);
+    expect(p.example).not.toContain('예를 들어');
     expect('practice' in p).toBe(false);
-    for (const star of p.stars) expect(star.example).toMatch(/^예를 들어/);
+    for (const star of p.stars) expect(star.example).not.toContain('예를 들어');
+    if (p.combination) expect(p.combination.example).not.toContain('예를 들어');
   }
   expect(palaces.flatMap((p) => p.transformations)).toHaveLength(4);
   expect(

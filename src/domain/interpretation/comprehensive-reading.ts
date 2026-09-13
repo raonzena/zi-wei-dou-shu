@@ -99,6 +99,8 @@ const palaceExamples: Record<string, string> = {
   부모: '예를 들어 진로나 생활 방식에 관한 가족의 의견을 들을 때 그대로 따르는지, 자신의 기준을 설명하는지에 기대를 받아들이는 방식이 드러날 수 있습니다.',
 };
 
+const withoutExampleLead = (text: string) => text.replace(/^예를 들어\s*/, '');
+
 export function createComprehensiveReading(
   chart: Chart,
   content: StarContent[],
@@ -113,6 +115,9 @@ export function createComprehensiveReading(
       const opposite =
         directMajor.length === 0 ? findOppositePalace(chart, palace) : null;
       const major = (opposite ?? palace).stars.filter((s) => s.isMajor);
+      const combination = createStarCombinationReading(
+        major.map((star) => star.name),
+      );
       const usesBasicPersonalitySummary = (opposite ?? palace).name === '명궁';
       const supporting = palace.stars
         .filter((s) => !s.isMajor)
@@ -144,15 +149,20 @@ export function createComprehensiveReading(
       return {
         name,
         question: palaceQuestions[name],
-        example: palaceExamples[name],
+        example: withoutExampleLead(palaceExamples[name]),
         stars: major.map((star) => ({
           star,
           ...palaceStarReadings[star.name],
-          ...palaceStarReadingExamples[star.name],
+          example: withoutExampleLead(
+            palaceStarReadingExamples[star.name].example,
+          ),
         })),
-        combination: createStarCombinationReading(
-          major.map((star) => star.name),
-        ),
+        combination: combination
+          ? {
+              ...combination,
+              example: withoutExampleLead(combination.example),
+            }
+          : null,
         usesBasicPersonalitySummary,
         empty: directMajor.length === 0,
         oppositeReference: opposite
