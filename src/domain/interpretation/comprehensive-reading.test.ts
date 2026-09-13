@@ -15,9 +15,24 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
   expect(new Set(palaces.map((p) => p.name)).size).toBe(12);
   for (const p of palaces) {
     const original = data.palaces.find((x) => x.name === p.name)!;
-    expect(p.stars.map((x) => x.star.name)).toEqual(
-      original.stars.filter((s) => s.isMajor).map((s) => s.name),
-    );
+    const direct = original.stars.filter((s) => s.isMajor);
+    if (direct.length) {
+      expect(p.stars.map((x) => x.star.name)).toEqual(
+        direct.map((s) => s.name),
+      );
+      expect(p.oppositeReference).toBeNull();
+      expect(p.combination === null).toBe(direct.length === 1);
+    } else {
+      expect(p.empty).toBe(true);
+      expect(p.oppositeReference).toBeTruthy();
+      const opposite = data.palaces.find(
+        (candidate) => candidate.name === p.oppositeReference!.name,
+      )!;
+      expect(p.stars.map((x) => x.star.name)).toEqual(
+        opposite.stars.filter((s) => s.isMajor).map((s) => s.name),
+      );
+      expect(p.combination === null).toBe(p.stars.length === 1);
+    }
     expect(p.related).toHaveLength(3);
     expect(p.related.some((x) => x.name === p.name)).toBe(false);
   }
@@ -58,12 +73,18 @@ it('검수된 설명에 있고 해당 궁에 실제 배치된 보조성만 사�
       .every((p) => p.supporting.length === 0),
   ).toBe(true);
 });
-it('빈 궁에 맞은편 주성을 본궁 주성으로 복사하지 않는다', () => {
+it('빈 궁은 맞은편 주성을 참고 풀이로 구분한다', () => {
   const data = chart();
   const empty = data.palaces.find((p) => !p.stars.some((s) => s.isMajor))!;
   const p = createComprehensiveReading(data, [])
     .flatMap((s) => s.readings)
     .find((p) => p.name === empty.name)!;
   expect(p.empty).toBe(true);
-  expect(p.stars).toEqual([]);
+  expect(p.oppositeReference).toBeTruthy();
+  const opposite = data.palaces.find(
+    (palace) => palace.name === p.oppositeReference!.name,
+  )!;
+  expect(p.stars.map((item) => item.star.name)).toEqual(
+    opposite.stars.filter((star) => star.isMajor).map((star) => star.name),
+  );
 });

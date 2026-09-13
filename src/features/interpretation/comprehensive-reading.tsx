@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import type { Chart } from '../../domain/ziwei/chart';
 import { createComprehensiveReading } from '../../domain/interpretation/comprehensive-reading';
+import { palaceLabel } from '../../domain/interpretation/palace-reading';
 import { StarContentContext } from '../chart/star-content-context';
 import * as styles from './styles.css';
 
@@ -26,22 +27,46 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
             <div key={reading.name}>
               <h4>{reading.focus}</h4>
               <p>{reading.description}</p>
-              {reading.empty ? (
+              {reading.empty && reading.stars.length === 0 ? (
                 <p>
-                  이 영역에는 중심이 되는 별이 없어 맞은편과 주변 영역을 함께
-                  살펴야 합니다. 해당 영역이 비어 있거나 중요하지 않다는 뜻은
-                  아닙니다. 아래 근거에서 연결된 영역을 확인할 수 있으며, 그곳의
-                  특징을 나의 성향으로 그대로 옮기지는 않습니다.
+                  이 영역과 맞은편 영역에는 주성이 없어 보조성과 주변 궁의
+                  관계를 함께 살펴야 합니다. 해당 영역이 비어 있거나 중요하지
+                  않다는 뜻은 아닙니다.
                 </p>
               ) : (
-                reading.stars.map((item) => (
-                  <div key={item.star.name}>
+                <>
+                  {reading.empty && reading.oppositeReference && (
                     <p>
-                      {item.meaning} {item.strength} {item.caution}
+                      이 영역에는 주성이 없어 맞은편{' '}
+                      {palaceLabel(reading.oppositeReference.name)}의 주성을
+                      참고합니다. 맞은편 궁의 모습이 이 영역에 그대로 나타난다는
+                      뜻은 아니며, 이 영역의 보조성과 주변 궁의 관계도 함께
+                      살펴야 합니다.
                     </p>
-                    <p>{item.balance}</p>
-                  </div>
-                ))
+                  )}
+                  {reading.combination ? (
+                    <div>
+                      <p>
+                        <strong>{reading.combination.heading}</strong>
+                      </p>
+                      <p>
+                        {reading.combination.summary}{' '}
+                        {reading.combination.strength}{' '}
+                        {reading.combination.caution}{' '}
+                        {reading.combination.balance}
+                      </p>
+                    </div>
+                  ) : (
+                    reading.stars.map((item) => (
+                      <div key={item.star.name}>
+                        <p>
+                          {item.meaning} {item.strength} {item.caution}
+                        </p>
+                        <p>{item.balance}</p>
+                      </div>
+                    ))
+                  )}
+                </>
               )}
               {reading.interactions.map((item) => (
                 <p key={item.stars.join(':')}>{item.text}</p>
@@ -54,12 +79,25 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                 <summary>이 풀이의 근거와 함께 볼 특징</summary>
                 <p className={styles.evidence}>
                   {reading.name} · 주성:{' '}
-                  {reading.stars.map((s) => s.star.name).join(' · ') || '없음'}
+                  {reading.empty
+                    ? '없음'
+                    : reading.stars.map((s) => s.star.name).join(' · ')}
+                  {reading.empty && reading.oppositeReference && (
+                    <>
+                      {' '}
+                      · 맞은편 {palaceLabel(
+                        reading.oppositeReference.name,
+                      )}{' '}
+                      참고 주성:{' '}
+                      {reading.stars.map((s) => s.star.name).join(' · ')}
+                    </>
+                  )}
                 </p>
                 {reading.stars.length > 1 && (
                   <p>
-                    두 주성의 기본 뜻을 각각 설명했습니다. 모든 쌍성 조합을
-                    종합한 규칙은 아닙니다.
+                    두 주성의 개별 뜻을 바탕으로 이 조합의 공통 강점과 주의점을
+                    설명했습니다. 밝기·사화·보조성까지 종합한 전문 조합 풀이는
+                    아닙니다.
                   </p>
                 )}
                 {reading.supporting.map(({ star, entry }) => (
