@@ -44,26 +44,13 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                     </p>
                   )}
                   {!reading.usesBasicPersonalitySummary &&
-                  reading.combination ? (
-                    <div>
+                    (reading.combination ?? reading.stars[0]) && (
                       <p>
-                        <strong>{reading.combination.heading}</strong>
+                        <strong>
+                          {(reading.combination ?? reading.stars[0]).heading}
+                        </strong>
                       </p>
-                      <p>
-                        {reading.combination.summary}{' '}
-                        {reading.combination.strength}{' '}
-                        {reading.combination.caution}
-                      </p>
-                    </div>
-                  ) : !reading.usesBasicPersonalitySummary ? (
-                    reading.stars.map((item) => (
-                      <div key={item.star.name}>
-                        <p>
-                          {item.meaning} {item.strength} {item.caution}
-                        </p>
-                      </div>
-                    ))
-                  ) : null}
+                    )}
                 </>
               )}
               {reading.stars.length > 0 && <p>{reading.example}</p>}

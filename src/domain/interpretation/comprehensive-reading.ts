@@ -145,18 +145,14 @@ export function createComprehensiveReading(
         name,
         question: palaceQuestions[name],
         example: palaceExamples[name],
-        stars: major.map((star) => {
-          const { heading, meaning, strength, caution } =
-            palaceStarReadings[star.name];
-          return { star, heading, meaning, strength, caution };
-        }),
+        stars: major.map((star) => ({
+          star,
+          heading: palaceStarReadings[star.name].heading,
+        })),
         combination: combination
           ? {
               starNames: combination.starNames,
               heading: combination.heading,
-              summary: combination.summary,
-              strength: combination.strength,
-              caution: combination.caution,
             }
           : null,
         usesBasicPersonalitySummary,

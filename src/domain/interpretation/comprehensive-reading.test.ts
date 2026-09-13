@@ -88,13 +88,25 @@ it('공통 별 예시를 다른 생활 영역에 섞지 않는다', () => {
   expect(health.example).toContain('피로');
   expect(health.example).not.toMatch(/업무|마감/);
   expect(career.example).toMatch(/업무|마감/);
-  expect(health.stars.every((star) => !('example' in star))).toBe(true);
+  expect(
+    health.stars.every(
+      (star) =>
+        !('meaning' in star) &&
+        !('strength' in star) &&
+        !('caution' in star) &&
+        !('example' in star),
+    ),
+  ).toBe(true);
   expect(
     readings
       .flatMap((section) => section.readings)
       .every(
         (reading) =>
-          !reading.combination || !('example' in reading.combination),
+          !reading.combination ||
+          (!('summary' in reading.combination) &&
+            !('strength' in reading.combination) &&
+            !('caution' in reading.combination) &&
+            !('example' in reading.combination)),
       ),
   ).toBe(true);
 });
