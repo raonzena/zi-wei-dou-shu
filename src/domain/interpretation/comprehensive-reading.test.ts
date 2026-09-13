@@ -77,3 +77,24 @@ it('검수된 설명에 있고 해당 궁에 실제 배치된 보조성만 사�
       .every((p) => p.supporting.length === 0),
   ).toBe(true);
 });
+
+it('공통 별 예시를 다른 생활 영역에 섞지 않는다', () => {
+  const readings = createComprehensiveReading(chart(), []);
+  const health = readings.find((section) => section.id === 'health')!
+    .readings[0];
+  const career = readings.find((section) => section.id === 'career')!
+    .readings[0];
+
+  expect(health.example).toContain('피로');
+  expect(health.example).not.toMatch(/업무|마감/);
+  expect(career.example).toMatch(/업무|마감/);
+  expect(health.stars.every((star) => !('example' in star))).toBe(true);
+  expect(
+    readings
+      .flatMap((section) => section.readings)
+      .every(
+        (reading) =>
+          !reading.combination || !('example' in reading.combination),
+      ),
+  ).toBe(true);
+});

@@ -29,7 +29,7 @@
 - 관련 테스트 파일은 196줄에서 161줄로 줄었다.
 - `prettier --check .`, `eslint .`: 통과했다.
 - `next typegen`, `tsc --noEmit`: 통과했다.
-- `vitest run`: 테스트 297개가 통과했고 1개는 기존 설정대로 제외됐다.
+- `vitest run`: 분야 혼합 회귀 테스트를 포함한 테스트 298개가 통과했고 1개는 기존 설정대로 제외됐다.
 - `pnpm run build`: Webpack 운영 빌드가 통과했다.
 
 ## 요구사항 대조

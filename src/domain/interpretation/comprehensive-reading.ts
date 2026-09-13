@@ -1,9 +1,6 @@
 import type { Chart } from '../ziwei/chart';
 import type { StarContent } from '../content/star-content';
-import {
-  palaceStarReadingExamples,
-  palaceStarReadings,
-} from '../../content/palace-reading-rules';
+import { palaceStarReadings } from '../../content/palace-reading-rules';
 import { consultationEvidence } from './consultation-evidence';
 import {
   createStarCombinationReading,
@@ -85,21 +82,19 @@ const palaceQuestions: Record<string, string> = {
 };
 
 const palaceExamples: Record<string, string> = {
-  명궁: '예를 들어 새 일을 맡았을 때 목표부터 정하는지, 주변 사람과 먼저 상의하는지에서 이런 성향이 드러날 수 있습니다.',
-  형제: '예를 들어 가족이 도움을 청했을 때 바로 나서는지, 먼저 사정과 역할을 확인하는지에서 가까운 사람을 대하는 방식이 드러날 수 있습니다.',
-  부처: '예를 들어 함께 주말 계획을 세우거나 집안일을 나눌 때 먼저 방향을 제안하는지, 상대의 의견을 기다리는지에 이런 성향이 나타날 수 있습니다.',
-  자녀: '예를 들어 누군가를 가르치거나 돌볼 때 답을 바로 알려주는지, 스스로 해볼 시간을 주는지에 돌봄 방식이 드러날 수 있습니다.',
-  재백: '예를 들어 예상하지 못한 지출이 생겼을 때 바로 결제하는지, 여러 선택지를 비교하는지에서 돈을 대하는 기준이 나타날 수 있습니다.',
-  질액: '예를 들어 일정이 몰렸을 때 끝까지 밀어붙이는지, 피로를 느끼면 계획을 조정하는지에서 생활 리듬을 다루는 방식이 드러날 수 있습니다.',
-  천이: '예를 들어 처음 가는 모임에서 먼저 말을 거는지, 분위기와 사람을 파악한 뒤 움직이는지에 낯선 환경에서의 반응이 나타날 수 있습니다.',
-  노복: '예를 들어 공동 작업을 시작할 때 역할부터 정하는지, 관계와 분위기를 만든 뒤 일을 나누는지에서 협력 방식이 드러날 수 있습니다.',
-  관록: '예를 들어 마감이 있는 일을 맡았을 때 계획을 세우는 순서와 문제가 생겼을 때 책임지는 방식에서 일할 때의 강점이 나타날 수 있습니다.',
-  전택: '예를 들어 이사나 큰 지출을 결정할 때 안정적인 조건을 우선하는지, 더 나은 환경을 위해 변화를 택하는지에 생활 기반을 대하는 태도가 드러날 수 있습니다.',
-  복덕: '예를 들어 쉬는 날 혼자 조용히 시간을 보내는지, 사람을 만나거나 새로운 활동을 찾는지에서 마음이 회복되는 방식이 나타날 수 있습니다.',
-  부모: '예를 들어 진로나 생활 방식에 관한 가족의 의견을 들을 때 그대로 따르는지, 자신의 기준을 설명하는지에 기대를 받아들이는 방식이 드러날 수 있습니다.',
+  명궁: '이 성향은 평소 결정을 내리고 역할을 정하는 방식으로 이어질 수 있습니다. 새 일을 맡았을 때 목표부터 정하는지, 주변 사람과 먼저 상의하는지에서 판단 기준이 드러납니다.',
+  형제: '이 성향은 가까운 가족과 도움과 책임을 나누는 방식으로 이어질 수 있습니다. 가족이 도움을 청했을 때 바로 나서는지, 먼저 사정과 역할을 확인하는지에서 관계의 기준이 드러납니다.',
+  부처: '이 성향은 연인이나 배우자와 의견과 역할을 조율하는 방식으로 이어질 수 있습니다. 함께 주말 계획을 세우거나 집안일을 나눌 때 먼저 방향을 제안하는지, 상대의 의견을 기다리는지에 관계 방식이 나타납니다.',
+  자녀: '이 성향은 누군가를 돌보거나 성장을 돕는 방식으로 이어질 수 있습니다. 답을 바로 알려주는지, 스스로 해볼 시간을 주는지에서 돌봄과 기대를 표현하는 방식이 드러납니다.',
+  재백: '이 성향은 돈을 쓰고 자원을 관리하는 기준으로 이어질 수 있습니다. 예상하지 못한 지출이 생겼을 때 바로 결제하는지, 여러 선택지를 비교하는지에서 무엇을 우선하는지가 나타납니다.',
+  질액: '이 성향은 피로를 알아차리는 시점과 휴식 방식을 정하는 과정으로 이어질 수 있습니다. 일정이 몰렸을 때 끝까지 밀어붙이는지, 피로를 느끼면 계획을 조정하는지에서 생활 리듬을 다루는 방식이 드러납니다.',
+  천이: '이 성향은 낯선 장소에서 사람을 만나고 새로운 상황에 적응하는 방식으로 이어질 수 있습니다. 처음 가는 모임에서 먼저 말을 거는지, 분위기와 사람을 파악한 뒤 움직이는지에 바깥 환경에서의 반응이 나타납니다.',
+  노복: '이 성향은 친구·동료와 관계를 만들고 일을 나누는 방식으로 이어질 수 있습니다. 공동 작업을 시작할 때 역할부터 정하는지, 분위기를 만든 뒤 일을 나누는지에서 협력 방식이 드러납니다.',
+  관록: '이 성향은 업무 계획을 세우고 책임을 나누며 문제에 대응하는 방식으로 이어질 수 있습니다. 마감이 있는 일을 맡았을 때 계획을 세우는 순서와 문제가 생겼을 때 책임지는 방식에서 일할 때의 강점이 드러납니다.',
+  전택: '이 성향은 집을 꾸리고 생활 기반을 안정시키는 방식으로 이어질 수 있습니다. 이사나 큰 지출을 결정할 때 안정적인 조건을 우선하는지, 더 나은 환경을 위해 변화를 택하는지에 생활 기반을 대하는 태도가 드러납니다.',
+  복덕: '이 성향은 마음을 쉬게 하고 만족을 얻는 방식으로 이어질 수 있습니다. 쉬는 날 혼자 조용히 시간을 보내는지, 사람을 만나거나 새로운 활동을 찾는지에서 회복 방식이 나타납니다.',
+  부모: '이 성향은 부모의 기대와 도움을 받아들이는 방식으로 이어질 수 있습니다. 진로나 생활 방식에 관한 가족의 의견을 들을 때 그대로 따르는지, 자신의 기준을 설명하는지에 가족과의 경계가 드러납니다.',
 };
-
-const withoutExampleLead = (text: string) => text.replace(/^예를 들어\s*/, '');
 
 export function createComprehensiveReading(
   chart: Chart,
@@ -149,18 +144,19 @@ export function createComprehensiveReading(
       return {
         name,
         question: palaceQuestions[name],
-        example: withoutExampleLead(palaceExamples[name]),
-        stars: major.map((star) => ({
-          star,
-          ...palaceStarReadings[star.name],
-          example: withoutExampleLead(
-            palaceStarReadingExamples[star.name].example,
-          ),
-        })),
+        example: palaceExamples[name],
+        stars: major.map((star) => {
+          const { heading, meaning, strength, caution } =
+            palaceStarReadings[star.name];
+          return { star, heading, meaning, strength, caution };
+        }),
         combination: combination
           ? {
-              ...combination,
-              example: withoutExampleLead(combination.example),
+              starNames: combination.starNames,
+              heading: combination.heading,
+              summary: combination.summary,
+              strength: combination.strength,
+              caution: combination.caution,
             }
           : null,
         usesBasicPersonalitySummary,

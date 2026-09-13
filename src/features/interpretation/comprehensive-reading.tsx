@@ -52,16 +52,14 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                       <p>
                         {reading.combination.summary}{' '}
                         {reading.combination.strength}{' '}
-                        {reading.combination.caution}{' '}
-                        {reading.combination.example}
+                        {reading.combination.caution}
                       </p>
                     </div>
                   ) : !reading.usesBasicPersonalitySummary ? (
                     reading.stars.map((item) => (
                       <div key={item.star.name}>
                         <p>
-                          {item.meaning} {item.strength} {item.caution}{' '}
-                          {item.example}
+                          {item.meaning} {item.strength} {item.caution}
                         </p>
                       </div>
                     ))
