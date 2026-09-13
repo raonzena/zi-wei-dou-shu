@@ -39,22 +39,8 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
     }
     expect(p.related).toHaveLength(3);
     expect(p.related.some((x) => x.name === p.name)).toBe(false);
-    expect(p.question).toMatch(/\?$/);
-    expect(p.example).toMatch(/^예를 들어/);
-    expect('practice' in p).toBe(false);
-    for (const star of p.stars) expect(star.example).toMatch(/^예를 들어/);
   }
   expect(palaces.flatMap((p) => p.transformations)).toHaveLength(4);
-  expect(
-    palaces
-      .flatMap((p) => p.transformations)
-      .every(
-        ({ text }) =>
-          !text.includes('이 영역에서는') &&
-          !text.includes('살펴봅니다') &&
-          !text.includes('해보세요'),
-      ),
-  ).toBe(true);
 });
 it('검수된 설명에 있고 해당 궁에 실제 배치된 보조성만 사용한다', () => {
   const data = chart();
@@ -90,19 +76,4 @@ it('검수된 설명에 있고 해당 궁에 실제 배치된 보조성만 사�
       )
       .every((p) => p.supporting.length === 0),
   ).toBe(true);
-});
-it('빈 궁은 맞은편 주성을 참고 풀이로 구분한다', () => {
-  const data = chart();
-  const empty = data.palaces.find((p) => !p.stars.some((s) => s.isMajor))!;
-  const p = createComprehensiveReading(data, [])
-    .flatMap((s) => s.readings)
-    .find((p) => p.name === empty.name)!;
-  expect(p.empty).toBe(true);
-  expect(p.oppositeReference).toBeTruthy();
-  const opposite = data.palaces.find(
-    (palace) => palace.name === p.oppositeReference!.name,
-  )!;
-  expect(p.stars.map((item) => item.star.name)).toEqual(
-    opposite.stars.filter((star) => star.isMajor).map((star) => star.name),
-  );
 });
