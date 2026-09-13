@@ -11,6 +11,15 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
   const data = chart();
   const reading = createComprehensiveReading(data, []);
   expect(reading).toHaveLength(7);
+  expect(reading.map((section) => section.title)).toEqual([
+    '핵심 성향',
+    '내면과 삶의 방향',
+    '일과 커리어',
+    '재물운',
+    '연애 및 결혼운',
+    '건강과 컨디션',
+    '가족과 대인관계',
+  ]);
   const palaces = reading.flatMap((s) => s.readings);
   expect(new Set(palaces.map((p) => p.name)).size).toBe(12);
   for (const p of palaces) {
@@ -22,7 +31,6 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
       );
       expect(p.oppositeReference).toBeNull();
       expect(p.combination === null).toBe(direct.length === 1);
-      expect(p.usesBasicPersonalitySummary).toBe(p.name === '명궁');
     } else {
       expect(p.empty).toBe(true);
       expect(p.oppositeReference).toBeTruthy();
@@ -33,9 +41,6 @@ it('일곱 분야가 열두 궁을 빠짐없이 구분하고 실제 배치만 �
         opposite.stars.filter((s) => s.isMajor).map((s) => s.name),
       );
       expect(p.combination === null).toBe(p.stars.length === 1);
-      expect(p.usesBasicPersonalitySummary).toBe(
-        p.oppositeReference?.name === '명궁',
-      );
     }
     expect(p.related).toHaveLength(3);
     expect(p.related.some((x) => x.name === p.name)).toBe(false);
@@ -78,16 +83,24 @@ it('검수된 설명에 있고 해당 궁에 실제 배치된 보조성만 사�
   ).toBe(true);
 });
 
-it('공통 별 예시를 다른 생활 영역에 섞지 않는다', () => {
+it('별의 성향을 각 궁의 생활 주제에 맞는 4문장으로 풀어낸다', () => {
   const readings = createComprehensiveReading(chart(), []);
   const health = readings.find((section) => section.id === 'health')!
     .readings[0];
   const career = readings.find((section) => section.id === 'career')!
     .readings[0];
 
-  expect(health.example).toContain('피로');
-  expect(health.example).not.toMatch(/업무|마감/);
-  expect(career.example).toMatch(/업무|마감/);
+  expect(health.sentences).toHaveLength(4);
+  expect(health.sentences.join(' ')).toMatch(/피로|수면|휴식|컨디션/);
+  expect(health.sentences.join(' ')).not.toMatch(/업무|마감/);
+  expect(career.sentences).toHaveLength(4);
+  expect(career.sentences.join(' ')).toMatch(/업무|마감|일의/);
+  expect(
+    readings
+      .flatMap((section) => section.readings)
+      .flatMap((reading) => reading.sentences)
+      .join(' '),
+  ).not.toMatch(/예를 들어|이 영역에서는|살펴봅니다|해보세요/);
   expect(
     health.stars.every(
       (star) =>

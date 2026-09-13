@@ -37,9 +37,11 @@ it('명궁이 무주성이면 간편 기본 풀이에 맞은편 궁과 참고 �
   const html = renderToStaticMarkup(<BasicReading reading={reading} />);
 
   expect(html).toContain(`맞은편 ${reference.palaceName}궁`);
-  expect(html).toContain(`이 설명의 바탕이 된 별: ${reference.palaceName}궁의`);
   for (const star of reference.stars) expect(html).toContain(star);
-  expect(html).toContain('명궁의 주성 풀이가 아니라');
+  expect(html).toContain(
+    `맞은편 ${reference.earthlyBranch} 위치의 ${reference.palaceName}궁 참고`,
+  );
+  expect(html).not.toContain('명궁의 주성 풀이가 아니라');
 });
 
 it('일곱 분야 종합 풀이에서 무주성 궁의 맞은편 참고 근거를 표시한다', () => {
@@ -59,11 +61,11 @@ it('일곱 분야 종합 풀이에서 무주성 궁의 맞은편 참고 근거�
   expect(html).not.toMatch(/예를 들어|이 영역에서는|살펴봅니다|해보세요/);
 });
 
-it('명궁 주성 조합의 같은 문장을 기본 풀이와 종합 풀이에서 반복하지 않는다', () => {
+it('명궁 주성 조합의 요약을 기본 풀이에서만 표시한다', () => {
   const data = chart();
   const basic = createBasicReading(data);
-  const heading = basic.combination?.heading;
-  if (!heading)
+  const summary = basic.combination?.summary;
+  if (!summary)
     throw new Error('Fixture needs two major stars in the soul palace');
   const soul = data.palaces.find((palace) => palace.name === '명궁')!;
   const opposite = findOppositePalace(data, soul);
@@ -77,6 +79,6 @@ it('명궁 주성 조합의 같은 문장을 기본 풀이와 종합 풀이에�
     </StarContentContext>,
   );
 
-  expect(html.split(heading)).toHaveLength(2);
+  expect(html.split(summary)).toHaveLength(2);
   expect(html).not.toContain('기본 성향은 위의');
 });

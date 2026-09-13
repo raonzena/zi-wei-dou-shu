@@ -13,15 +13,10 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
   );
   return (
     <section className={styles.reading} aria-labelledby="comprehensive-title">
-      <h2 id="comprehensive-title">별의 조합으로 보는 일·돈·관계</h2>
-      <p>
-        명반에 놓인 별의 성향이 평소 선택, 일, 돈, 관계와 휴식에서 어떻게 나타날
-        수 있는지 생활 장면과 함께 설명합니다.
-      </p>
+      <h2 id="comprehensive-title">분야별 자세한 풀이</h2>
       {sections.map((section) => (
         <article className={styles.entry} key={section.id}>
           <h3>{section.title}</h3>
-          <p>{section.connection}</p>
           {section.readings.map((reading) => (
             <div key={reading.name}>
               <h4>{reading.question}</h4>
@@ -43,17 +38,9 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                       달라질 수 있습니다.
                     </p>
                   )}
-                  {!reading.usesBasicPersonalitySummary &&
-                    (reading.combination ?? reading.stars[0]) && (
-                      <p>
-                        <strong>
-                          {(reading.combination ?? reading.stars[0]).heading}
-                        </strong>
-                      </p>
-                    )}
                 </>
               )}
-              {reading.stars.length > 0 && <p>{reading.example}</p>}
+              {reading.stars.length > 0 && <p>{reading.sentences.join(' ')}</p>}
               {reading.interactions.map((item) => (
                 <p key={item.stars.join(':')}>{item.text}</p>
               ))}
@@ -78,14 +65,13 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
                     </>
                   )}
                 </p>
-                {reading.stars.length > 1 &&
-                  !reading.usesBasicPersonalitySummary && (
-                    <p>
-                      두 주성의 개별 뜻을 바탕으로 이 조합의 공통 강점과
-                      주의점을 설명했습니다. 밝기·사화·보조성까지 종합한 전문
-                      조합 풀이는 아닙니다.
-                    </p>
-                  )}
+                {reading.stars.length > 1 && (
+                  <p>
+                    두 주성은 단순히 별 두 개의 문장을 더하지 않고, iztro
+                    원문에서 확인한 동궁 조합을 기준으로 함께 읽었습니다.
+                    밝기·사화·보조성까지 종합한 전문 조합 풀이는 아닙니다.
+                  </p>
+                )}
                 {reading.supporting.map(({ star, entry }) => (
                   <p key={entry.star_key}>
                     <strong>{star.name}</strong> · {entry.translation}
@@ -123,8 +109,8 @@ export function ComprehensiveReading({ chart }: { chart: Chart }) {
       <details className={styles.sources}>
         <summary>풀이의 범위와 출처</summary>
         <p>
-          열두 궁의 주성, 표시 범위의 보조성, 생년사화와 두 보조성 조합의 기본
-          의미를 다룹니다. 신궁은{' '}
+          열두 궁의 주성과 iztro 원문에 있는 실제 동궁 조합, 표시 범위의 보조성,
+          생년사화와 두 보조성 조합의 기본 의미를 다룹니다. 신궁은{' '}
           {chart.palaces.find((p) => p.isBodyPalace)!.name}에 있습니다. 다른
           궁의 사화가 연쇄적으로 작용하는 해석, 모든 쌍성 조합, 시기별 종합
           운세는 포함하지 않습니다.

@@ -124,17 +124,18 @@ describe('OpenAI 설명 요청과 검증', () => {
         .items.properties.evidence.items.properties.id.enum;
     expect(allowed).toContain('star:사:adjective:팔좌');
     expect(allowed).not.toContain('star:사:minor:팔좌');
-    expect(request.instructions).toContain('relationship: 관계와 배우자');
+    expect(request.instructions).toContain('money: 재물운');
+    expect(request.instructions).toContain('relationship: 연애 및 결혼운');
     expect(request.instructions).toContain('health: 건강과 컨디션');
     expect(request.instructions).toContain('한 줄로 정리하면');
     expect(request.text.format.schema.properties.monthly).toBeUndefined();
     if (result.status === 'ready') {
       expect(result.sections.map((s) => s.id)).toEqual([
         'core',
+        'inner-life',
         'career',
         'money',
         'relationship',
-        'inner-life',
         'health',
         'social',
       ]);
