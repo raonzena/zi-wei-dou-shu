@@ -206,6 +206,55 @@ export const inputLayout = style({
     },
   },
 });
+export const introColumn = style({
+  display: 'flex',
+  flexDirection: 'column',
+});
+export const about = style({
+  borderTop: `1px solid ${colors.line}`,
+  paddingTop: '1.5rem',
+  marginBottom: '2rem',
+});
+export const aboutEyebrow = style({
+  color: colors.accent,
+  fontSize: '.8rem',
+  fontWeight: 700,
+  letterSpacing: '.06em',
+  margin: '0 0 .65rem',
+});
+export const aboutTitle = style({
+  fontFamily: serif,
+  fontSize: 'clamp(1.4rem, 2.4vw, 1.75rem)',
+  lineHeight: 1.5,
+  letterSpacing: '-.02em',
+  margin: '0 0 1.25rem',
+});
+export const aboutGrid = style({
+  display: 'grid',
+  gap: '1.25rem',
+  '@media': {
+    '(min-width: 560px) and (max-width: 999px)': {
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    },
+  },
+});
+export const aboutSubtitle = style({
+  fontFamily: serif,
+  fontSize: '1rem',
+  margin: '0 0 .45rem',
+});
+export const aboutText = style({
+  color: colors.muted,
+  fontSize: '.9rem',
+  lineHeight: 1.75,
+  margin: 0,
+});
+export const aboutHook = style({
+  color: colors.ink,
+  fontWeight: 700,
+  fontSize: '.95rem',
+  margin: '1.25rem 0 0',
+});
 export const introSeal = style({
   '@media': { '(max-width: 999px)': { display: 'none' } },
 });

@@ -114,21 +114,60 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
       <div hidden={pending}>
         <Brand />
         <div className={styles.inputLayout}>
-          <header>
-            <p className={styles.eyebrow}>출생 정보</p>
-            <h1 className={styles.title}>
-              나를 알아보는
-              <br />첫 번째 명반
-            </h1>
-            <p className={styles.intro}>
-              태어난 날짜와 시각을 입력하고
-              <br />
-              나의 명반에 어떤 별이 있는지 살펴보세요.
-            </p>
+          <div className={styles.introColumn}>
+            <header>
+              <p className={styles.eyebrow}>출생 정보</p>
+              <h1 className={styles.title}>
+                나를 알아보는
+                <br />첫 번째 명반
+              </h1>
+              <p className={styles.intro}>
+                태어난 날짜와 시각을 입력하고
+                <br />
+                나의 명반에 어떤 별이 있는지 살펴보세요.
+              </p>
+            </header>
+            <section
+              className={styles.about}
+              aria-labelledby="about-ziwei-title"
+            >
+              <p className={styles.aboutEyebrow}>자미두수 알아보기</p>
+              <h2 id="about-ziwei-title" className={styles.aboutTitle}>
+                별이 놓인 자리로 나의 여러 모습을 읽습니다
+              </h2>
+              <div className={styles.aboutGrid}>
+                <div>
+                  <h3 className={styles.aboutSubtitle}>
+                    자미두수란 무엇인가요?
+                  </h3>
+                  <p className={styles.aboutText}>
+                    태어난 날짜와 시각을 바탕으로 별을 열두 궁에 배치하고, 나
+                    자신·일·재물·관계처럼 삶의 여러 주제를 나누어 읽는 동양의
+                    명리 체계입니다. 같은 별도 어느 궁에 놓이고 어떤 별과 함께
+                    있는지에 따라 해석의 초점이 달라집니다.
+                  </p>
+                </div>
+                <div>
+                  <h3 className={styles.aboutSubtitle}>
+                    사주와는 무엇이 다른가요?
+                  </h3>
+                  <p className={styles.aboutText}>
+                    사주가 태어난 연·월·일·시의 여덟 글자와 오행의 관계를
+                    중심으로 본다면, 자미두수는 열두 궁에 놓인 별의 조합과 궁
+                    사이의 관계를 명반에서 살펴봅니다. 어느 쪽이 더 정확하다는
+                    뜻이 아니라, 같은 출생 정보를 서로 다른 방식으로 이해하는
+                    것입니다.
+                  </p>
+                </div>
+              </div>
+              <p className={styles.aboutHook}>
+                내 명반에는 어떤 별이, 어느 자리에 놓여 있을까요?
+              </p>
+            </section>
             <div className={styles.introSeal}>
               <Seal />
             </div>
-          </header>
+          </div>
           <form
             ref={formRef}
             method="post"
