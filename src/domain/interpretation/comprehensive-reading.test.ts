@@ -100,7 +100,9 @@ it('별의 성향을 각 궁의 생활 주제에 맞는 4문장으로 풀어낸�
       .flatMap((section) => section.readings)
       .flatMap((reading) => reading.sentences)
       .join(' '),
-  ).not.toMatch(/예를 들어|이 영역에서는|살펴봅니다|해보세요/);
+  ).not.toMatch(
+    /예를 들어|이 영역에서는|살펴봅니다|해보세요|할 수 있습니다|태도가 두드러집니다|방식이 드러납니다|모습이 나타납니다/,
+  );
   expect(
     health.stars.every(
       (star) =>
