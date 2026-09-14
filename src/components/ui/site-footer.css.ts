@@ -12,4 +12,7 @@ export const footer = style({
     '(min-width: 768px)': { padding: '0 3rem 2rem' },
     '(min-width: 1200px)': { padding: '0 6rem 2rem' },
   },
+  selectors: {
+    'body:has([data-page-state="loading"]) &': { display: 'none' },
+  },
 });

@@ -100,6 +100,7 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
       {pending && (
         <section
           className={styles.loading}
+          data-page-state="loading"
           role="status"
           aria-live="polite"
           aria-busy="true"

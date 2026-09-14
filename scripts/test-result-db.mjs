@@ -105,6 +105,12 @@ try {
         'utf8',
       ),
     );
+  assert.equal(
+    sql(
+      "select count(*) from cron.job where jobname='purge-expired-saved-results' and schedule='15 * * * *' and active;",
+    ),
+    '1',
+  );
   const query = (actor, fingerprint) =>
     `select public.save_or_reuse_result('${hash(actor)}','${hash(fingerprint)}','{"version":1}');`;
   const results = await Promise.all(
@@ -152,7 +158,7 @@ try {
     ),
   );
   console.log(
-    'PASS: concurrent deduplication, owner isolation, identity changes, retention, expiry and RPC privileges',
+    'PASS: concurrent deduplication, owner isolation, identity changes, retention cron, expiry and RPC privileges',
   );
 } finally {
   if (started) docker(['stop', name]);
