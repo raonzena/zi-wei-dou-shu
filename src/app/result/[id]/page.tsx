@@ -10,7 +10,7 @@ export const maxDuration = 180;
 export const metadata: Metadata = {
   title: '저장된 명반 | 자미두수',
   robots: { index: false, follow: false, nocache: true },
-  referrer: 'no-referrer',
+  referrer: 'strict-origin',
 };
 export default async function ResultPage({
   params,
