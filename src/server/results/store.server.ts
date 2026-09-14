@@ -70,20 +70,34 @@ export async function loadResult(id: string, requireOwner = false) {
   if (!resultIdSchema.safeParse(id).success) return null;
   const ownerHash = await owner();
   if (requireOwner && !ownerHash) return null;
-  let query = database()
-    .from('saved_results')
-    .select('payload,owner_hash')
-    .eq('id', id)
-    .gt('expires_at', new Date().toISOString());
-  if (requireOwner) query = query.eq('owner_hash', ownerHash!);
-  const { data, error } = await query.maybeSingle();
-  if (error) throw new Error('Result load failed');
-  return data
-    ? {
-        snapshot: parseSnapshot(data.payload),
-        isOwner: ownerHash === data.owner_hash,
-      }
-    : null;
+  const started = performance.now();
+  let outcome = 'error';
+  try {
+    let query = database()
+      .from('saved_results')
+      .select('payload,owner_hash')
+      .eq('id', id)
+      .gt('expires_at', new Date().toISOString());
+    if (requireOwner) query = query.eq('owner_hash', ownerHash!);
+    const { data, error } = await query.maybeSingle();
+    if (error) throw new Error('Result load failed');
+    outcome = data ? 'ready' : 'missing';
+    return data
+      ? {
+          snapshot: parseSnapshot(data.payload),
+          isOwner: ownerHash === data.owner_hash,
+        }
+      : null;
+  } finally {
+    console.info(
+      JSON.stringify({
+        event: 'result_load',
+        outcome,
+        ownerRequired: requireOwner,
+        durationMs: Math.round(performance.now() - started),
+      }),
+    );
+  }
 }
 export async function updateResultAi(id: string, ai: ResultSnapshot['ai']) {
   const saved = await loadResult(id, true);

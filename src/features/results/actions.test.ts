@@ -6,6 +6,7 @@ const m = vi.hoisted(() => ({
   load: vi.fn(),
   update: vi.fn(),
   ai: vi.fn(),
+  content: vi.fn(),
 }));
 vi.mock('../../server/results/fingerprint.server', () => ({
   resultFingerprint: () => 'a'.repeat(64),
@@ -14,7 +15,7 @@ vi.mock('../birth-input/calculate-action', () => ({
   calculatePreview: m.calculate,
 }));
 vi.mock('../../server/content/star-content.server', () => ({
-  getStarContent: async () => ({ status: 'ready', entries: [] }),
+  getStarContent: m.content,
 }));
 vi.mock('../../server/results/store.server', () => ({
   saveResult: m.save,
@@ -36,6 +37,7 @@ beforeEach(() => {
   });
   m.save.mockResolvedValue({ id: 'saved-id', created: true });
   m.ai.mockResolvedValue({ status: 'not-requested' });
+  m.content.mockResolvedValue({ status: 'ready', entries: [] });
 });
 
 function form(includeAi = false) {
@@ -102,4 +104,27 @@ it('이름을 결과에 저장하고 계산 엔진에는 전달하지 않는다'
   await createSavedResult(form());
   expect(m.calculate.mock.calls[0][0].has('name')).toBe(false);
   expect(m.save.mock.calls[0][0].name).toBe('설화');
+});
+
+it('명반 계산과 별 콘텐츠 조회를 동시에 시작한다', async () => {
+  let finishCalculation!: (value: unknown) => void;
+  const calculation = new Promise((resolve) => {
+    finishCalculation = resolve;
+  });
+  m.calculate.mockReturnValueOnce(calculation);
+
+  const pending = createSavedResult(form());
+  await vi.waitFor(() => {
+    expect(m.calculate).toHaveBeenCalledOnce();
+    expect(m.content).toHaveBeenCalledOnce();
+  });
+
+  finishCalculation({
+    success: true,
+    chart: {},
+    reading: {},
+    facts: {},
+    ai: { status: 'not-requested' },
+  });
+  await expect(pending).resolves.toEqual({ success: true, id: 'saved-id' });
 });
