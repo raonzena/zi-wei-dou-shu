@@ -2,7 +2,7 @@
 
 - 작성일: 2026-09-14
 - 최종 갱신일: 2026-09-14
-- 상태: 구현·로컬 코드 검증 완료 · DB CI 대기
+- 상태: 구현·검증 완료
 
 ## 작업 개요
 
@@ -38,8 +38,10 @@
 - `corepack pnpm build` 통과
 - `corepack pnpm exec vitest run --maxWorkers=1`에서 테스트 312개가 통과하고 실호출 평가 1개가 제외됐다. 테스트 요약이 나온 뒤 실행 프로세스가 종료되지 않아 직접 중단했다.
 - `corepack pnpm test:result-db`는 현재 실행 환경에 Docker가 없어 `spawnSync docker ENOENT`로 실행하지 못했다. GitHub Actions의 Docker 환경에서 확인해야 한다.
+- GitHub Actions run 43에서 `pnpm check`, AI DB 검사, 저장 결과 DB 검사와 운영 빌드가 모두 통과했다. 저장 결과 DB 검사는 만료 Cron의 이름·매시간 15분 실행 주기·활성 상태도 확인했다.
+- Vercel PR 미리보기 배포가 성공했다.
 
-별도 UI 문자열 테스트는 추가하지 않았다. 운영 빌드가 vanilla-extract의 로딩 상태 선택자를 정상 생성하는 것을 확인했다. 브라우저 시각 검증은 배포 미리보기에서 수행한다.
+별도 UI 문자열 테스트는 추가하지 않았다. 운영 빌드가 vanilla-extract의 로딩 상태 선택자를 정상 생성하는 것을 확인했다. 명반 생성이 필요한 로딩 상태의 브라우저 시각 검증은 수행하지 않았다.
 
 ## 요구사항 대조
 
