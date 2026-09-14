@@ -5,7 +5,11 @@ import { Brand, Seal } from '../../components/ui/brand';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createSavedResult } from '../results/actions';
 import { useRouter } from 'next/navigation';
-import { parseBirthForm, type InputErrors } from './form-input';
+import {
+  parseBirthForm,
+  parseDisplayName,
+  type InputErrors,
+} from './form-input';
 import { NumberChoice } from './number-choice';
 import { birthInputRanges } from './input-ranges';
 import { Term } from '../../components/ui/term';
@@ -35,8 +39,12 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
     if (busy.current) return;
     const data = new FormData(event.currentTarget);
     const parsed = parseBirthForm(data);
-    if (!parsed.success) {
-      setErrors(parsed.errors);
+    const parsedName = parseDisplayName(data);
+    if (!parsed.success || !parsedName.success) {
+      setErrors({
+        ...(!parsed.success ? parsed.errors : {}),
+        ...(!parsedName.success ? parsedName.errors : {}),
+      });
       return;
     }
     busy.current = true;
@@ -150,6 +158,34 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
             <fieldset
               className={styles.section}
               disabled={pending}
+              aria-describedby={`name-help${errors.name ? ' name-error' : ''}`}
+            >
+              <legend className={styles.legend}>공유할 이름</legend>
+              <label className={styles.field}>
+                <span>이름 또는 닉네임</span>
+                <span className={styles.inputGroup}>
+                  <input
+                    className={styles.textInput}
+                    type="text"
+                    name="name"
+                    maxLength={20}
+                    placeholder="예: 설화"
+                    required
+                    disabled={pending}
+                    aria-invalid={!!errors.name}
+                    aria-describedby={`name-help${errors.name ? ' name-error' : ''}`}
+                  />
+                </span>
+              </label>
+              <p id="name-help" className={styles.help}>
+                입력한 이름은 공유 링크의 미리보기 제목에 표시됩니다. 실명
+                공개가 부담스러우면 닉네임을 입력해주세요.
+              </p>
+              {error('name')}
+            </fieldset>
+            <fieldset
+              className={styles.section}
+              disabled={pending}
               aria-describedby={`date-help${errors.date ? ' date-error' : ''}`}
             >
               <legend className={styles.legend}>태어난 날짜</legend>
@@ -256,11 +292,13 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
             <aside className={styles.notice}>
               <strong>입력 정보는 명반과 해석을 만드는 데 사용합니다.</strong>
               <p>
-                명반과 풀이를 생성일로부터 30일간 저장합니다. 결과 링크를 아는
-                사람은 누구나 볼 수 있으며, 운의 시기와 나이 정보로 출생 연도를
-                짐작할 수 있습니다. 원본 생년월일·시각·성별은 저장하지 않습니다.
-                같은 브라우저에서 같은 정보로 다시 요청하면 기존 결과를 보여줄
-                수 있으며, 보관 기간은 연장되지 않습니다.
+                입력한 이름 또는 닉네임은 명반과 풀이와 함께 생성일로부터 30일간
+                저장하며 공유 링크의 미리보기 제목에 표시합니다. 결과 링크를
+                아는 사람은 누구나 볼 수 있으며, 운의 시기와 나이 정보로 출생
+                연도를 짐작할 수 있습니다. 원본 생년월일·시각·성별은 저장하지
+                않습니다. 같은 브라우저에서 같은 이름과 출생 정보로 다시
+                요청하면 기존 결과를 보여줄 수 있으며, 보관 기간은 연장되지
+                않습니다.
               </p>
               {includeAi && (
                 <p>

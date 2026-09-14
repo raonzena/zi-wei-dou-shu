@@ -12,9 +12,11 @@ import {
   type StarContentResult,
 } from '../../domain/content/star-content';
 import { palaceStarCombinationExamples } from '../../content/palace-reading-rules';
+import { displayNameSchema } from '../../domain/user/display-name';
 
 export type ResultSnapshot = {
   version: 1;
+  name?: string;
   chart: Chart;
   reading: BasicReading;
   facts: ChartFactsData;
@@ -25,6 +27,7 @@ export const resultIdSchema = z.uuid();
 const strings = z.array(z.string());
 const snapshotSchema = z.strictObject({
   version: z.literal(1),
+  name: displayNameSchema.optional(),
   chart: chartSchema,
   reading: z.strictObject({
     version: z.string(),

@@ -141,6 +141,17 @@ export const comboInput = style({
   fontSize: '1rem',
   color: colors.ink,
 });
+export const textInput = style({
+  width: '100%',
+  minWidth: 0,
+  border: 0,
+  outline: 0,
+  background: 'transparent',
+  padding: '.75rem',
+  font: 'inherit',
+  fontSize: '1rem',
+  color: colors.ink,
+});
 export const comboTrigger = style({
   display: 'grid',
   placeItems: 'center',

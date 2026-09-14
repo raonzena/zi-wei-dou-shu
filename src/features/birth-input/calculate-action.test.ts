@@ -2,7 +2,7 @@ import * as aiService from '../../server/interpretation/request.server';
 import { describe, expect, it, vi } from 'vitest';
 import * as interpretation from '../../domain/interpretation/basic-reading';
 import { calculatePreview } from './calculate-action';
-import { parseBirthForm } from './form-input';
+import { parseBirthForm, parseDisplayName } from './form-input';
 
 function form(values: Record<string, string> = {}) {
   const data = new FormData();
@@ -67,6 +67,15 @@ describe('birth form server boundary', () => {
       ),
     );
   });
+});
+
+it('공유할 이름을 정리하고 비어 있거나 지나치게 긴 값은 거부한다', () => {
+  expect(parseDisplayName(form({ name: '  설화  ' }))).toEqual({
+    success: true,
+    name: '설화',
+  });
+  expect(parseDisplayName(form({ name: '  ' })).success).toBe(false);
+  expect(parseDisplayName(form({ name: '가'.repeat(21) })).success).toBe(false);
 });
 
 it.each([

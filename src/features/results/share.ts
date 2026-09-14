@@ -26,10 +26,11 @@ export async function shareResult(
   url: string,
   method: 'share' | 'copy',
   browser: ShareBrowser,
+  title = '자미두수 명반 풀이',
 ): Promise<ShareOutcome> {
   if (method === 'share' && browser.share) {
     try {
-      await browser.share({ title: '자미두수 명반 풀이', url });
+      await browser.share({ title, url });
       return 'shared';
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError')

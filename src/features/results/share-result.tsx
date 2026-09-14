@@ -3,10 +3,19 @@
 import { Toast } from '@base-ui/react/toast';
 import { useRef, useState } from 'react';
 import { resultShareMethod, resultShareUrl, shareResult } from './share';
+import { resultShareTitle } from './result-title';
 import * as styles from './share-result.css';
 import { button } from './result-action.css';
 
-export function ShareResult({ id, view }: { id: string; view: string }) {
+export function ShareResult({
+  id,
+  name,
+  view,
+}: {
+  id: string;
+  name?: string;
+  view: string;
+}) {
   const toastManager = Toast.useToastManager();
   const [busy, setBusy] = useState(false);
   const running = useRef(false);
@@ -29,6 +38,7 @@ export function ShareResult({ id, view }: { id: string; view: string }) {
         url,
         resultShareMethod(navigator),
         navigator,
+        resultShareTitle(name),
       );
       if (outcome === 'copied') {
         toastManager.add({
