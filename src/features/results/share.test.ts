@@ -25,6 +25,19 @@ it('passes only a generic title and result URL to device sharing', async () => {
   });
   expect(writeText).not.toHaveBeenCalled();
 });
+it('passes the personalized result title to device sharing', async () => {
+  const share = vi.fn().mockResolvedValue(undefined);
+  await shareResult(
+    'url',
+    'share',
+    { share },
+    '설화님의 명반은 어떻게 나왔을까요?',
+  );
+  expect(share).toHaveBeenCalledWith({
+    title: '설화님의 명반은 어떻게 나왔을까요?',
+    url: 'url',
+  });
+});
 it('does not copy or report an error when device sharing is cancelled', async () => {
   const share = vi
     .fn()

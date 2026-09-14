@@ -12,6 +12,7 @@ import {
 import { isAiExplanationEnabled } from '../../server/interpretation/availability';
 import { requestExplanation } from '../../server/interpretation/request.server';
 import type { AiExplanationResult } from '../../domain/interpretation/ai-explanation';
+import { parseDisplayName } from '../birth-input/form-input';
 
 export async function createSavedResult(form: FormData) {
   const aiValues = form.getAll('includeAi');
@@ -21,9 +22,12 @@ export async function createSavedResult(form: FormData) {
       errors: { input: 'AI 설명 선택을 확인해주세요.' },
     };
   const wantsAi = aiValues[0] === 'on' && isAiExplanationEnabled();
+  const parsedName = parseDisplayName(form);
+  if (!parsedName.success) return parsedName;
   const calculationForm = new FormData();
   for (const [key, value] of form)
-    if (key !== 'includeAi') calculationForm.append(key, value);
+    if (key !== 'includeAi' && key !== 'name')
+      calculationForm.append(key, value);
   const result = await calculatePreview(calculationForm);
   if (!result.success) return result;
   try {
@@ -39,6 +43,7 @@ export async function createSavedResult(form: FormData) {
       : { status: 'not-requested' };
     const snapshot: ResultSnapshot = {
       version: 1,
+      name: parsedName.name,
       chart,
       reading,
       facts,

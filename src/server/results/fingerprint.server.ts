@@ -23,8 +23,8 @@ export function resultFingerprint(
   if (!normalized.success) throw new Error('Invalid birth input');
   const { birthInstant, gender, policyVersion, timeZoneDataVersion } =
     normalized.data;
-  const { version, chart, reading, facts, content } = snapshot;
-  const result = { version, chart, reading, facts };
+  const { version, name, chart, reading, facts, content } = snapshot;
+  const result = { version, name: name ?? null, chart, reading, facts };
   return privateDigest(
     secret,
     'saved-result-v1',

@@ -37,21 +37,25 @@ beforeEach(() => {
   m.save.mockResolvedValue({ id: 'saved-id', created: true });
   m.ai.mockResolvedValue({ status: 'not-requested' });
 });
+
+function form(includeAi = false) {
+  const result = new FormData();
+  result.set('name', '설화');
+  if (includeAi) result.set('includeAi', 'on');
+  return result;
+}
+
 it('does not call AI if storage fails and preserves an input error', async () => {
   m.save.mockRejectedValue(new Error('private'));
-  const form = new FormData();
-  form.set('includeAi', 'on');
-  const result = await createSavedResult(form);
+  const result = await createSavedResult(form(true));
   expect(result.success).toBe(false);
   expect(JSON.stringify(result)).not.toContain('private');
   expect(m.ai).not.toHaveBeenCalled();
   expect(m.calculate.mock.calls[0][0].has('includeAi')).toBe(false);
 });
 it('saves before AI and returns the saved link even if AI update fails', async () => {
-  const form = new FormData();
-  form.set('includeAi', 'on');
   m.update.mockRejectedValue(new Error('storage'));
-  expect(await createSavedResult(form)).toEqual({
+  expect(await createSavedResult(form(true))).toEqual({
     success: true,
     id: 'saved-id',
   });
@@ -60,15 +64,15 @@ it('saves before AI and returns the saved link even if AI update fails', async (
   );
 });
 it('rejects malformed AI options and calculation failures without saving', async () => {
-  const form = new FormData();
-  form.set('includeAi', 'wrong');
-  expect((await createSavedResult(form)).success).toBe(false);
+  const malformed = form();
+  malformed.set('includeAi', 'wrong');
+  expect((await createSavedResult(malformed)).success).toBe(false);
   expect(m.calculate).not.toHaveBeenCalled();
   m.calculate.mockResolvedValue({
     success: false,
     errors: { hour: 'required' },
   });
-  expect((await createSavedResult(new FormData())).success).toBe(false);
+  expect((await createSavedResult(form())).success).toBe(false);
   expect(m.save).not.toHaveBeenCalled();
 });
 it('never calls AI for a public visitor retry or when disabled', async () => {
@@ -86,12 +90,16 @@ it('never calls AI for a public visitor retry or when disabled', async () => {
 
 it('returns a reused result without another AI call or update', async () => {
   m.save.mockResolvedValue({ id: 'existing-id', created: false });
-  const form = new FormData();
-  form.set('includeAi', 'on');
-  expect(await createSavedResult(form)).toEqual({
+  expect(await createSavedResult(form(true))).toEqual({
     success: true,
     id: 'existing-id',
   });
   expect(m.ai).not.toHaveBeenCalled();
   expect(m.update).not.toHaveBeenCalled();
+});
+
+it('이름을 결과에 저장하고 계산 엔진에는 전달하지 않는다', async () => {
+  await createSavedResult(form());
+  expect(m.calculate.mock.calls[0][0].has('name')).toBe(false);
+  expect(m.save.mock.calls[0][0].name).toBe('설화');
 });

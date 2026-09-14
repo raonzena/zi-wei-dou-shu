@@ -25,6 +25,7 @@ import * as styles from './styles.css';
 
 export function ChartResult({
   resultId,
+  resultName,
   chart,
   facts,
   reading,
@@ -35,6 +36,7 @@ export function ChartResult({
   backLabel,
 }: {
   resultId: string;
+  resultName?: string;
   chart: Chart;
   facts: ChartFactsData;
   reading: Reading;
@@ -118,7 +120,12 @@ export function ChartResult({
           명반과 저장된 풀이를 확인할 수 있습니다.
         </p>
         <div className={styles.resultActions}>
-          <ShareResult key={resultId} id={resultId} view={view} />
+          <ShareResult
+            key={resultId}
+            id={resultId}
+            name={resultName}
+            view={view}
+          />
           <button
             type="button"
             className={resultActionButton}

@@ -1,0 +1,32 @@
+import type { Metadata } from 'next';
+import { resultShareTitle } from './result-title';
+
+const fallbackTitle = '저장된 명반 | 자미두수';
+const fallbackDescription = '저장된 자미두수 명반과 성향 풀이를 확인합니다.';
+
+export function createResultMetadata(id: string, name?: string): Metadata {
+  const title = name ? resultShareTitle(name) : fallbackTitle;
+  const description = name
+    ? `${name}님의 자미두수 명반과 성향 풀이를 담았습니다.`
+    : fallbackDescription;
+
+  return {
+    title,
+    description,
+    robots: { index: false, follow: false, nocache: true },
+    referrer: 'strict-origin',
+    openGraph: {
+      type: 'website',
+      locale: 'ko_KR',
+      siteName: '자미두수',
+      url: `/result/${id}`,
+      title,
+      description,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  };
+}

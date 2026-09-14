@@ -5,7 +5,11 @@ import { Brand, Seal } from '../../components/ui/brand';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createSavedResult } from '../results/actions';
 import { useRouter } from 'next/navigation';
-import { parseBirthForm, type InputErrors } from './form-input';
+import {
+  parseBirthForm,
+  parseDisplayName,
+  type InputErrors,
+} from './form-input';
 import { NumberChoice } from './number-choice';
 import { birthInputRanges } from './input-ranges';
 import { Term } from '../../components/ui/term';
@@ -35,8 +39,12 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
     if (busy.current) return;
     const data = new FormData(event.currentTarget);
     const parsed = parseBirthForm(data);
-    if (!parsed.success) {
-      setErrors(parsed.errors);
+    const parsedName = parseDisplayName(data);
+    if (!parsed.success || !parsedName.success) {
+      setErrors({
+        ...(!parsed.success ? parsed.errors : {}),
+        ...(!parsedName.success ? parsedName.errors : {}),
+      });
       return;
     }
     busy.current = true;
@@ -106,21 +114,60 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
       <div hidden={pending}>
         <Brand />
         <div className={styles.inputLayout}>
-          <header>
-            <p className={styles.eyebrow}>출생 정보</p>
-            <h1 className={styles.title}>
-              나를 알아보는
-              <br />첫 번째 명반
-            </h1>
-            <p className={styles.intro}>
-              태어난 날짜와 시각을 입력하고
-              <br />
-              나의 명반에 어떤 별이 있는지 살펴보세요.
-            </p>
+          <div className={styles.introColumn}>
+            <header>
+              <p className={styles.eyebrow}>출생 정보</p>
+              <h1 className={styles.title}>
+                나를 알아보는
+                <br />첫 번째 명반
+              </h1>
+              <p className={styles.intro}>
+                태어난 날짜와 시각을 입력하고
+                <br />
+                나의 명반에 어떤 별이 있는지 살펴보세요.
+              </p>
+            </header>
+            <section
+              className={styles.about}
+              aria-labelledby="about-ziwei-title"
+            >
+              <p className={styles.aboutEyebrow}>자미두수 알아보기</p>
+              <h2 id="about-ziwei-title" className={styles.aboutTitle}>
+                별이 놓인 자리로 나의 여러 모습을 읽습니다
+              </h2>
+              <div className={styles.aboutGrid}>
+                <div>
+                  <h3 className={styles.aboutSubtitle}>
+                    자미두수란 무엇인가요?
+                  </h3>
+                  <p className={styles.aboutText}>
+                    태어난 날짜와 시각을 바탕으로 별을 열두 궁에 배치하고, 나
+                    자신·일·재물·관계처럼 삶의 여러 주제를 나누어 읽는 동양의
+                    명리 체계입니다. 같은 별도 어느 궁에 놓이고 어떤 별과 함께
+                    있는지에 따라 해석의 초점이 달라집니다.
+                  </p>
+                </div>
+                <div>
+                  <h3 className={styles.aboutSubtitle}>
+                    사주와는 무엇이 다른가요?
+                  </h3>
+                  <p className={styles.aboutText}>
+                    사주가 태어난 연·월·일·시의 여덟 글자와 오행의 관계를
+                    중심으로 본다면, 자미두수는 열두 궁에 놓인 별의 조합과 궁
+                    사이의 관계를 명반에서 살펴봅니다. 어느 쪽이 더 정확하다는
+                    뜻이 아니라, 같은 출생 정보를 서로 다른 방식으로 이해하는
+                    것입니다.
+                  </p>
+                </div>
+              </div>
+              <p className={styles.aboutHook}>
+                내 명반에는 어떤 별이, 어느 자리에 놓여 있을까요?
+              </p>
+            </section>
             <div className={styles.introSeal}>
               <Seal />
             </div>
-          </header>
+          </div>
           <form
             ref={formRef}
             method="post"
@@ -147,6 +194,34 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
                 )}
               </div>
             )}
+            <fieldset
+              className={styles.section}
+              disabled={pending}
+              aria-describedby={`name-help${errors.name ? ' name-error' : ''}`}
+            >
+              <legend className={styles.legend}>공유할 이름</legend>
+              <label className={styles.field}>
+                <span>이름 또는 닉네임</span>
+                <span className={styles.inputGroup}>
+                  <input
+                    className={styles.textInput}
+                    type="text"
+                    name="name"
+                    maxLength={20}
+                    placeholder="예: 설화"
+                    required
+                    disabled={pending}
+                    aria-invalid={!!errors.name}
+                    aria-describedby={`name-help${errors.name ? ' name-error' : ''}`}
+                  />
+                </span>
+              </label>
+              <p id="name-help" className={styles.help}>
+                입력한 이름은 공유 링크의 미리보기 제목에 표시됩니다. 실명
+                공개가 부담스러우면 닉네임을 입력해주세요.
+              </p>
+              {error('name')}
+            </fieldset>
             <fieldset
               className={styles.section}
               disabled={pending}
@@ -256,11 +331,13 @@ export function BirthForm({ includeAi = true }: { includeAi?: boolean }) {
             <aside className={styles.notice}>
               <strong>입력 정보는 명반과 해석을 만드는 데 사용합니다.</strong>
               <p>
-                명반과 풀이를 생성일로부터 30일간 저장합니다. 결과 링크를 아는
-                사람은 누구나 볼 수 있으며, 운의 시기와 나이 정보로 출생 연도를
-                짐작할 수 있습니다. 원본 생년월일·시각·성별은 저장하지 않습니다.
-                같은 브라우저에서 같은 정보로 다시 요청하면 기존 결과를 보여줄
-                수 있으며, 보관 기간은 연장되지 않습니다.
+                입력한 이름 또는 닉네임은 명반과 풀이와 함께 생성일로부터 30일간
+                저장하며 공유 링크의 미리보기 제목에 표시합니다. 결과 링크를
+                아는 사람은 누구나 볼 수 있으며, 운의 시기와 나이 정보로 출생
+                연도를 짐작할 수 있습니다. 원본 생년월일·시각·성별은 저장하지
+                않습니다. 같은 브라우저에서 같은 이름과 출생 정보로 다시
+                요청하면 기존 결과를 보여줄 수 있으며, 보관 기간은 연장되지
+                않습니다.
               </p>
               {includeAi && (
                 <p>

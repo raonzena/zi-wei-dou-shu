@@ -10,6 +10,7 @@ if (!calculated.success) throw new Error('fixture');
 const chart = calculated.data.chart;
 const snapshot: ResultSnapshot = {
   version: 1,
+  name: '설화',
   chart,
   reading: createBasicReading(chart),
   facts: createChartFacts(chart),
@@ -23,16 +24,12 @@ function form(overrides: Record<string, string> = {}) {
   return result;
 }
 beforeEach(() => vi.stubEnv('AI_USAGE_HMAC_SECRET', 'a'.repeat(64)));
-it('normalizes equivalent solar and lunar inputs and ignores name and formatting', () => {
+it('normalizes equivalent solar and lunar inputs and ignores numeric formatting', () => {
   const expected = resultFingerprint(form(), snapshot, false);
   expect(expected).toMatch(/^[a-f0-9]{64}$/);
-  expect(
-    resultFingerprint(
-      form({ month: '04', name: 'different' }),
-      snapshot,
-      false,
-    ),
-  ).toBe(expected);
+  expect(resultFingerprint(form({ month: '04' }), snapshot, false)).toBe(
+    expected,
+  );
   expect(
     resultFingerprint(
       form({ calendar: 'lunar', month: '3', day: '16' }),
@@ -50,6 +47,9 @@ it('separates exact birth time, gender, AI mode and revised readings', () => {
     resultFingerprint(form({ gender: 'female' }), snapshot, false),
   ).not.toBe(expected);
   expect(resultFingerprint(form(), snapshot, true)).not.toBe(expected);
+  expect(
+    resultFingerprint(form(), { ...snapshot, name: '다인' }, false),
+  ).not.toBe(expected);
   expect(
     resultFingerprint(
       form(),

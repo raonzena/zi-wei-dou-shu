@@ -3,9 +3,10 @@ import {
   birthInputSchema,
   type BirthInput,
 } from '../../domain/birth/birth-input';
+import { displayNameSchema } from '../../domain/user/display-name';
 
 export type InputField =
-  keyof BirthInput | 'isLeapMonth' | 'date' | 'time' | 'input';
+  keyof BirthInput | 'name' | 'isLeapMonth' | 'date' | 'time' | 'input';
 export type InputErrors = Partial<Record<InputField, string>>;
 export type FormInputResult =
   | { success: true; input: BirthInput }
@@ -13,6 +14,7 @@ export type FormInputResult =
 
 const numbers = ['year', 'month', 'day', 'hour', 'minute'] as const;
 const labels = {
+  name: '이름 또는 닉네임',
   year: '출생 연도',
   month: '월',
   day: '일',
@@ -22,6 +24,20 @@ const labels = {
   gender: '성별',
   isLeapMonth: '윤달 여부',
 };
+
+export function parseDisplayName(form: FormData) {
+  const values = form.getAll('name');
+  const parsed = displayNameSchema.safeParse(values[0]);
+  if (values.length !== 1 || typeof values[0] !== 'string' || !parsed.success)
+    return {
+      success: false as const,
+      errors: { name: '이름 또는 닉네임을 20자 이내로 입력해주세요.' },
+    };
+  return {
+    success: true as const,
+    name: parsed.data,
+  };
+}
 
 /** Explicit conversion: blank time must never become midnight. Used on both sides. */
 export function parseBirthForm(form: FormData): FormInputResult {
