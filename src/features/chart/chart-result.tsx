@@ -1,5 +1,6 @@
 'use client';
 import { ShareResult } from '../results/share-result';
+import { ResultAd } from '../ads/result-ad';
 import { button as resultActionButton } from '../results/result-action.css';
 import { ComprehensiveReading } from '../interpretation/comprehensive-reading';
 
@@ -111,6 +112,7 @@ export function ChartResult({
             </p>
           </Tabs.Panel>
         </Tabs.Root>
+        <ResultAd />
         <p className={styles.help}>
           결과 주소를 보관하면 새로고침하거나 다른 브라우저에서 열어도 같은
           명반과 저장된 풀이를 확인할 수 있습니다.

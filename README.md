@@ -61,6 +61,17 @@ SDK와 AI 사용량 제어용 PostgreSQL RPC가 연결되어 있다. Production�
 
 연결 단계에서 `.env.example`을 `.env.local`로 복사하고 프로젝트 값을 입력한다. `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`는 공개 키이고 `SUPABASE_SECRET_KEY`는 서버 전용 키다. 서버 키를 공개 환경변수에 넣지 않는다. `.env.local`은 Git에 포함하지 않는다.
 
+## Google AdSense
+
+결과 풀이 하단의 반응형 광고는 다음 두 공개 환경변수가 모두 유효할 때만 표시한다. 설정하지 않은 환경에서는 Google 광고 스크립트와 빈 광고 영역을 생성하지 않는다.
+
+```sh
+NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID=ca-pub-0000000000000000
+NEXT_PUBLIC_GOOGLE_ADSENSE_RESULT_SLOT_ID=0000000000
+```
+
+게시자 ID를 설정하면 사이트 확인용 메타 태그와 `/ads.txt`도 함께 제공한다. 운영 환경변수를 등록하기 전에 AdSense에서 사이트 승인, 결과용 디스플레이 광고 단위 생성, 개인정보 메시지의 대상 지역별 동의 관리 설정을 마친다. 광고 단위의 실제 값은 AdSense에서 발급받은 값을 사용한다.
+
 ## 커밋 규칙
 
 [AGENTS.md](AGENTS.md)를 따른다. 제목은 `<type>/<kebab-case-summary>`, 빈 줄 뒤 본문에는 변경 내용·이유와 검증 결과를 작성한다.

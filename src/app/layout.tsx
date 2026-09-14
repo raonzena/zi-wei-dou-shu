@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { Providers } from './providers';
+import { SiteFooter } from '../components/ui/site-footer';
+import { getPublicAdSenseClientId } from '../features/ads/adsense-config';
 import '@/styles/global.css';
 
 const sans = Noto_Sans_KR({
@@ -15,6 +17,8 @@ const serif = Noto_Serif_KR({
   subsets: ['latin'],
   display: 'swap',
 });
+
+const adsenseClientId = getPublicAdSenseClientId();
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://zi-wei-dou-shu-blush.vercel.app'),
@@ -32,6 +36,9 @@ export const metadata: Metadata = {
     title: '자미두수',
     description: '나의 명반을 읽고, 나를 알아가는 시간',
   },
+  other: adsenseClientId
+    ? { 'google-adsense-account': adsenseClientId }
+    : undefined,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -39,6 +46,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="ko" className={`${sans.variable} ${serif.variable}`}>
       <body>
         <Providers>{children}</Providers>
+        <SiteFooter />
       </body>
     </html>
   );
