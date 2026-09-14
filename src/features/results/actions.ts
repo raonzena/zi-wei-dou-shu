@@ -28,10 +28,34 @@ export async function createSavedResult(form: FormData) {
   for (const [key, value] of form)
     if (key !== 'includeAi' && key !== 'name')
       calculationForm.append(key, value);
-  const result = await calculatePreview(calculationForm);
-  if (!result.success) return result;
+  const started = performance.now();
+  const timings: Record<string, number> = {};
+  const measured = async <T>(name: string, operation: () => Promise<T>) => {
+    const stageStarted = performance.now();
+    try {
+      return await operation();
+    } finally {
+      timings[name] = Math.round(performance.now() - stageStarted);
+    }
+  };
+  const log = (outcome: string) =>
+    console.info(
+      JSON.stringify({
+        event: 'result_generation',
+        outcome,
+        durationMs: Math.round(performance.now() - started),
+        stages: timings,
+      }),
+    );
+  const [result, content] = await Promise.all([
+    measured('calculationMs', () => calculatePreview(calculationForm)),
+    measured('starContentMs', getStarContent),
+  ]);
+  if (!result.success) {
+    log('invalid-input');
+    return result;
+  }
   try {
-    const content = await getStarContent();
     const { chart, reading, facts } = result;
     const ai: AiExplanationResult = wantsAi
       ? {
@@ -50,20 +74,26 @@ export async function createSavedResult(form: FormData) {
       ai,
       content,
     };
-    const { id, created } = await saveResult(
-      snapshot,
+    const fingerprint = await measured('fingerprintMs', async () =>
       resultFingerprint(calculationForm, snapshot, wantsAi),
+    );
+    const { id, created } = await measured('saveMs', () =>
+      saveResult(snapshot, fingerprint),
     );
     if (wantsAi && created) {
       try {
-        const explanation = await requestExplanation(chart);
-        await updateResultAi(id, explanation);
+        const explanation = await measured('aiMs', () =>
+          requestExplanation(chart),
+        );
+        await measured('aiSaveMs', () => updateResultAi(id, explanation));
       } catch {
         /* The saved result remains available for an explicit retry. */
       }
     }
+    log(created ? 'created' : 'reused');
     return { success: true as const, id };
   } catch {
+    log('storage-error');
     return {
       success: false as const,
       errors: {
