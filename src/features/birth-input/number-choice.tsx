@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ChevronDown from '../../assets/icons/chevron-down.svg';
 import { Autocomplete } from '@base-ui/react/autocomplete';
+import { normalizeNumericInput } from './numeric-input';
 import * as styles from './styles.css';
 
 export function NumberChoice({
@@ -38,7 +39,7 @@ export function NumberChoice({
         name={name}
         value={value}
         onValueChange={(next) => {
-          const limited = next.slice(0, maxLength);
+          const limited = normalizeNumericInput(next, maxLength);
           setValue(limited);
           onChange?.(limited);
         }}
@@ -49,6 +50,7 @@ export function NumberChoice({
             id={name}
             className={styles.comboInput}
             inputMode="numeric"
+            pattern="[0-9]*"
             maxLength={maxLength}
             required
             placeholder={placeholder}
