@@ -60,10 +60,14 @@ it('일곱 분야 종합 풀이에서 무주성 궁의 맞은편 참고 근거�
   expect(html).toContain(`${empty.name} · 주성: 없음`);
   expect(html).toContain('참고 주성:');
   expect(html).toContain('그대로 나타난다는 뜻은 아니며');
-  expect(html).not.toMatch(/예를 들어|이 영역에서는|살펴봅니다|해보세요/);
+  const opposite = findOppositePalace(data, empty);
+  expect(html).toContain(`맞은편 ${opposite.name}궁`);
+  for (const star of opposite.stars.filter((star) => star.isMajor)) {
+    expect(html).toContain(star.name);
+  }
 });
 
-it('명궁 주성 조합의 요약을 기본 풀이에서만 표시한다', () => {
+it('기본 풀이와 분야별 본문에 조합을 반영하고 대궁 참고에도 같은 규칙을 사용한다', () => {
   const data = chart();
   const basic = createBasicReading(data);
   const summary = basic.combination?.summary;
@@ -74,13 +78,24 @@ it('명궁 주성 조합의 요약을 기본 풀이에서만 표시한다', () =
   if (!opposite) throw new Error('Fixture needs an opposite palace');
   opposite.stars = opposite.stars.filter((star) => !star.isMajor);
 
+  const basicHtml = renderToStaticMarkup(<BasicReading reading={basic} />);
+  expect(basicHtml.split(summary)).toHaveLength(2);
   const html = renderToStaticMarkup(
     <StarContentContext value={{ status: 'ready', entries: [] }}>
-      <BasicReading reading={basic} />
       <ComprehensiveReading chart={data} />
     </StarContentContext>,
   );
-
-  expect(html.split(summary)).toHaveLength(2);
-  expect(html).not.toContain('기본 성향은 위의');
+  const core = html.match(/<article\b[^>]*>[\s\S]*?<\/article>/)?.[0];
+  expect(core).toBeDefined();
+  const paragraphs = core!.match(/<p>[\s\S]*?<\/p>/g) ?? [];
+  const combinationParagraphs = paragraphs.filter((p) => p.includes(summary));
+  expect(combinationParagraphs).toHaveLength(2);
+  for (const paragraph of combinationParagraphs) {
+    expect(paragraph).toContain(basic.combination!.strength);
+    expect(paragraph).toContain(basic.combination!.caution);
+    expect(paragraph).toContain(basic.combination!.balance);
+  }
+  expect(core).toContain('평소 판단하고 선택할 때');
+  expect(core).toContain('낯선 환경에 적응하고 새로운 사람을 만날 때');
+  expect(core).toContain('맞은편 명궁의 주성을 참고합니다');
 });
