@@ -8,6 +8,8 @@ import { BasicReading } from './basic-reading';
 import { ComprehensiveReading } from './comprehensive-reading';
 import { StarContentContext } from '../chart/star-content-context';
 
+vi.mock('./personality-characters.css', () => ({}));
+
 vi.mock('../../components/ui/term', () => ({
   Term: ({ children }: { children?: React.ReactNode }) => (
     <span>{children}</span>

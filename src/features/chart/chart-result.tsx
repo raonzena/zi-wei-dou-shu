@@ -26,6 +26,7 @@ import * as styles from './styles.css';
 export function ChartResult({
   resultId,
   resultName,
+  characterGender,
   chart,
   facts,
   reading,
@@ -37,6 +38,7 @@ export function ChartResult({
 }: {
   resultId: string;
   resultName?: string;
+  characterGender?: 'male' | 'female';
   chart: Chart;
   facts: ChartFactsData;
   reading: Reading;
@@ -89,7 +91,7 @@ export function ChartResult({
           </Tabs.List>
           <Tabs.Panel value="simple">
             <ChartRing chart={chart} detail={false} />
-            <BasicReading reading={reading} />
+            <BasicReading reading={reading} characterGender={characterGender} />
             <ComprehensiveReading chart={chart} />
             <AiExplanation
               result={ai}

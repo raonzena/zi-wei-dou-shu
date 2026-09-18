@@ -17,6 +17,7 @@ import { displayNameSchema } from '../../domain/user/display-name';
 export type ResultSnapshot = {
   version: 1;
   name?: string;
+  characterGender?: 'male' | 'female';
   chart: Chart;
   reading: BasicReading;
   facts: ChartFactsData;
@@ -28,6 +29,7 @@ const strings = z.array(z.string());
 const snapshotSchema = z.strictObject({
   version: z.literal(1),
   name: displayNameSchema.optional(),
+  characterGender: z.enum(['male', 'female']).optional(),
   chart: chartSchema,
   reading: z.strictObject({
     version: z.string(),

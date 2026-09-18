@@ -24,7 +24,14 @@ export function resultFingerprint(
   const { birthInstant, gender, policyVersion, timeZoneDataVersion } =
     normalized.data;
   const { version, name, chart, reading, facts, content } = snapshot;
-  const result = { version, name: name ?? null, chart, reading, facts };
+  const result = {
+    version,
+    name: name ?? null,
+    characterGender: snapshot.characterGender ?? null,
+    chart,
+    reading,
+    facts,
+  };
   return privateDigest(
     secret,
     'saved-result-v1',

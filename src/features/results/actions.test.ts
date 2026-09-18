@@ -43,9 +43,18 @@ beforeEach(() => {
 function form(includeAi = false) {
   const result = new FormData();
   result.set('name', '설화');
+  result.set('gender', 'female');
   if (includeAi) result.set('includeAi', 'on');
   return result;
 }
+
+it('입력한 성별을 캐릭터 복원용으로 저장한다', async () => {
+  await createSavedResult(form());
+  expect(m.save).toHaveBeenCalledWith(
+    expect.objectContaining({ characterGender: 'female' }),
+    expect.any(String),
+  );
+});
 
 it('does not call AI if storage fails and preserves an input error', async () => {
   m.save.mockRejectedValue(new Error('private'));

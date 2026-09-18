@@ -6,6 +6,7 @@ import { SavedResult } from '../../../features/results/saved-result';
 import { createResultMetadata } from '../../../features/results/result-metadata';
 import { isAiExplanationEnabled } from '../../../server/interpretation/availability';
 import * as styles from '../../page.css';
+import { personalityCharacters } from '../../../content/personality-characters';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 180;
@@ -18,7 +19,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const result = await getResult(id).catch(() => null);
-  return createResultMetadata(id, result?.snapshot.name);
+  return createResultMetadata(
+    id,
+    result?.snapshot.name,
+    !!result &&
+      personalityCharacters(
+        result.snapshot.reading,
+        result.snapshot.characterGender,
+      ).length > 0,
+  );
 }
 
 export default async function ResultPage({

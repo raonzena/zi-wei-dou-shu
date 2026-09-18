@@ -68,6 +68,7 @@ export async function createSavedResult(form: FormData) {
     const snapshot: ResultSnapshot = {
       version: 1,
       name: parsedName.name,
+      characterGender: calculationForm.get('gender') as 'male' | 'female',
       chart,
       reading,
       facts,

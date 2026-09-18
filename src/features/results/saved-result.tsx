@@ -38,6 +38,7 @@ export function SavedResult({
       <ChartResult
         resultId={id}
         resultName={snapshot.name}
+        characterGender={snapshot.characterGender}
         chart={snapshot.chart}
         reading={snapshot.reading}
         facts={snapshot.facts}

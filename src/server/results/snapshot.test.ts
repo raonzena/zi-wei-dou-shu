@@ -32,6 +32,13 @@ it('기존에 저장한 두 주성 풀이에도 새 예시를 복원한다', () 
 
   const parsed = parseSnapshot(legacy);
 
+  expect(
+    parseSnapshot({ ...legacy, characterGender: 'female' }).characterGender,
+  ).toBe('female');
+  expect(() =>
+    parseSnapshot({ ...legacy, characterGender: 'invalid' }),
+  ).toThrow();
+
   expect(parsed.reading.combination?.example).toContain('예를 들어');
   expect(parsed.reading.combination?.reflection).toBeTruthy();
   expect(parsed.name).toBeUndefined();

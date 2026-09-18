@@ -5,14 +5,23 @@ import {
 import { Term } from '../../components/ui/term';
 import { palaceTerms } from '../../content/glossary';
 import * as styles from './styles.css';
+import { PersonalityCharacters } from './personality-characters';
+import type { CharacterGender } from '../../content/personality-characters';
 
-export function BasicReading({ reading }: { reading: Reading }) {
+export function BasicReading({
+  reading,
+  characterGender,
+}: {
+  reading: Reading;
+  characterGender?: CharacterGender;
+}) {
   const summary = createOverallPersonalitySummary(reading);
 
   return (
     <section className={styles.reading} aria-labelledby="basic-reading-title">
       <p className={styles.eyebrow}>나를 알아보는 풀이</p>
       <h2 id="basic-reading-title">종합적인 나의 성향</h2>
+      <PersonalityCharacters reading={reading} gender={characterGender} />
       <p>{summary.join(' ')}</p>
       <details className={styles.sources}>
         <summary>이 설명은 무엇을 바탕으로 하나요?</summary>
