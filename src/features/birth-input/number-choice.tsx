@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import ChevronDown from '../../assets/icons/chevron-down.svg';
 import { Autocomplete } from '@base-ui/react/autocomplete';
-import { normalizeNumericInput } from './numeric-input';
+import {
+  normalizeNumericInput,
+  sanitizeNumericInputElement,
+} from './numeric-input';
 import * as styles from './styles.css';
 
 export function NumberChoice({
@@ -52,6 +55,12 @@ export function NumberChoice({
             inputMode="numeric"
             pattern="[0-9]*"
             maxLength={maxLength}
+            onInputCapture={(event) =>
+              sanitizeNumericInputElement(event.currentTarget, maxLength)
+            }
+            onCompositionEndCapture={(event) =>
+              sanitizeNumericInputElement(event.currentTarget, maxLength)
+            }
             required
             placeholder={placeholder}
             aria-invalid={!!error}
