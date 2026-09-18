@@ -103,3 +103,5 @@
 | 2026-09-12 | [해석 근거 크기와 접기](2026-09-12-collapsible-reading-evidence.md) | 완료 — 근거 크기·접기·여백 검증 |
 
 | 2026-09-12 | [AI 일시 중지와 호출 운영 제어](2026-09-12-ai-usage-controls.md) | 운영 AI 중지 유지 · Supabase·Vercel Production 연결 완료 |
+
+| 2026-09-18 | [기본 풀이와 두 주성 조합 문장 검수](2026-09-18-basic-reading-editorial-review.md) | 문구·조합 반영 수정 완료 · 원문 전체 대조 후속 |

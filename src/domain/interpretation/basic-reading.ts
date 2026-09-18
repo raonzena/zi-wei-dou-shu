@@ -50,7 +50,7 @@ export function createOverallPersonalitySummary(reading: BasicReading) {
   const chartDescription = source
     ? `명궁에는 주성이 없고 맞은편 ${source.palaceName}궁의 주성을 참고해 기본 성향을 읽는 명식입니다.`
     : starNames.length === 2
-      ? '명궁에 두 주성이 함께 자리한 명식입니다.'
+      ? `명궁에 ${starNames.join('·')} 두 주성이 함께 자리한 명식입니다.`
       : `명궁의 주성이 ${starNames[0]}인 명식입니다.`;
   const interpretation =
     reading.combination ?? palaceStarReadings[starNames[0]];

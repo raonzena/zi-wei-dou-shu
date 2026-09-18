@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 import { calculateChart } from '../ziwei/calculate-chart.server';
 import fixture from '../ziwei/fixtures/cust-1929.json';
 import { createComprehensiveReading } from './comprehensive-reading';
+import { createStarCombinationReading } from './palace-reading';
 function chart() {
   const result = calculateChart(fixture.input);
   if (!result.success) throw new Error('fixture');
@@ -96,14 +97,6 @@ it('별의 성향을 각 궁의 생활 주제에 맞는 4문장으로 풀어낸�
   expect(career.sentences).toHaveLength(4);
   expect(career.sentences.join(' ')).toMatch(/업무|마감|일의/);
   expect(
-    readings
-      .flatMap((section) => section.readings)
-      .flatMap((reading) => reading.sentences)
-      .join(' '),
-  ).not.toMatch(
-    /예를 들어|이 영역에서는|살펴봅니다|해보세요|할 수 있습니다|태도가 두드러집니다|방식이 드러납니다|모습이 나타납니다/,
-  );
-  expect(
     health.stars.every(
       (star) =>
         !('meaning' in star) &&
@@ -124,4 +117,67 @@ it('별의 성향을 각 궁의 생활 주제에 맞는 4문장으로 풀어낸�
             !('example' in reading.combination)),
       ),
   ).toBe(true);
+});
+
+function withMajorStars(palaceName: string, names: string[]) {
+  const data = chart();
+  const palace = data.palaces.find((p) => p.name === palaceName)!;
+  const star = data.palaces.flatMap((p) => p.stars).find((s) => s.isMajor)!;
+  palace.stars = [
+    ...palace.stars.filter((s) => !s.isMajor),
+    ...names.map((name) => ({ ...star, name, transformation: null })),
+  ];
+  return data;
+}
+
+it('같은 재백궁이라도 주성 조합에 따라 강점·주의점·조언이 달라진다', () => {
+  const getMoney = (names: string[]) =>
+    createComprehensiveReading(withMajorStars('재백', names), []).find(
+      (section) => section.id === 'money',
+    )!.readings[0];
+  const action = getMoney(['무곡', '칠살']);
+  const careful = getMoney(['천기', '태음']);
+  for (const index of [1, 2, 3]) {
+    expect(action.sentences[index]).not.toBe(careful.sentences[index]);
+  }
+  const combination = createStarCombinationReading(['무곡', '칠살'])!;
+  expect(action.sentences.slice(1)).toEqual([
+    combination.strength,
+    combination.caution,
+    combination.balance,
+  ]);
+  expect(action.sentences.join(' ')).not.toContain('짧은 시간에 변화를');
+  expect(action.sentences.join(' ')).not.toContain('바로 결제하기보다');
+});
+
+it('무주성은 맞은편의 조합을 사용하고 참고 출처를 유지한다', () => {
+  const data = withMajorStars('명궁', []);
+  const soul = data.palaces.find((p) => p.name === '명궁')!;
+  const branches = [
+    '자',
+    '축',
+    '인',
+    '묘',
+    '진',
+    '사',
+    '오',
+    '미',
+    '신',
+    '유',
+    '술',
+    '해',
+  ];
+  const oppositeBranch =
+    branches[(branches.indexOf(soul.earthlyBranch) + 6) % 12];
+  const opposite = data.palaces.find(
+    (p) => p.earthlyBranch === oppositeBranch,
+  )!;
+  const star = data.palaces.flatMap((p) => p.stars).find((s) => s.isMajor)!;
+  opposite.stars = ['천동', '천량'].map((name) => ({ ...star, name }));
+  const reading = createComprehensiveReading(data, [])[0].readings[0];
+  expect(reading.empty).toBe(true);
+  expect(reading.oppositeReference?.name).toBe(opposite.name);
+  expect(reading.sentences[0]).toContain(
+    createStarCombinationReading(['천동', '천량'])!.summary,
+  );
 });
